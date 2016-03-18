@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 
+ *
  * An efficient persistent map from integer keys to non-null values.
  * <p>
  * Iteration occurs in the integer order of the keys.
@@ -60,16 +60,14 @@ import java.util.Set;
  * <p>
  * J. Nievergelt and E.M. Reingold, "Binary search trees of bounded balance",
  * SIAM journal of computing 2(1), March 1973.
- * 
+ *
  * @author harold
- * 
+ *
  * @param <V>
  */
-public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
-		PMap<Integer, V> {
+public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements PMap<Integer, V> {
 	// // STATIC FACTORY METHODS ////
-	private static final IntTreePMap<Object> EMPTY = new IntTreePMap<>(
-			IntTree.EMPTYNODE);
+	private static final IntTreePMap<Object> EMPTY = new IntTreePMap<>(IntTree.EMPTYNODE);
 
 	/**
 	 * @param <V>
@@ -96,8 +94,7 @@ public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 	 * @return empty().plusAll(map)
 	 */
 	@SuppressWarnings("unchecked")
-	public static <V> IntTreePMap<V> from(
-			final Map<? extends Integer, ? extends V> map) {
+	public static <V> IntTreePMap<V> from(final Map<? extends Integer, ? extends V> map) {
 		if (map instanceof IntTreePMap) {
 			return (IntTreePMap<V>) map; // (actually we only know it's
 											// IntTreePMap<? extends V>)
@@ -161,8 +158,7 @@ public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 						return false;
 					}
 					V value = get(((Entry<?, ?>) e).getKey());
-					return value != null
-							&& value.equals(((Entry<?, ?>) e).getValue());
+					return value != null && value.equals(((Entry<?, ?>) e).getValue());
 				}
 			};
 		}
@@ -226,11 +222,13 @@ public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 	}
 
 	@Override
+	@Deprecated
 	public V put(Integer k, V v) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public void putAll(Map<? extends Integer, ? extends V> m) {
 		throw new UnsupportedOperationException();
 	}

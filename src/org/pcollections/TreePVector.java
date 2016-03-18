@@ -40,7 +40,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
- * 
+ *
  * A persistent vector of non-null elements.
  * <p>
  * This implementation is backed by an IntTreePMap and supports logarithmic-time
@@ -48,15 +48,14 @@ import java.util.Map.Entry;
  * <p>
  * This implementation is thread-safe (assuming Java's AbstractList is
  * thread-safe) although its iterators may not be.
- * 
+ *
  * @author harold
- * 
+ *
  * @param <E>
  */
 public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 	// // STATIC FACTORY METHODS ////
-	private static final TreePVector<Object> EMPTY = new TreePVector<>(
-			IntTreePMap.empty());
+	private static final TreePVector<Object> EMPTY = new TreePVector<>(IntTreePMap.empty());
 
 	/**
 	 * @param <E>
@@ -217,21 +216,25 @@ public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E e) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public void add(int index, E element) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean addAll(int index, Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}

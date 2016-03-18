@@ -78,13 +78,12 @@ public class StoreValuesTest {
 
 	/**
 	 * Loads the test graph
-	 * 
+	 *
 	 * @return the loaded graph
 	 * @throws GraphIOException
 	 */
 	public static Graph createTestGraph() throws GraphIOException {
-		Graph testGraph = GraphIO.loadGraphFromFile(
-				"testit/testgraphs/greqltestgraph.tg", null);
+		Graph testGraph = GraphIO.loadGraphFromFile("testit/testgraphs/greqltestgraph.tg", null);
 		return testGraph;
 	}
 
@@ -191,8 +190,7 @@ public class StoreValuesTest {
 	@Test
 	public void testOutputOfListOfVertices() {
 		String qu = "from airport: V{junctions.Airport}, x: V with x "
-				+ "(-->{localities.ContainsLocality} | -->{connections.AirRoute}) airport "
-				+ "report x end";
+				+ "(-->{localities.ContainsLocality} | -->{connections.AirRoute}) airport " + "report x end";
 		evaluateQueryAndSaveResult(qu, "outputPVectorOfVertices");
 	}
 
@@ -202,8 +200,7 @@ public class StoreValuesTest {
 	@Test
 	public void testOutputOfSetOfVertices() {
 		String qu = "from airport: V{junctions.Airport}, x: V with x "
-				+ "(-->{localities.ContainsLocality} | -->{connections.AirRoute}) airport "
-				+ "reportSet x end";
+				+ "(-->{localities.ContainsLocality} | -->{connections.AirRoute}) airport " + "reportSet x end";
 		evaluateQueryAndSaveResult(qu, "outputPSetOfVertices");
 	}
 
@@ -230,7 +227,7 @@ public class StoreValuesTest {
 	 */
 	@Test
 	public void testTableOfIntegers() {
-		String queryString = "from i : list (1..10), j : list (1..5) reportTable i-1, j, i*j end";
+		String queryString = "from i : list (1..10), j : list (1..5) report i-1, j, i*j end";
 		evaluateQueryAndSaveResult(queryString, "outputTableOfIntegers");
 	}
 
@@ -242,11 +239,9 @@ public class StoreValuesTest {
 		String qu = "from a,b:V with connected report a,b end where connected := a-->b";
 
 		@SuppressWarnings("unchecked")
-		PVector<Vertex> result = (PVector<Vertex>) GreqlQuery.createQuery(qu)
-				.evaluate(graph);
+		PVector<Vertex> result = (PVector<Vertex>) GreqlQuery.createQuery(qu).evaluate(graph);
 
-		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph,
-				true);
+		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph, true);
 	}
 
 	/**
@@ -263,7 +258,8 @@ public class StoreValuesTest {
 	/**
 	 * Slice
 	 */
-	@Test
+	// HTMLOutputWriter can not handle slices
+	@Test(expected = SerialisingException.class)
 	public void testOutputOfSlice() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
 		Object result = GreqlQuery.createQuery(qu).evaluate(graph);
@@ -271,8 +267,7 @@ public class StoreValuesTest {
 		try {
 			HTMLOutputWriter writer = new HTMLOutputWriter(graph);
 			writer.setCreateElementLinks(true);
-			writer.writeValue(result, new File(testdir + "outputSlice"
-					+ ".html"));
+			writer.writeValue(result, new File(testdir + "outputSlice" + ".html"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			assert false;
@@ -283,6 +278,7 @@ public class StoreValuesTest {
 	 * Slice
 	 */
 
+	// HTMLOutputWriter can not handle slices
 	@Test(expected = SerialisingException.class)
 	public void testOutputOfSliceException() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
@@ -290,8 +286,7 @@ public class StoreValuesTest {
 
 		try {
 			XMLOutputWriter writer = new XMLOutputWriter(graph);
-			writer.writeValue(result,
-					new File(testdir + "outputSlice" + ".xml"));
+			writer.writeValue(result, new File(testdir + "outputSlice" + ".xml"));
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -303,8 +298,7 @@ public class StoreValuesTest {
 	 */
 	@Test
 	public void testOutputOfAttributedElementClas() {
-		generateHTMLandXMLoutput(graph.getFirstVertex()
-				.getAttributedElementClass(), "outputAttributedElementClass");
+		generateHTMLandXMLoutput(graph.getFirstVertex().getAttributedElementClass(), "outputAttributedElementClass");
 	}
 
 	/**
@@ -340,8 +334,7 @@ public class StoreValuesTest {
 	@Test
 	public void testOutputOfMapFromVertexToMapFromEnumToDouble() {
 		String qu = "from v : V{localities.County} reportMap v -> v.tags end";
-		evaluateQueryAndSaveResult(qu,
-				"outputMapFromVertexToMapFromEnumToDouble");
+		evaluateQueryAndSaveResult(qu, "outputMapFromVertexToMapFromEnumToDouble");
 	}
 
 	/**
@@ -353,8 +346,7 @@ public class StoreValuesTest {
 		try {
 			HTMLOutputWriter writer = new HTMLOutputWriter(graph);
 			writer.setCreateElementLinks(true);
-			writer.writeValue(state, new File(testdir + "outputException"
-					+ ".html"));
+			writer.writeValue(state, new File(testdir + "outputException" + ".html"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -368,8 +360,7 @@ public class StoreValuesTest {
 		State state = new State();
 		try {
 			XMLOutputWriter writer = new XMLOutputWriter(graph);
-			writer.writeValue(state, new File(testdir + "outputException"
-					+ ".xml"));
+			writer.writeValue(state, new File(testdir + "outputException" + ".xml"));
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -388,13 +379,11 @@ public class StoreValuesTest {
 		generateHTMLandXMLoutput(result, filename, null, false);
 	}
 
-	public void generateHTMLandXMLoutput(Object result, String filename,
-			Graph graph, boolean elemlinks) {
+	public void generateHTMLandXMLoutput(Object result, String filename, Graph graph, boolean elemlinks) {
 		try {
 			HTMLOutputWriter htmlWriter = new HTMLOutputWriter(graph);
 			htmlWriter.setCreateElementLinks(elemlinks);
-			htmlWriter.writeValue(result,
-					new File(testdir + filename + ".html"));
+			htmlWriter.writeValue(result, new File(testdir + filename + ".html"));
 
 			XMLOutputWriter xmlWriter = new XMLOutputWriter(graph);
 			xmlWriter.writeValue(result, new File(testdir + filename + ".xml"));

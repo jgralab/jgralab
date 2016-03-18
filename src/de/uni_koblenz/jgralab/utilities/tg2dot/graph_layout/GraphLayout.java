@@ -105,29 +105,26 @@ public class GraphLayout {
 	}
 
 	public TypeDefinition getTypeDefinition(AttributedElement<?, ?> element) {
-		return getTypeDefinition(element.getAttributedElementClass());
+		return getTypeDefinitionForClass(element.getAttributedElementClass());
 	}
 
 	public TypeDefinition getTypeDefinition(String attributedElementClassName) {
 
 		// 4.12.12, af: Differentiation between default Vertex/Edge class and
-		// schema-specific element calsses is necessary as Vertex and Edge no
+		// schema-specific element classes is necessary as Vertex and Edge no
 		// longer are part of the schema and are therefore not found by the
 		// getAttributedElement() method!
 		if (attributedElementClassName.compareTo("Vertex") == 0) {
-			return getTypeDefinition(schema.getGraphClass()
-					.getDefaultVertexClass());
+			return getTypeDefinitionForClass(schema.getGraphClass().getDefaultVertexClass());
 		} else if (attributedElementClassName.compareTo("Edge") == 0) {
-			return getTypeDefinition(schema.getGraphClass()
-					.getDefaultEdgeClass());
+			return getTypeDefinitionForClass(schema.getGraphClass().getDefaultEdgeClass());
 		} else {
-			return getTypeDefinition(schema
-					.getAttributedElementClass(attributedElementClassName));
+			return getTypeDefinitionForClass(schema.getAttributedElementClass(attributedElementClassName));
 		}
 
 	}
 
-	public TypeDefinition getTypeDefinition(AttributedElementClass<?, ?> type) {
+	public TypeDefinition getTypeDefinitionForClass(AttributedElementClass<?, ?> type) {
 		TypeDefinition definition = vertexTypeDefinitions.get(type);
 		if (definition == null) {
 			definition = edgeTypeDefinitions.get(type);
@@ -172,8 +169,7 @@ public class GraphLayout {
 	}
 
 	private void add(TypeDefinition definition) {
-		TypeDefinition originalSpec = getTypeDefinition(definition
-				.getTypeClass());
+		TypeDefinition originalSpec = getTypeDefinitionForClass(definition.getTypeClass());
 		originalSpec.overwriteAttributes(definition);
 	}
 

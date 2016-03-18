@@ -45,9 +45,8 @@ import de.uni_koblenz.jgralab.greql.funlib.NeedsGraphArgument;
 
 @NeedsGraphArgument
 public class IsAcyclic extends Function {
-	
-	@Description(params = "g", description = "Returns true, iff the graph is acyclic.", 
-			categories = Category.GRAPH)
+
+	@Description(params = "g", description = "Returns true, iff the graph is acyclic.", categories = Category.GRAPH)
 	public IsAcyclic() {
 		super(100, 1, 0.1);
 	}

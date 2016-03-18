@@ -8,12 +8,12 @@ import java.util.Set;
 /**
  * Wraps a {@link LinkedHashSet} and converts to some other {@link POrderedSet}
  * on "modification".
- * 
+ *
  * CAUTION: Don't ever modify a {@link LinkedHashSet} which backs a
  * LinkedHashPSet! This will change the LinkedHashPSet as well. (Such
  * modifications will be detected and you'll get an exception at the next access
  * to the LinkedHashPSet that's backed by the LinkedHashSet in question).
- * 
+ *
  * @param <E>
  */
 public class LinkedHashPSet<E> implements POrderedSet<E> {
@@ -179,8 +179,8 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	}
 
 	private final POrderedSet<E> immute(int maxAddCount) {
-		POrderedSet<E> r = ((lhs.size() + maxAddCount) <= ArrayPSet.SIZELIMIT) ? ArrayPSet
-				.<E> empty() : OrderedPSet.<E> empty();
+		POrderedSet<E> r = ((lhs.size() + maxAddCount) <= ArrayPSet.SIZELIMIT) ? ArrayPSet.<E> empty()
+				: OrderedPSet.<E> empty();
 		return r.plusAll(lhs);
 	}
 
@@ -214,31 +214,37 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}

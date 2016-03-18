@@ -38,8 +38,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class OrderedPSet<E> implements POrderedSet<E> {
-	private static final OrderedPSet<Object> EMPTY = new OrderedPSet<>(
-			Empty.set(), Empty.vector());
+	private static final OrderedPSet<Object> EMPTY = new OrderedPSet<>(Empty.set(), Empty.vector());
 
 	@SuppressWarnings("unchecked")
 	public static <E> OrderedPSet<E> empty() {
@@ -165,31 +164,37 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}

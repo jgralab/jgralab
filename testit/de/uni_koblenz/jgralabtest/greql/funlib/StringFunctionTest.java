@@ -51,13 +51,12 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testCapitalizeNull() throws Exception {
-		assertQueryIsUndefined("using nll: capitalizeFirst(nll)");
+		assertQueryIsUndefined("capitalizeFirst(undefined)");
 	}
 
 	@Test
 	public void testConcat() throws Exception {
-		assertQueryEquals("concat(concat(\"foo\", \"bar\"), \"baz\")",
-				"foobarbaz");
+		assertQueryEquals("concat(concat(\"foo\", \"bar\"), \"baz\")", "foobarbaz");
 		assertQueryEquals("concat(concat('foo', 'bar'), 'baz')", "foobarbaz");
 		assertQueryEquals("concat(concat('', ''), '')", "");
 		assertQueryEquals("concat('g', 'g')", "gg");
@@ -65,9 +64,9 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testConcatNull() throws Exception {
-		assertQueryIsUndefined("using nll: concat('', nll)");
-		assertQueryIsUndefined("using nll: concat(nll, '')");
-		assertQueryIsUndefined("using nll: concat(nll, nll)");
+		assertQueryIsUndefined("concat('', undefined)");
+		assertQueryIsUndefined("concat(undefined, '')");
+		assertQueryIsUndefined("concat(undefined, undefined)");
 	}
 
 	@Test
@@ -80,9 +79,9 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testConcatInfixNull() throws Exception {
-		assertQueryIsUndefined("using nll: '' ++ nll");
-		assertQueryIsUndefined("using nll: nll ++ ''");
-		assertQueryIsUndefined("using nll: nll ++ nll");
+		assertQueryIsUndefined("'' ++ undefined");
+		assertQueryIsUndefined("undefined ++ ''");
+		assertQueryIsUndefined("undefined ++ undefined");
 	}
 
 	@Test
@@ -94,9 +93,9 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testReMatchNull() throws Exception {
-		assertQueryIsUndefined("using nll: reMatch('', nll)");
-		assertQueryIsUndefined("using nll: reMatch(nll, '')");
-		assertQueryIsUndefined("using nll: reMatch(nll, nll)");
+		assertQueryIsUndefined("reMatch('', undefined)");
+		assertQueryIsUndefined("reMatch(undefined, '')");
+		assertQueryIsUndefined("reMatch(undefined, undefined)");
 	}
 
 	@Test
@@ -108,28 +107,25 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testReMatchInfixNull() throws Exception {
-		assertQueryIsUndefined("using nll: '' =~ nll");
-		assertQueryIsUndefined("using nll: nll =~ ''");
-		assertQueryIsUndefined("using nll: nll =~ nll");
+		assertQueryIsUndefined("'' =~ undefined");
+		assertQueryIsUndefined("undefined =~ ''");
+		assertQueryIsUndefined("undefined =~ undefined");
 	}
 
 	@Test
 	public void testSplit() throws Exception {
 
 		assertQueryEquals("split('aaabc', '[a]+[b]+')", Arrays.asList("", "c"));
-		assertQueryEqualsQuery("split('Eckhard-Großmann', '-')",
-				"list('Eckhard', 'Großmann')");
+		assertQueryEqualsQuery("split('Eckhard-Großmann', '-')", "list('Eckhard', 'Großmann')");
 		assertQueryEqualsQuery("split('aaa bc', ' ')", "list('aaa', 'bc')");
-		assertQueryEqualsQuery("split('Software-Technik', '[-e]')",
-				"list('Softwar', '', 'T', 'chnik')");
-		assertQueryEqualsQuery("split('JGraLab', '\\p{javaLowerCase}')",
-				"list('JG', '', 'L')");
+		assertQueryEqualsQuery("split('Software-Technik', '[-e]')", "list('Softwar', '', 'T', 'chnik')");
+		assertQueryEqualsQuery("split('JGraLab', '\\\\p{javaLowerCase}')", "list('JG', '', 'L')");
 	}
 
 	@Test
 	public void testSplitNull() throws Exception {
-		assertQueryIsUndefined("using nll: split('', nll)");
-		assertQueryIsUndefined("using nll: split(nll, '')");
-		assertQueryIsUndefined("using nll: split(nll, nll)");
+		assertQueryIsUndefined("split('', undefined)");
+		assertQueryIsUndefined("split(undefined, '')");
+		assertQueryIsUndefined("split(undefined, undefined)");
 	}
 }

@@ -40,15 +40,15 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
- * 
+ *
  * A map-backed persistent bag.
  * <p>
  * If the backing map is thread-safe, then this implementation is thread-safe
  * (assuming Java's AbstractCollection is thread-safe), although its iterators
  * may not be.
- * 
+ *
  * @author harold
- * 
+ *
  * @param <E>
  */
 public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
@@ -195,11 +195,13 @@ public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}

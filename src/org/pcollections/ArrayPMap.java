@@ -47,16 +47,15 @@ import java.util.Set;
  * Also, memory consumption is low compared to the other PMap implementations,
  * but at the price of O(n^2) effort for the equals method (when comparing to
  * another ArrayPMap).
- * 
+ *
  * This implementation is not thread safe.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  * @param <K>
  * @param <V>
  */
-public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
-		Iterable<SimpleImmutableEntry<K, V>>, Serializable {
+public final class ArrayPMap<K, V> implements POrderedMap<K, V>, Iterable<SimpleImmutableEntry<K, V>>, Serializable {
 	private static final long serialVersionUID = -7101801297307300984L;
 
 	private ArrayPSet<K> keys;
@@ -103,8 +102,7 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		return true;
 	}
 
-	private static ArrayPMap<?, ?> empty = new ArrayPMap<>(ArrayPSet.empty(),
-			ArrayPVector.empty());
+	private static ArrayPMap<?, ?> empty = new ArrayPMap<>(ArrayPSet.empty(), ArrayPVector.empty());
 
 	@SuppressWarnings("unchecked")
 	public static <T, U> ArrayPMap<T, U> empty() {
@@ -138,21 +136,25 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 	}
 
 	@Override
+	@Deprecated
 	public V put(K key, V value) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public V remove(Object key) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public void putAll(Map<? extends K, ? extends V> m) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
@@ -201,8 +203,7 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		if (i >= 0) {
 			return new ArrayPMap<>(keys, values.with(i, value));
 		} else {
-			return new ArrayPMap<>(keys.plusWithoutCheck(key),
-					values.plus(value));
+			return new ArrayPMap<>(keys.plusWithoutCheck(key), values.plus(value));
 		}
 	}
 
@@ -247,8 +248,7 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		return new ArrayPMapIterator();
 	}
 
-	private final class ArrayPMapIterator implements
-			Iterator<SimpleImmutableEntry<K, V>> {
+	private final class ArrayPMapIterator implements Iterator<SimpleImmutableEntry<K, V>> {
 		Iterator<K> ki = keys.iterator();
 		Iterator<V> vi = values.iterator();
 

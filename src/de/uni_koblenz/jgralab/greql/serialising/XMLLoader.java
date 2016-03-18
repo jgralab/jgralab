@@ -100,9 +100,8 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 
 		@Override
 		public String toString() {
-			return "(currentVertex: " + currentVertex + " state: " + state
-					+ " edge2Parent: " + edge2Parent + " isLeaf: " + isLeaf
-					+ ")" + " children: " + children;
+			return "(currentVertex: " + currentVertex + " state: " + state + " edge2Parent: " + edge2Parent
+					+ " isLeaf: " + isLeaf + ")" + " children: " + children;
 		}
 	}
 
@@ -123,13 +122,11 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		}
 	}
 
-	public Object load(String fileName) throws FileNotFoundException,
-			XMLStreamException {
+	public Object load(String fileName) throws FileNotFoundException, XMLStreamException {
 		process(fileName);
 		if (stack.size() != 1) {
 			throw new SerialisingException(
-					"Something went wrong.  stack.size() = " + stack.size()
-							+ " != 1.  This must not happen!", null);
+					"Something went wrong.  stack.size() = " + stack.size() + " != 1.  This must not happen!", null);
 		}
 		return stack.firstElement();
 	}
@@ -140,8 +137,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 	}
 
 	@Override
-	protected void endElement(String name, StringBuilder content)
-			throws XMLStreamException {
+	protected void endElement(String name, StringBuilder content) throws XMLStreamException {
 		if (name.equals(OBJECT)) {
 			return;
 		}
@@ -189,7 +185,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			} else if (parentElement instanceof Table) {
 				@SuppressWarnings("unchecked")
 				Table<Object> tab = (Table<Object>) parentElement;
-				if (tab.getTitles().isEmpty()) {
+				if (tab.getTitles() == null || tab.getTitles().isEmpty()) {
 					@SuppressWarnings("unchecked")
 					PVector<String> titles = (PVector<String>) endedElement;
 					parentElement = tab.withTitles(titles);
@@ -223,8 +219,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			}
 		} else if (parentElement instanceof PathSystem) {
 			PathSystemNodeEntry nodeEntry = (PathSystemNodeEntry) endedElement;
-			PathSystemNode node = pathSystem.setRootVertex(
-					nodeEntry.currentVertex, nodeEntry.state, nodeEntry.isLeaf);
+			PathSystemNode node = pathSystem.setRootVertex(nodeEntry.currentVertex, nodeEntry.state, nodeEntry.isLeaf);
 			for (PathSystemNode child : nodeEntry.children) {
 				pathSystem.addEdge(child, node, child.edge2parent);
 			}
@@ -234,9 +229,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			PathSystemNodeEntry parentNode = (PathSystemNodeEntry) parentElement;
 			if (endedElement instanceof PathSystemNodeEntry) {
 				PathSystemNodeEntry nodeEntry = (PathSystemNodeEntry) endedElement;
-				PathSystemNode node = pathSystem.addVertex(
-						nodeEntry.currentVertex, nodeEntry.state,
-						nodeEntry.isLeaf);
+				PathSystemNode node = pathSystem.addVertex(nodeEntry.currentVertex, nodeEntry.state, nodeEntry.isLeaf);
 				node.edge2parent = nodeEntry.edge2Parent;
 				for (PathSystemNode child : nodeEntry.children) {
 					pathSystem.addEdge(child, node, child.edge2parent);
@@ -248,8 +241,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 				parentNode.edge2Parent = (Edge) endedElement;
 			}
 		} else {
-			throw new SerialisingException("The element '" + endedElement
-					+ "' couldn't be added to its parent.", null);
+			throw new SerialisingException("The element '" + endedElement + "' couldn't be added to its parent.", null);
 		}
 	}
 
@@ -268,8 +260,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			if (gid != null) {
 				defaultGraph = id2GraphMap.get(gid);
 				if (defaultGraph == null) {
-					throw new SerialisingException("There's no graph with id '"
-							+ gid + "'.", null);
+					throw new SerialisingException("There's no graph with id '" + gid + "'.", null);
 				}
 			}
 			return;
@@ -278,15 +269,12 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			String schemaName = getAttribute(ATTR_SCHEMA);
 			Schema schema = schemaName2Schema.get(schemaName);
 			if (schema == null) {
-				throw new SerialisingException("Couldn't retrieve Schema '"
-						+ schemaName + "'", null);
+				throw new SerialisingException("Couldn't retrieve Schema '" + schemaName + "'", null);
 			}
-			AttributedElementClass<?, ?> aec = schema
-					.getAttributedElementClass(qName);
+			AttributedElementClass<?, ?> aec = schema.getAttributedElementClass(qName);
 			if (aec == null) {
 				throw new SerialisingException(
-						"Couldn't retrieve attributed element '" + qName
-								+ "' from schema '" + schemaName + "'.", null);
+						"Couldn't retrieve attributed element '" + qName + "' from schema '" + schemaName + "'.", null);
 			}
 			val = aec;
 			// ---------------------------------------------------------------
@@ -303,14 +291,13 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			if (gid != null) {
 				g = id2GraphMap.get(gid);
 				if (g == null) {
-					throw new SerialisingException("There's no graph with id '"
-							+ gid + "'.", null);
+					throw new SerialisingException("There's no graph with id '" + gid + "'.", null);
 				}
 			}
 			Edge e = g.getEdge(id);
 			if (e == null) {
-				throw new SerialisingException("There's no edge with id '" + id
-						+ "' in graph '" + g.getId() + "'.", null);
+				throw new SerialisingException("There's no edge with id '" + id + "' in graph '" + g.getId() + "'.",
+						null);
 			}
 			val = e;
 			// ---------------------------------------------------------------
@@ -323,8 +310,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			String gid = getAttribute(ATTR_GRAPH_ID);
 			Graph g = id2GraphMap.get(gid);
 			if (g == null) {
-				throw new SerialisingException("There's no graph with id '"
-						+ gid + "'.", null);
+				throw new SerialisingException("There's no graph with id '" + gid + "'.", null);
 			}
 			val = g;
 			// ---------------------------------------------------------------
@@ -374,14 +360,13 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			if (gid != null) {
 				g = id2GraphMap.get(gid);
 				if (g == null) {
-					throw new SerialisingException("There's no graph with id '"
-							+ gid + "'.", null);
+					throw new SerialisingException("There's no graph with id '" + gid + "'.", null);
 				}
 			}
 			Vertex v = g.getVertex(id);
 			if (v == null) {
-				throw new SerialisingException("There's no vertex with id '"
-						+ id + "' in graph '" + g.getId() + "'.", null);
+				throw new SerialisingException("There's no vertex with id '" + id + "' in graph '" + g.getId() + "'.",
+						null);
 			}
 			val = v;
 			// ---------------------------------------------------------------
@@ -392,20 +377,16 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			val = pathSystem;
 		} else if (elem.equals(PATH_SYTEM_NODE)) {
 			PathSystemNodeEntry nodeEntry = new PathSystemNodeEntry();
-			nodeEntry.state = Integer
-					.parseInt(getAttribute(ATTR_PATH_SYTEM_NODE_STATE));
-			nodeEntry.isLeaf = getAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF)
-					.equals("true");
+			nodeEntry.state = Integer.parseInt(getAttribute(ATTR_PATH_SYTEM_NODE_STATE));
+			nodeEntry.isLeaf = getAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF).equals("true");
 			val = nodeEntry;
 		} else {
-			throw new SerialisingException("Unrecognized XML element '" + elem
-					+ "'.", null);
+			throw new SerialisingException("Unrecognized XML element '" + elem + "'.", null);
 		}
 
 		// -------------------------------------------------------------------
 		if (val == null) {
-			throw new SerialisingException(
-					"Couldn't read the value of element '" + elem + "'.", null);
+			throw new SerialisingException("Couldn't read the value of element '" + elem + "'.", null);
 		}
 
 		stack.push(val);
@@ -420,8 +401,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			val = Enum.valueOf(e, litName);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new SerialisingException("The Enum class '" + enumTypeName
-					+ "' could not be loaded.", e);
+			throw new SerialisingException("The Enum class '" + enumTypeName + "' could not be loaded.", e);
 		}
 		return val;
 	}

@@ -92,7 +92,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * Writes a PSet by writing all its elements
-	 * 
+	 *
 	 * @param s
 	 *            the PSet to write
 	 */
@@ -113,7 +113,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * Writes a PVector by writing all its elements
-	 * 
+	 *
 	 * @param b
 	 *            the PVector to write
 	 */
@@ -134,7 +134,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * Writes a PMap by writing all of its Tuples
-	 * 
+	 *
 	 * @param b
 	 *            the PMap to write
 	 */
@@ -157,7 +157,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * Writes a Table by first write the titles and then write the data
-	 * 
+	 *
 	 * @param t
 	 *            the Table to write
 	 */
@@ -168,7 +168,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * Writes a Tuple by writing all of its components
-	 * 
+	 *
 	 * @param t
 	 *            the Tuple to write
 	 */
@@ -190,7 +190,7 @@ public abstract class DefaultWriter {
 	/**
 	 * Writes a Record by writing the Components, first the name, second the
 	 * value
-	 * 
+	 *
 	 * @param r
 	 *            the Record to write
 	 */
@@ -211,7 +211,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Path
-	 * 
+	 *
 	 * @param p
 	 *            the Path to write
 	 */
@@ -221,7 +221,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a PathSystem
-	 * 
+	 *
 	 * @param p
 	 *            the PathSystem to write
 	 */
@@ -231,7 +231,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Vertex
-	 * 
+	 *
 	 * @param v
 	 *            the Vertex to write
 	 */
@@ -248,7 +248,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing an Edge
-	 * 
+	 *
 	 * @param e
 	 *            the Edge to write
 	 */
@@ -258,7 +258,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing an Integer
-	 * 
+	 *
 	 * @param n
 	 *            the Integer to write
 	 */
@@ -268,7 +268,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Long
-	 * 
+	 *
 	 * @param n
 	 *            the Long to write
 	 */
@@ -278,7 +278,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Double
-	 * 
+	 *
 	 * @param n
 	 *            the Double to write
 	 */
@@ -288,7 +288,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a String
-	 * 
+	 *
 	 * @param s
 	 *            the String to write
 	 */
@@ -298,7 +298,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing an Enum
-	 * 
+	 *
 	 * @param e
 	 *            the Enum to write
 	 */
@@ -308,7 +308,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Graph
-	 * 
+	 *
 	 * @param g
 	 *            the Graph to write
 	 */
@@ -318,7 +318,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a SubGraphMarker
-	 * 
+	 *
 	 * @param s
 	 *            the SubGraphMarker to write
 	 */
@@ -328,7 +328,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a DFA
-	 * 
+	 *
 	 * @param d
 	 *            the DFA to write
 	 */
@@ -338,7 +338,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a NFA
-	 * 
+	 *
 	 * @param n
 	 *            the NFA to write
 	 */
@@ -348,7 +348,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Boolean
-	 * 
+	 *
 	 * @param b
 	 *            the Boolean to write
 	 */
@@ -358,18 +358,17 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing an AttributedElementClass
-	 * 
+	 *
 	 * @param a
 	 *            the AttributedElementClass to write
 	 */
-	protected void writeAttributedElementClass(AttributedElementClass<?, ?> a)
-			throws Exception {
+	protected void writeAttributedElementClass(AttributedElementClass<?, ?> a) throws Exception {
 		cantWrite(a);
 	}
 
 	/**
 	 * DefaultWriter has no support for writing a TypeCollection
-	 * 
+	 *
 	 * @param a
 	 *            the TypeCollection to write
 	 */
@@ -379,7 +378,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a State
-	 * 
+	 *
 	 * @param s
 	 *            the State to write
 	 */
@@ -389,7 +388,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Transition
-	 * 
+	 *
 	 * @param t
 	 *            the Transition to write
 	 */
@@ -399,7 +398,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing a Declaration
-	 * 
+	 *
 	 * @param d
 	 *            the Declaration to write
 	 */
@@ -409,7 +408,7 @@ public abstract class DefaultWriter {
 
 	/**
 	 * DefaultWriter has no support for writing an unknown Object
-	 * 
+	 *
 	 * @param o
 	 *            the Object to write
 	 */
@@ -420,7 +419,7 @@ public abstract class DefaultWriter {
 	/**
 	 * Decides which of the possible Greql types the given object is and calls
 	 * the specific method
-	 * 
+	 *
 	 * @param o
 	 *            the Object to write
 	 */
@@ -498,8 +497,7 @@ public abstract class DefaultWriter {
 	}
 
 	protected void cantWrite(Object v) {
-		throw new SerialisingException(getClass().getSimpleName()
-				+ " can not handle " + v.getClass(), v);
+		throw new SerialisingException(getClass().getSimpleName() + " can not handle " + v.getClass(), v);
 
 	}
 

@@ -210,23 +210,19 @@ public class XDotParser {
 				if (action == 'p' || action == 'P' || action == 'L') {
 					Path2D p = new Path2D.Double();
 					for (int i = 0; i < n - 1; i++) {
-						p.append(new Line2D.Double(xp[i], yp[i], xp[i + 1],
-								yp[i + 1]), i != 0);
+						p.append(new Line2D.Double(xp[i], yp[i], xp[i + 1], yp[i + 1]), i != 0);
 					}
 					if (action != 'L') {
 						p.closePath();
 					}
-					xs = new XDotShape(p, lineColor, action == 'P' ? fillColor
-							: null, null, null);
+					xs = new XDotShape(p, lineColor, action == 'P' ? fillColor : null, null, null);
 				} else {
 					Path2D p = new Path2D.Double();
 					for (int i = 0; i < n - 1; i += 3) {
-						p.append(new CubicCurve2D.Double(xp[i], yp[i],
-								xp[i + 1], yp[i + 1], xp[i + 2], yp[i + 2],
+						p.append(new CubicCurve2D.Double(xp[i], yp[i], xp[i + 1], yp[i + 1], xp[i + 2], yp[i + 2],
 								xp[i + 3], yp[i + 3]), i != 0);
 					}
-					xs = new XDotShape(p, lineColor, action == 'b' ? fillColor
-							: null, null, null);
+					xs = new XDotShape(p, lineColor, action == 'b' ? fillColor : null, null, null);
 				}
 				shapes.add(xs);
 				addShapeToCurrentElement(xs);
@@ -241,8 +237,7 @@ public class XDotParser {
 				double w = l.nextDouble();
 				double h = l.nextDouble();
 				Ellipse2D e = new Ellipse2D.Double(x - w, y - h, w * 2, h * 2);
-				XDotShape xs = new XDotShape(e, lineColor,
-						action == 'E' ? fillColor : null, null, null);
+				XDotShape xs = new XDotShape(e, lineColor, action == 'E' ? fillColor : null, null, null);
 				shapes.add(xs);
 				addShapeToCurrentElement(xs);
 			}
@@ -252,7 +247,7 @@ public class XDotParser {
 				// Font
 				double size = l.nextDouble();
 				String name = l.nextString();
-				font = new Font(name, Font.PLAIN, (int) size);
+				font = new Font(name, Font.PLAIN, (int) Math.max(1, size - 2));
 			}
 				break;
 
@@ -278,8 +273,7 @@ public class XDotParser {
 				break;
 
 			default:
-				throw new RuntimeException(xdl.getLine()
-						+ ": FIXME Unknown action '" + action + "'");
+				throw new RuntimeException(xdl.getLine() + ": FIXME Unknown action '" + action + "'");
 			}
 		}
 	}
@@ -311,8 +305,7 @@ public class XDotParser {
 			throw new IOException("Unexpected EOF");
 		}
 		if (la.type == Type.SEPARATOR) {
-			throw new IOException(xdl.getLine() + ": Expected ID, found "
-					+ la.text);
+			throw new IOException(xdl.getLine() + ": Expected ID, found " + la.text);
 		}
 		String s = la.text;
 		la = xdl.nextToken();
@@ -321,12 +314,10 @@ public class XDotParser {
 
 	private String match(String s) throws IOException {
 		if (la.type == Type.EOF) {
-			throw new IOException(xdl.getLine() + ": Expected " + s
-					+ " found EOF");
+			throw new IOException(xdl.getLine() + ": Expected " + s + " found EOF");
 		}
 		if (!s.equals(la.text)) {
-			throw new IOException(xdl.getLine() + ": Expected " + s + " found "
-					+ la.text);
+			throw new IOException(xdl.getLine() + ": Expected " + s + " found " + la.text);
 		}
 		la = xdl.nextToken();
 		return s;
@@ -344,8 +335,7 @@ public class XDotParser {
 		if (la.text.equals("graph") || la.text.equals("digraph")) {
 			match();
 		} else {
-			throw new IOException(xdl.getLine()
-					+ ": Expected 'graph' or 'digraph', found " + la.text);
+			throw new IOException(xdl.getLine() + ": Expected 'graph' or 'digraph', found " + la.text);
 		}
 		if (!la.text.equals("{")) {
 			matchID();
@@ -459,8 +449,7 @@ public class XDotParser {
 		} else if (id.charAt(0) == 'e') {
 			currentElement = graph.getEdge(Integer.parseInt(id.substring(1)));
 		} else {
-			throw new IOException(xdl.getLine() + ": Unexpected element id "
-					+ id);
+			throw new IOException(xdl.getLine() + ": Unexpected element id " + id);
 		}
 	}
 

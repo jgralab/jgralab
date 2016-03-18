@@ -122,16 +122,19 @@ public class Tuple implements PSequence<Object> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends Object> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
@@ -157,16 +160,19 @@ public class Tuple implements PSequence<Object> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean remove(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean removeAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean retainAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
@@ -231,21 +237,25 @@ public class Tuple implements PSequence<Object> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean addAll(int index, Collection<? extends Object> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public Object set(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public void add(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public Object remove(int index) {
 		throw new UnsupportedOperationException();
 	}

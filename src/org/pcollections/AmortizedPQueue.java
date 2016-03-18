@@ -42,11 +42,11 @@ import java.util.Iterator;
 // TODO tests
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author mtklein
- * 
+ *
  * @param <E>
  */
 public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
@@ -138,13 +138,11 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 			// If there's nothing on front, dump back onto front
 			// (as stacks, this goes in reverse like we want)
 			// and take one off.
-			return new AmortizedPQueue<>(Empty.<E> stack().plusAll(back),
-					Empty.<E> stack()).minus();
+			return new AmortizedPQueue<>(Empty.<E> stack().plusAll(back), Empty.<E> stack()).minus();
 		} else if (fsize == 1) {
 			// If there's one element on front, dump back onto front,
 			// but now we've already removed the head.
-			return new AmortizedPQueue<>(Empty.<E> stack().plusAll(back),
-					Empty.<E> stack());
+			return new AmortizedPQueue<>(Empty.<E> stack().plusAll(back), Empty.<E> stack());
 		} else {
 			// If there's more than one on front, we pop one off.
 			return new AmortizedPQueue<>(front.minus(0), back);
@@ -180,6 +178,7 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 
 	/* These 2 methods are not applicable to a persistent collection. */
 	@Override
+	@Deprecated
 	public boolean offer(E o) {
 		// Not possible to modify a persistent queue, interface
 		// says return false if it's not added.
@@ -187,6 +186,7 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	@Override
+	@Deprecated
 	public E poll() {
 		// Poll is meant to destructively remove and return the front of the
 		// queue.
@@ -196,8 +196,7 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	public static void main(String[] args) {
 		AmortizedPQueue<Integer> queue = new AmortizedPQueue<>();
 
-		queue = queue.plus(1).minus().minus().plus(2).plus(3).plus(4).plus(5)
-				.minus().plus(6).plus(7);
+		queue = queue.plus(1).minus().minus().plus(2).plus(3).plus(4).plus(5).minus().plus(6).plus(7);
 		PQueue<Integer> original = queue;
 
 		System.out.println("    \t" + queue.front + " " + queue.back);
@@ -212,11 +211,13 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E e) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}

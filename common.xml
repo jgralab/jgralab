@@ -141,9 +141,9 @@
 	<property name="testcompileexcludes" value="" />
 
 	<!-- Settings for javac -->
-	<property name="javac.source" value="1.7" />
-	<property name="javac.target" value="1.7" />
-	<property name="javac.encoding" value="UTF8" />
+	<property name="javac.source" value="1.8" />
+	<property name="javac.target" value="1.8" />
+	<property name="javac.encoding" value="UTF-8" />
 
 	<!-- debug infos in compiled sources -->
 	<property name="debug" value="false" />

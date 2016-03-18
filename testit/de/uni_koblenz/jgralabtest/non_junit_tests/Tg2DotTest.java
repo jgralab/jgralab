@@ -36,8 +36,6 @@ package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import java.io.IOException;
 
-import org.junit.Test;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
@@ -50,14 +48,12 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 public class Tg2DotTest {
 
 	public void convertGraph() throws GraphIOException, IOException {
-		Graph g = GraphIO.loadGraphFromFile(
-				"testit/testgraphs/greqltestgraph.tg", null);
+		Graph g = GraphIO.loadGraphFromFile("testit/testgraphs/greqltestgraph.tg", null);
 		Tg2Dot.convertGraph(g, "testit/testdata/testoutput.dot");
 	}
 
 	public void convertGraph2Svg() throws GraphIOException, IOException {
-		Graph g = GraphIO.loadGraphFromFile(
-				"testit/testgraphs/greqltestgraph.tg", null);
+		Graph g = GraphIO.loadGraphFromFile("testit/testgraphs/greqltestgraph.tg", null);
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.SVG);
@@ -66,8 +62,7 @@ public class Tg2DotTest {
 	}
 
 	public void convertGraph2Png() throws GraphIOException, IOException {
-		Graph g = GraphIO.loadGraphFromFile(
-				"testit/testgraphs/greqltestgraph.tg", null);
+		Graph g = GraphIO.loadGraphFromFile("testit/testgraphs/greqltestgraph.tg", null);
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);
@@ -75,10 +70,8 @@ public class Tg2DotTest {
 		t2d.convert();
 	}
 
-	@Test
 	public void convertSchema2png() throws GraphIOException, IOException {
-		Schema schema = GraphIO
-				.loadSchemaFromFile("src/de/uni_koblenz/jgralab/greql2/greql2Schema.tg");
+		Schema schema = GraphIO.loadSchemaFromFile("src/de/uni_koblenz/jgralab/greql2/greql2Schema.tg");
 		Schema2SchemaGraph converter = new Schema2SchemaGraph();
 		Graph g = converter.convert2SchemaGraph(schema);
 		Tg2Dot t2d = new Tg2Dot();

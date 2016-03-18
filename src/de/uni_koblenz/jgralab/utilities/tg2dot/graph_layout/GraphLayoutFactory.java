@@ -138,7 +138,7 @@ public class GraphLayoutFactory {
 	}
 
 	private void setDefaultVertexLayout() {
-		TypeDefinition definition = currentGraphLayout.getTypeDefinition(schema
+		TypeDefinition definition = currentGraphLayout.getTypeDefinitionForClass(schema
 				.getGraphClass().getDefaultVertexClass());
 		definition
 				.setAttribute(
@@ -171,7 +171,7 @@ public class GraphLayoutFactory {
 	}
 
 	private void setDefaultEdgeLayout() {
-		TypeDefinition definition = currentGraphLayout.getTypeDefinition(schema
+		TypeDefinition definition = currentGraphLayout.getTypeDefinitionForClass(schema
 				.getGraphClass().getDefaultEdgeClass());
 		definition.setAttribute("color", "'gray'");
 		definition

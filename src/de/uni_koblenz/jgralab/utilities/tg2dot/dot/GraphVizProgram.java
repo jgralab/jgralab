@@ -36,21 +36,28 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
 public class GraphVizProgram {
 
-	/**
-	 * Must end with "/". For example: "GraphViz/bin/"
-	 */
-	public String path;
+	public String graphvizPath;
 	public GraphVizLayouter layouter;
 	public GraphVizOutputFormat outputFormat;
 
 	public GraphVizProgram() {
-		path = "";
+		graphvizPath = System.getProperty("GRAPHVIZ_PATH");
+		if (graphvizPath != null) {
+			if (!graphvizPath.endsWith("/")) {
+				graphvizPath += "/";
+			}
+		} else {
+			graphvizPath = "";
+		}
 		layouter = GraphVizLayouter.DOT;
 		outputFormat = GraphVizOutputFormat.PDF;
 	}
 
 	public GraphVizProgram path(String path) {
-		this.path = path;
+		if (!path.endsWith("/")) {
+			path += "/";
+		}
+		this.graphvizPath = path;
 		return this;
 	}
 

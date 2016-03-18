@@ -75,13 +75,10 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	@Override
 	public void writeValue(Object value, File file) throws XMLStreamException {
-		try {
-			writer = new IndentingXMLStreamWriter(
-					XMLOutputFactory.newInstance()
-							.createXMLStreamWriter(
-									new BufferedOutputStream(
-											new FileOutputStream(file)),
-									"UTF-8"), "\t");
+		try (IndentingXMLStreamWriter xw = new IndentingXMLStreamWriter(XMLOutputFactory.newInstance()
+				.createXMLStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), "UTF-8"), "\t")) {
+
+			writer = xw;
 			writeValue(value);
 		} catch (FactoryConfigurationError e) {
 			throw e;
@@ -92,12 +89,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		} catch (Exception e) {
 			throw new SerialisingException("Unhandled Exception", rootValue, e);
 		} finally {
-			try {
-				writer.close();
-			} catch (XMLStreamException ex) {
-				throw new RuntimeException(
-						"An exception occured while closing the stream", ex);
-			}
+			writer = null;
 		}
 	}
 
@@ -133,13 +125,12 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#
 	 * visitAttributedElementClass(de.uni_koblenz.jgralab.greql2.jvalue.JValue)
 	 */
 	@Override
-	protected void writeAttributedElementClass(AttributedElementClass<?, ?> aec)
-			throws XMLStreamException {
+	protected void writeAttributedElementClass(AttributedElementClass<?, ?> aec) throws XMLStreamException {
 		writer.writeEmptyElement(ATTRIBUTEDELEMENTCLASS);
 		writer.writeAttribute(ATTR_NAME, aec.getQualifiedName());
 		writer.writeAttribute(ATTR_SCHEMA, aec.getSchema().getQualifiedName());
@@ -147,7 +138,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitBoolean
 	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -160,7 +151,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitDouble
 	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -173,7 +164,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitEdge(de
 	 * .uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -183,14 +174,13 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		writer.writeEmptyElement(EDGE);
 		writer.writeAttribute(ATTR_ID, Integer.toString(edge.getId()));
 		if (edge.getGraph() != getGraph()) {
-			writer.writeAttribute(ATTR_GRAPH_ID,
-					String.valueOf(edge.getGraph().getId()));
+			writer.writeAttribute(ATTR_GRAPH_ID, String.valueOf(edge.getGraph().getId()));
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitEnumValue
 	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -199,13 +189,12 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 	protected void writeEnum(Enum<?> val) throws XMLStreamException {
 		writer.writeEmptyElement(ENUM);
 		writer.writeAttribute(ATTR_VALUE, val.name());
-		writer.writeAttribute(ATTR_TYPE, val.getDeclaringClass()
-				.getCanonicalName());
+		writer.writeAttribute(ATTR_TYPE, val.getDeclaringClass().getCanonicalName());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitGraph(
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -218,7 +207,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitInt(de
 	 * .uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -231,7 +220,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitList(de
 	 * .uni_koblenz.jgralab.greql2.jvalue.JValueList)
@@ -247,7 +236,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitLong(de
 	 * .uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -260,7 +249,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitMap(de
 	 * .uni_koblenz.jgralab.greql2.jvalue.JValueMap)
@@ -279,7 +268,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitRecord
 	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord)
@@ -300,7 +289,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitSet(de
 	 * .uni_koblenz.jgralab.greql2.jvalue.JValueSet)
@@ -320,7 +309,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitString
 	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
@@ -333,7 +322,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.serialising.DefaultWriter#writeTuple(
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple)
 	 */
@@ -352,7 +341,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.serialising.DefaultWriter#writeVertex
 	 */
 	@Override
@@ -360,8 +349,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		writer.writeEmptyElement(VERTEX);
 		writer.writeAttribute(ATTR_ID, String.valueOf(vertex.getId()));
 		if (vertex.getGraph() != getGraph()) {
-			writer.writeAttribute(ATTR_GRAPH_ID,
-					String.valueOf(vertex.getGraph().getId()));
+			writer.writeAttribute(ATTR_GRAPH_ID, String.valueOf(vertex.getGraph().getId()));
 		}
 	}
 
@@ -393,13 +381,10 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		writer.writeEndElement();
 	}
 
-	private void writeNode(PathSystem p, PathSystemNode currentNode)
-			throws XMLStreamException {
+	private void writeNode(PathSystem p, PathSystemNode currentNode) throws XMLStreamException {
 		writer.writeStartElement(PATH_SYTEM_NODE);
-		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_STATE, new Integer(
-				currentNode.state).toString());
-		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF,
-				new Boolean(p.isLeaf(currentNode)).toString());
+		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_STATE, new Integer(currentNode.state).toString());
+		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF, new Boolean(p.isLeaf(currentNode)).toString());
 		writeVertex(currentNode.currentVertex);
 		if (currentNode.edge2parent != null) {
 			writeEdge(currentNode.edge2parent);

@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.7.0_60-b19 (Oracle Corporation)
 Main-Class: de.uni_koblenz.jgralab.JGraLab
-Bundle-Version: 8.0.12.Hylonomus
+Bundle-Version: 8.1.0.Hylonomus
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
 Bundle-Activator: de.uni_koblenz.jgralab.plugin.Activator
 Bundle-Vendor: Institute for Software Technology
 Require-Bundle: org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uni_koblenz.ist.utilities.ant,de.uni_koblenz.ist.ut
  ilities.csvreader,de.uni_koblenz.ist.utilities.gui,de.uni_koblenz.ist
  .utilities.license_header,de.uni_koblenz.ist.utilities.option_handler
@@ -89,8 +89,8 @@ Eclipse-BuddyPolicy: registered
 
 Name: de/uni_koblenz/jgralab/
 Implementation-Title: JGraLab
-Implementation-Version: 8.0.12@Hylonomus@d21b89f06465454c3ae47ae7d3bf5
- 8aa26026c6c
+Implementation-Version: 8.1.0@Hylonomus@27a40f8e7cb6fca72b19d10f7860f9
+ a9d1b0e184
 Implementation-Vendor: University of Koblenz, Institute for Software T
  echnology
 

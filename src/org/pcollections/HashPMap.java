@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 
+ *
  * A persistent map from non-null keys to non-null values.
  * <p>
  * This map uses a given integer map to map hashcodes to lists of elements with
@@ -51,14 +51,13 @@ import java.util.Set;
  * <p>
  * This implementation is thread-safe (assuming Java's AbstractMap and
  * AbstractSet are thread-safe), although its iterators may not be.
- * 
+ *
  * @author harold
- * 
+ *
  * @param <K>
  * @param <V>
  */
-public final class HashPMap<K, V> extends AbstractMap<K, V> implements
-		PMap<K, V> {
+public final class HashPMap<K, V> extends AbstractMap<K, V> implements PMap<K, V> {
 	// // STATIC FACTORY METHODS ////
 	/**
 	 * @param <K>
@@ -67,8 +66,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 	 * @return a map backed by an empty version of intMap, i.e. backed by
 	 *         intMap.minusAll(intMap.keySet())
 	 */
-	public static <K, V> HashPMap<K, V> empty(
-			final PMap<Integer, PSequence<Entry<K, V>>> intMap) {
+	public static <K, V> HashPMap<K, V> empty(final PMap<Integer, PSequence<Entry<K, V>>> intMap) {
 		return new HashPMap<>(intMap.minusAll(intMap.keySet()), 0);
 	}
 
@@ -77,8 +75,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 	private final int size;
 
 	// not externally instantiable (or subclassable):
-	private HashPMap(final PMap<Integer, PSequence<Entry<K, V>>> intMap,
-			final int size) {
+	private HashPMap(final PMap<Integer, PSequence<Entry<K, V>>> intMap, final int size) {
 		this.intMap = intMap;
 		this.size = size;
 	}
@@ -109,8 +106,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 						return false;
 					}
 					V value = get(((Entry<?, ?>) e).getKey());
-					return value != null
-							&& value.equals(((Entry<?, ?>) e).getValue());
+					return value != null && value.equals(((Entry<?, ?>) e).getValue());
 				}
 			};
 		}
@@ -165,10 +161,8 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 		if (i != -1) {
 			entries = entries.minus(i);
 		}
-		entries = entries.plus(new org.pcollections.SimpleImmutableEntry<>(key,
-				value));
-		return new HashPMap<>(intMap.plus(key.hashCode(), entries), size
-				- size0 + entries.size());
+		entries = entries.plus(new org.pcollections.SimpleImmutableEntry<>(key, value));
+		return new HashPMap<>(intMap.plus(key.hashCode(), entries), size - size0 + entries.size());
 	}
 
 	@Override
@@ -196,8 +190,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 	}
 
 	// // PRIVATE STATIC UTILITIES ////
-	private static <K, V> int keyIndexIn(final PSequence<Entry<K, V>> entries,
-			final Object key) {
+	private static <K, V> int keyIndexIn(final PSequence<Entry<K, V>> entries, final Object key) {
 		int i = 0;
 		for (Entry<K, V> entry : entries) {
 			if (entry.getKey().equals(key)) {
@@ -238,11 +231,13 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 	}
 
 	@Override
+	@Deprecated
 	public V put(K k, V v) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public void putAll(Map<? extends K, ? extends V> m) {
 		throw new UnsupportedOperationException();
 	}

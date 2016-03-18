@@ -103,12 +103,10 @@ public class EdgeTest extends InstanceTest {
 	public void setUp() {
 		switch (implementationType) {
 		case STANDARD:
-			g = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.STANDARD);
+			g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
+			fail("Implementation " + implementationType + " not yet supported by this test.");
 		}
 
 		rand = new Random(System.currentTimeMillis());
@@ -123,7 +121,7 @@ public class EdgeTest extends InstanceTest {
 	 * If you create several edges and you delete one, the next edge should get
 	 * the id of the deleted edge. If you create a further edge it should get
 	 * the next free id.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -158,7 +156,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Edge getNextEdge(EdgeDirection orientation);
 	/**
 	 * There exists only one edge in the graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -179,7 +177,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -195,49 +193,31 @@ public class EdgeTest extends InstanceTest {
 		// edges of vertex v0
 		assertEquals(e2, e1.getNextIncidence(EdgeDirection.INOUT));
 		assertEquals(e2, e1.getNextIncidence(EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(EdgeDirection.INOUT));
 		assertEquals(e4, e2.getNextIncidence(EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(EdgeDirection.IN));
-		assertEquals(e4,
-				e3.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
-		assertEquals(e4,
-				e3.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
-		assertEquals(e5.getReversedEdge(), e3.getReversedEdge()
-				.getNextIncidence(EdgeDirection.IN));
-		assertEquals(e5.getReversedEdge(),
-				e4.getNextIncidence(EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(EdgeDirection.IN));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
+		assertEquals(e5.getReversedEdge(), e3.getReversedEdge().getNextIncidence(EdgeDirection.IN));
+		assertEquals(e5.getReversedEdge(), e4.getNextIncidence(EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(EdgeDirection.OUT));
-		assertEquals(e5.getReversedEdge(),
-				e4.getNextIncidence(EdgeDirection.IN));
+		assertEquals(e5.getReversedEdge(), e4.getNextIncidence(EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(EdgeDirection.INOUT));
 		assertNull(e5.getNextIncidence(EdgeDirection.OUT));
 		assertNull(e5.getNextIncidence(EdgeDirection.IN));
 		// edges of vertex v1
-		assertEquals(e2.getReversedEdge(), e1.getReversedEdge()
-				.getNextIncidence(EdgeDirection.INOUT));
-		assertEquals(e3,
-				e1.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
-		assertEquals(e2.getReversedEdge(), e1.getReversedEdge()
-				.getNextIncidence(EdgeDirection.IN));
-		assertEquals(e3,
-				e2.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
-		assertEquals(e3,
-				e2.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(), e2.getReversedEdge()
-				.getNextIncidence(EdgeDirection.IN));
-		assertEquals(e4.getReversedEdge(),
-				e3.getNextIncidence(EdgeDirection.INOUT));
+		assertEquals(e2.getReversedEdge(), e1.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
+		assertEquals(e3, e1.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
+		assertEquals(e2.getReversedEdge(), e1.getReversedEdge().getNextIncidence(EdgeDirection.IN));
+		assertEquals(e3, e2.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
+		assertEquals(e3, e2.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
+		assertEquals(e4.getReversedEdge(), e2.getReversedEdge().getNextIncidence(EdgeDirection.IN));
+		assertEquals(e4.getReversedEdge(), e3.getNextIncidence(EdgeDirection.INOUT));
 		assertEquals(e5, e3.getNextIncidence(EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(),
-				e3.getNextIncidence(EdgeDirection.IN));
-		assertEquals(e5,
-				e4.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
-		assertEquals(e5,
-				e4.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
+		assertEquals(e4.getReversedEdge(), e3.getNextIncidence(EdgeDirection.IN));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
 		assertNull(e4.getReversedEdge().getNextIncidence(EdgeDirection.IN));
 		assertNull(e5.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
 		assertNull(e5.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
@@ -246,7 +226,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -254,12 +234,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -315,32 +293,18 @@ public class EdgeTest extends InstanceTest {
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				if (e.getAlpha() == v0) {
-					assertEquals(v0inout[k],
-							e.getNextIncidence(EdgeDirection.INOUT));
-					assertEquals(v0out[k],
-							e.getNextIncidence(EdgeDirection.OUT));
+					assertEquals(v0inout[k], e.getNextIncidence(EdgeDirection.INOUT));
+					assertEquals(v0out[k], e.getNextIncidence(EdgeDirection.OUT));
 					assertEquals(v0in[k], e.getNextIncidence(EdgeDirection.IN));
-					assertEquals(v1inout[k], e.getReversedEdge()
-							.getNextIncidence(EdgeDirection.INOUT));
-					assertEquals(v1out[k], e.getReversedEdge()
-							.getNextIncidence(EdgeDirection.OUT));
-					assertEquals(
-							v1in[k],
-							e.getReversedEdge().getNextIncidence(
-									EdgeDirection.IN));
+					assertEquals(v1inout[k], e.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
+					assertEquals(v1out[k], e.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
+					assertEquals(v1in[k], e.getReversedEdge().getNextIncidence(EdgeDirection.IN));
 				} else {
-					assertEquals(v0inout[k], e.getReversedEdge()
-							.getNextIncidence(EdgeDirection.INOUT));
-					assertEquals(v0out[k], e.getReversedEdge()
-							.getNextIncidence(EdgeDirection.OUT));
-					assertEquals(
-							v0in[k],
-							e.getReversedEdge().getNextIncidence(
-									EdgeDirection.IN));
-					assertEquals(v1inout[k],
-							e.getNextIncidence(EdgeDirection.INOUT));
-					assertEquals(v1out[k],
-							e.getNextIncidence(EdgeDirection.OUT));
+					assertEquals(v0inout[k], e.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
+					assertEquals(v0out[k], e.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
+					assertEquals(v0in[k], e.getReversedEdge().getNextIncidence(EdgeDirection.IN));
+					assertEquals(v1inout[k], e.getNextIncidence(EdgeDirection.INOUT));
+					assertEquals(v1out[k], e.getNextIncidence(EdgeDirection.OUT));
 					assertEquals(v1in[k], e.getNextIncidence(EdgeDirection.IN));
 				}
 			}
@@ -351,7 +315,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 * 
+	 *
 	 * @return {Link, SubLink, LinkBack} @
 	 */
 	private EdgeClass[] getEdgeClasses() {
@@ -373,7 +337,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -391,7 +355,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -434,7 +398,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -443,12 +407,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -513,7 +475,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -529,7 +491,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -570,7 +532,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -578,12 +540,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -648,7 +608,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -672,7 +632,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -688,92 +648,55 @@ public class EdgeTest extends InstanceTest {
 		Edge e5 = g.createLinkBack(v1, v2);
 
 		// test of edge e1
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertEquals(e2, e1.getNextIncidence(ecs[2], EdgeDirection.INOUT));
 		assertEquals(e4, e1.getNextIncidence(ecs[0], EdgeDirection.OUT));
 		assertNull(e1.getNextIncidence(ecs[1], EdgeDirection.OUT));
 		assertEquals(e2, e1.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[0], EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(ecs[2], EdgeDirection.IN));
 		// test of edge e2
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[0], EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertEquals(e5, e2.getNextIncidence(ecs[2], EdgeDirection.INOUT));
 		assertEquals(e4, e2.getNextIncidence(ecs[0], EdgeDirection.OUT));
 		assertNull(e2.getNextIncidence(ecs[1], EdgeDirection.OUT));
 		assertEquals(e5, e2.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[0], EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e2.getNextIncidence(ecs[2], EdgeDirection.IN));
 		// test of edge e3
-		assertEquals(
-				e4,
-				e3.getReversedEdge().getNextIncidence(ecs[0],
-						EdgeDirection.INOUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e3.getReversedEdge().getNextIncidence(ecs[2],
-						EdgeDirection.INOUT));
-		assertEquals(e4,
-				e3.getReversedEdge()
-						.getNextIncidence(ecs[0], EdgeDirection.OUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.OUT));
-		assertEquals(e5,
-				e3.getReversedEdge()
-						.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(), e3.getReversedEdge()
-				.getNextIncidence(ecs[0], EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[2],
-				EdgeDirection.IN));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.INOUT));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.OUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.OUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.OUT));
+		assertEquals(e4.getReversedEdge(), e3.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.IN));
 		// test of edge e4
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(ecs[0], EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertEquals(e5, e4.getNextIncidence(ecs[2], EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(ecs[0], EdgeDirection.OUT));
 		assertNull(e4.getNextIncidence(ecs[1], EdgeDirection.OUT));
 		assertEquals(e5, e4.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(ecs[0], EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(ecs[2], EdgeDirection.IN));
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0],
-				EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e4.getReversedEdge().getNextIncidence(ecs[2],
-						EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0],
-				EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.OUT));
-		assertEquals(e5,
-				e4.getReversedEdge()
-						.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0],
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[2],
-				EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.OUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.IN));
 		// test of edge e5
 		assertNull(e5.getNextIncidence(ecs[0], EdgeDirection.INOUT));
 		assertNull(e5.getNextIncidence(ecs[1], EdgeDirection.INOUT));
@@ -788,7 +711,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -797,12 +720,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -832,8 +753,7 @@ public class EdgeTest extends InstanceTest {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
-							v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -861,8 +781,7 @@ public class EdgeTest extends InstanceTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? g.createSubLink(v0, v1) : g
-							.createSubLink(v1, v0);
+					Edge e = direction ? g.createSubLink(v0, v1) : g.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -895,8 +814,7 @@ public class EdgeTest extends InstanceTest {
 								lastlinkin++;
 							}
 							while (lastsublinkinout < j) {
-								sublinkinout[lastsublinkinout] = e
-										.getReversedEdge();
+								sublinkinout[lastsublinkinout] = e.getReversedEdge();
 								lastsublinkinout++;
 							}
 							while (lastsublinkin < j) {
@@ -906,8 +824,7 @@ public class EdgeTest extends InstanceTest {
 						}
 					}
 				} else {
-					Edge e = direction ? g.createLinkBack(v0, v1) : g
-							.createLinkBack(v1, v0);
+					Edge e = direction ? g.createLinkBack(v0, v1) : g.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -924,13 +841,11 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkbackinout < j) {
-								linkbackinout[lastlinkbackinout] = e
-										.getReversedEdge();
+								linkbackinout[lastlinkbackinout] = e.getReversedEdge();
 								lastlinkbackinout++;
 							}
 							while (lastlinkbackin < j) {
-								linkbackin[lastlinkbackin] = e
-										.getReversedEdge();
+								linkbackin[lastlinkbackin] = e.getReversedEdge();
 								lastlinkbackin++;
 							}
 						}
@@ -940,24 +855,15 @@ public class EdgeTest extends InstanceTest {
 			}
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
-				assertEquals(linkinout[k],
-						e.getNextIncidence(ecs[0], EdgeDirection.INOUT));
-				assertEquals(sublinkinout[k],
-						e.getNextIncidence(ecs[1], EdgeDirection.INOUT));
-				assertEquals(linkbackinout[k],
-						e.getNextIncidence(ecs[2], EdgeDirection.INOUT));
-				assertEquals(linkout[k],
-						e.getNextIncidence(ecs[0], EdgeDirection.OUT));
-				assertEquals(sublinkout[k],
-						e.getNextIncidence(ecs[1], EdgeDirection.OUT));
-				assertEquals(linkbackout[k],
-						e.getNextIncidence(ecs[2], EdgeDirection.OUT));
-				assertEquals(linkin[k],
-						e.getNextIncidence(ecs[0], EdgeDirection.IN));
-				assertEquals(sublinkin[k],
-						e.getNextIncidence(ecs[1], EdgeDirection.IN));
-				assertEquals(linkbackin[k],
-						e.getNextIncidence(ecs[2], EdgeDirection.IN));
+				assertEquals(linkinout[k], e.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+				assertEquals(sublinkinout[k], e.getNextIncidence(ecs[1], EdgeDirection.INOUT));
+				assertEquals(linkbackinout[k], e.getNextIncidence(ecs[2], EdgeDirection.INOUT));
+				assertEquals(linkout[k], e.getNextIncidence(ecs[0], EdgeDirection.OUT));
+				assertEquals(sublinkout[k], e.getNextIncidence(ecs[1], EdgeDirection.OUT));
+				assertEquals(linkbackout[k], e.getNextIncidence(ecs[2], EdgeDirection.OUT));
+				assertEquals(linkin[k], e.getNextIncidence(ecs[0], EdgeDirection.IN));
+				assertEquals(sublinkin[k], e.getNextIncidence(ecs[1], EdgeDirection.IN));
+				assertEquals(linkbackin[k], e.getNextIncidence(ecs[2], EdgeDirection.IN));
 			}
 		}
 	}
@@ -967,7 +873,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -989,7 +895,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1003,95 +909,55 @@ public class EdgeTest extends InstanceTest {
 		Edge e5 = g.createLinkBack(v1, v2);
 
 		// test of edge e1
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e2, e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertEquals(e4, e1.getNextIncidence(Link.EC, EdgeDirection.OUT));
 		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 		assertEquals(e2, e1.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.EC, EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e2
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.EC, EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5, e2.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertEquals(e4, e2.getNextIncidence(Link.EC, EdgeDirection.OUT));
 		assertNull(e2.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 		assertEquals(e5, e2.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.EC, EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e2.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e3
-		assertEquals(
-				e4,
-				e3.getReversedEdge().getNextIncidence(Link.EC,
-						EdgeDirection.INOUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.INOUT));
-		assertEquals(
-				e4,
-				e3.getReversedEdge().getNextIncidence(Link.EC,
-						EdgeDirection.OUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.OUT));
-		assertEquals(
-				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(), e3.getReversedEdge()
-				.getNextIncidence(Link.EC, EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.EC,
-				EdgeDirection.IN));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertEquals(e4.getReversedEdge(), e3.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e4
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5, e4.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(Link.EC, EdgeDirection.OUT));
 		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 		assertEquals(e5, e4.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
-				EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
-				EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.OUT));
-		assertEquals(
-				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.EC,
-				EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e5
 		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
@@ -1106,7 +972,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1114,12 +980,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1149,8 +1013,7 @@ public class EdgeTest extends InstanceTest {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
-							v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -1178,8 +1041,7 @@ public class EdgeTest extends InstanceTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? g.createSubLink(v0, v1) : g
-							.createSubLink(v1, v0);
+					Edge e = direction ? g.createSubLink(v0, v1) : g.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -1212,8 +1074,7 @@ public class EdgeTest extends InstanceTest {
 								lastlinkin++;
 							}
 							while (lastsublinkinout < j) {
-								sublinkinout[lastsublinkinout] = e
-										.getReversedEdge();
+								sublinkinout[lastsublinkinout] = e.getReversedEdge();
 								lastsublinkinout++;
 							}
 							while (lastsublinkin < j) {
@@ -1223,8 +1084,7 @@ public class EdgeTest extends InstanceTest {
 						}
 					}
 				} else {
-					Edge e = direction ? g.createLinkBack(v0, v1) : g
-							.createLinkBack(v1, v0);
+					Edge e = direction ? g.createLinkBack(v0, v1) : g.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -1241,13 +1101,11 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkbackinout < j) {
-								linkbackinout[lastlinkbackinout] = e
-										.getReversedEdge();
+								linkbackinout[lastlinkbackinout] = e.getReversedEdge();
 								lastlinkbackinout++;
 							}
 							while (lastlinkbackin < j) {
-								linkbackin[lastlinkbackin] = e
-										.getReversedEdge();
+								linkbackin[lastlinkbackin] = e.getReversedEdge();
 								lastlinkbackin++;
 							}
 						}
@@ -1258,24 +1116,15 @@ public class EdgeTest extends InstanceTest {
 
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
-				assertEquals(linkinout[k],
-						e.getNextIncidence(Link.EC, EdgeDirection.INOUT));
-				assertEquals(sublinkinout[k],
-						e.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
-				assertEquals(linkbackinout[k],
-						e.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
-				assertEquals(linkout[k],
-						e.getNextIncidence(Link.EC, EdgeDirection.OUT));
-				assertEquals(sublinkout[k],
-						e.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
-				assertEquals(linkbackout[k],
-						e.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-				assertEquals(linkin[k],
-						e.getNextIncidence(Link.EC, EdgeDirection.IN));
-				assertEquals(sublinkin[k],
-						e.getNextIncidence(SubLink.EC, EdgeDirection.IN));
-				assertEquals(linkbackin[k],
-						e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
+				assertEquals(linkinout[k], e.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+				assertEquals(sublinkinout[k], e.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+				assertEquals(linkbackinout[k], e.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+				assertEquals(linkout[k], e.getNextIncidence(Link.EC, EdgeDirection.OUT));
+				assertEquals(sublinkout[k], e.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+				assertEquals(linkbackout[k], e.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+				assertEquals(linkin[k], e.getNextIncidence(Link.EC, EdgeDirection.IN));
+				assertEquals(sublinkin[k], e.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+				assertEquals(linkbackin[k], e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 			}
 		}
 	}
@@ -1285,7 +1134,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1303,7 +1152,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1325,10 +1174,8 @@ public class EdgeTest extends InstanceTest {
 		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[0]));
 		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[1]));
 		assertEquals(e5, e2.getNextIncidence(ecs[2]));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[0], EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[1], EdgeDirection.IN));
 		// test of edge e3
 		assertEquals(e4, e3.getReversedEdge().getNextIncidence(ecs[0]));
 		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1]));
@@ -1349,7 +1196,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1358,12 +1205,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1387,8 +1232,7 @@ public class EdgeTest extends InstanceTest {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
-							v1, v0).getReversedEdge();
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkfalse < j) {
@@ -1402,8 +1246,7 @@ public class EdgeTest extends InstanceTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? g.createSubLink(v0, v1) : g
-							.createSubLink(v1, v0).getReversedEdge();
+					Edge e = direction ? g.createSubLink(v0, v1) : g.createSubLink(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkfalse < j) {
@@ -1420,8 +1263,7 @@ public class EdgeTest extends InstanceTest {
 						}
 					}
 				} else {
-					Edge e = direction ? g.createLinkBack(v0, v1) : g
-							.createLinkBack(v1, v0).getReversedEdge();
+					Edge e = direction ? g.createLinkBack(v0, v1) : g.createLinkBack(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkbackfalse < j) {
@@ -1451,7 +1293,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1467,7 +1309,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1488,10 +1330,8 @@ public class EdgeTest extends InstanceTest {
 		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC));
 		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC));
 		assertEquals(e5, e2.getNextIncidence(LinkBack.EC));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.EC, EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		// test of edge e3
 		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.EC));
 		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC));
@@ -1512,7 +1352,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1520,12 +1360,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1549,8 +1387,7 @@ public class EdgeTest extends InstanceTest {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
-							v1, v0).getReversedEdge();
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkfalse < j) {
@@ -1564,8 +1401,7 @@ public class EdgeTest extends InstanceTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? g.createSubLink(v0, v1) : g
-							.createSubLink(v1, v0).getReversedEdge();
+					Edge e = direction ? g.createSubLink(v0, v1) : g.createSubLink(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkfalse < j) {
@@ -1582,8 +1418,7 @@ public class EdgeTest extends InstanceTest {
 						}
 					}
 				} else {
-					Edge e = direction ? g.createLinkBack(v0, v1) : g
-							.createLinkBack(v1, v0).getReversedEdge();
+					Edge e = direction ? g.createLinkBack(v0, v1) : g.createLinkBack(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkbackfalse < j) {
@@ -1612,7 +1447,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1636,7 +1471,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1652,96 +1487,59 @@ public class EdgeTest extends InstanceTest {
 		Edge e5 = g.createLinkBack(v1, v2);
 
 		// test of edge e1
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertEquals(e2, e1.getNextIncidence(ecs[2], EdgeDirection.INOUT));
 		assertEquals(e4, e1.getNextIncidence(ecs[0], EdgeDirection.OUT));
 		assertNull(e1.getNextIncidence(ecs[1], EdgeDirection.OUT));
 		assertEquals(e2, e1.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[0], EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(ecs[2], EdgeDirection.IN));
 
 		// test of edge e2
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[0], EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertEquals(e5, e2.getNextIncidence(ecs[2], EdgeDirection.INOUT));
 		assertEquals(e4, e2.getNextIncidence(ecs[0], EdgeDirection.OUT));
 		assertNull(e2.getNextIncidence(ecs[1], EdgeDirection.OUT));
 		assertEquals(e5, e2.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[0], EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e2.getNextIncidence(ecs[2], EdgeDirection.IN));
 
 		// test of edge e3
-		assertEquals(
-				e4,
-				e3.getReversedEdge().getNextIncidence(ecs[0],
-						EdgeDirection.INOUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e3.getReversedEdge().getNextIncidence(ecs[2],
-						EdgeDirection.INOUT));
-		assertEquals(e4,
-				e3.getReversedEdge()
-						.getNextIncidence(ecs[0], EdgeDirection.OUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.OUT));
-		assertEquals(e5,
-				e3.getReversedEdge()
-						.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(), e3.getReversedEdge()
-				.getNextIncidence(ecs[0], EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(ecs[2],
-				EdgeDirection.IN));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.INOUT));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.OUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.OUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.OUT));
+		assertEquals(e4.getReversedEdge(), e3.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.IN));
 
 		// test of edge e4
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(ecs[0], EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertEquals(e5, e4.getNextIncidence(ecs[2], EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(ecs[0], EdgeDirection.OUT));
 		assertNull(e4.getNextIncidence(ecs[1], EdgeDirection.OUT));
 		assertEquals(e5, e4.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(ecs[0], EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(ecs[2], EdgeDirection.IN));
 
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0],
-				EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e4.getReversedEdge().getNextIncidence(ecs[2],
-						EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0],
-				EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.OUT));
-		assertEquals(e5,
-				e4.getReversedEdge()
-						.getNextIncidence(ecs[2], EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0],
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1],
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(ecs[2],
-				EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.INOUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.OUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[0], EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[1], EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(ecs[2], EdgeDirection.IN));
 
 		// test of edge e5
 		assertNull(e5.getNextIncidence(ecs[0], EdgeDirection.INOUT));
@@ -1758,7 +1556,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1767,12 +1565,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1808,8 +1604,7 @@ public class EdgeTest extends InstanceTest {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
-							v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -1834,31 +1629,26 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkinoutfalse < j) {
-								linkinoutfalse[lastlinkinoutfalse] = e
-										.getReversedEdge();
+								linkinoutfalse[lastlinkinoutfalse] = e.getReversedEdge();
 								lastlinkinoutfalse++;
 							}
 							while (lastlinkinfalse < j) {
-								linkinfalse[lastlinkinfalse] = e
-										.getReversedEdge();
+								linkinfalse[lastlinkinfalse] = e.getReversedEdge();
 								lastlinkinfalse++;
 							}
 							while (lastlinkinouttrue < j) {
-								linkinouttrue[lastlinkinouttrue] = e
-										.getReversedEdge();
+								linkinouttrue[lastlinkinouttrue] = e.getReversedEdge();
 								lastlinkinouttrue++;
 							}
 							while (lastlinkintrue < j) {
-								linkintrue[lastlinkintrue] = e
-										.getReversedEdge();
+								linkintrue[lastlinkintrue] = e.getReversedEdge();
 								lastlinkintrue++;
 							}
 						}
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? g.createSubLink(v0, v1) : g
-							.createSubLink(v1, v0);
+					Edge e = direction ? g.createSubLink(v0, v1) : g.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -1883,18 +1673,15 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkinoutfalse < j) {
-								linkinoutfalse[lastlinkinoutfalse] = e
-										.getReversedEdge();
+								linkinoutfalse[lastlinkinoutfalse] = e.getReversedEdge();
 								lastlinkinoutfalse++;
 							}
 							while (lastlinkinfalse < j) {
-								linkinfalse[lastlinkinfalse] = e
-										.getReversedEdge();
+								linkinfalse[lastlinkinfalse] = e.getReversedEdge();
 								lastlinkinfalse++;
 							}
 							while (lastsublinkinout < j) {
-								sublinkinout[lastsublinkinout] = e
-										.getReversedEdge();
+								sublinkinout[lastsublinkinout] = e.getReversedEdge();
 								lastsublinkinout++;
 							}
 							while (lastsublinkin < j) {
@@ -1904,8 +1691,7 @@ public class EdgeTest extends InstanceTest {
 						}
 					}
 				} else {
-					Edge e = direction ? g.createLinkBack(v0, v1) : g
-							.createLinkBack(v1, v0);
+					Edge e = direction ? g.createLinkBack(v0, v1) : g.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -1922,13 +1708,11 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkbackinout < j) {
-								linkbackinout[lastlinkbackinout] = e
-										.getReversedEdge();
+								linkbackinout[lastlinkbackinout] = e.getReversedEdge();
 								lastlinkbackinout++;
 							}
 							while (lastlinkbackin < j) {
-								linkbackin[lastlinkbackin] = e
-										.getReversedEdge();
+								linkbackin[lastlinkbackin] = e.getReversedEdge();
 								lastlinkbackin++;
 							}
 						}
@@ -1938,24 +1722,15 @@ public class EdgeTest extends InstanceTest {
 			}
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
-				assertEquals(linkinoutfalse[k],
-						e.getNextIncidence(ecs[0], EdgeDirection.INOUT));
-				assertEquals(sublinkinout[k],
-						e.getNextIncidence(ecs[1], EdgeDirection.INOUT));
-				assertEquals(linkbackinout[k],
-						e.getNextIncidence(ecs[2], EdgeDirection.INOUT));
-				assertEquals(linkoutfalse[k],
-						e.getNextIncidence(ecs[0], EdgeDirection.OUT));
-				assertEquals(sublinkout[k],
-						e.getNextIncidence(ecs[1], EdgeDirection.OUT));
-				assertEquals(linkbackout[k],
-						e.getNextIncidence(ecs[2], EdgeDirection.OUT));
-				assertEquals(linkinfalse[k],
-						e.getNextIncidence(ecs[0], EdgeDirection.IN));
-				assertEquals(sublinkin[k],
-						e.getNextIncidence(ecs[1], EdgeDirection.IN));
-				assertEquals(linkbackin[k],
-						e.getNextIncidence(ecs[2], EdgeDirection.IN));
+				assertEquals(linkinoutfalse[k], e.getNextIncidence(ecs[0], EdgeDirection.INOUT));
+				assertEquals(sublinkinout[k], e.getNextIncidence(ecs[1], EdgeDirection.INOUT));
+				assertEquals(linkbackinout[k], e.getNextIncidence(ecs[2], EdgeDirection.INOUT));
+				assertEquals(linkoutfalse[k], e.getNextIncidence(ecs[0], EdgeDirection.OUT));
+				assertEquals(sublinkout[k], e.getNextIncidence(ecs[1], EdgeDirection.OUT));
+				assertEquals(linkbackout[k], e.getNextIncidence(ecs[2], EdgeDirection.OUT));
+				assertEquals(linkinfalse[k], e.getNextIncidence(ecs[0], EdgeDirection.IN));
+				assertEquals(sublinkin[k], e.getNextIncidence(ecs[1], EdgeDirection.IN));
+				assertEquals(linkbackin[k], e.getNextIncidence(ecs[2], EdgeDirection.IN));
 			}
 		}
 	}
@@ -1965,7 +1740,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1987,7 +1762,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2001,99 +1776,59 @@ public class EdgeTest extends InstanceTest {
 		Edge e5 = g.createLinkBack(v1, v2);
 
 		// test of edge e1
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e2, e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertEquals(e4, e1.getNextIncidence(Link.EC, EdgeDirection.OUT));
 		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 		assertEquals(e2, e1.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.EC, EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e2
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.EC, EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5, e2.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertEquals(e4, e2.getNextIncidence(Link.EC, EdgeDirection.OUT));
 		assertNull(e2.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 		assertEquals(e5, e2.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.EC, EdgeDirection.IN));
-		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e2.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e3
-		assertEquals(
-				e4,
-				e3.getReversedEdge().getNextIncidence(Link.EC,
-						EdgeDirection.INOUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.INOUT));
-		assertEquals(
-				e4,
-				e3.getReversedEdge().getNextIncidence(Link.EC,
-						EdgeDirection.OUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.OUT));
-		assertEquals(
-				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(), e3.getReversedEdge()
-				.getNextIncidence(Link.EC, EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.EC,
-				EdgeDirection.IN));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertEquals(e4.getReversedEdge(), e3.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e4
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5, e4.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertNull(e4.getNextIncidence(Link.EC, EdgeDirection.OUT));
 		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 		assertEquals(e5, e4.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e4.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
-				EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.INOUT));
-		assertEquals(
-				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
-				EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.OUT));
-		assertEquals(
-				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
-						EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
-				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.EC,
-				EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e5
 		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.INOUT));
@@ -2109,7 +1844,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2117,12 +1852,10 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.STANDARD);
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				fail("Implementation " + implementationType + " not yet supported by this test.");
 			}
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -2158,8 +1891,7 @@ public class EdgeTest extends InstanceTest {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
-							v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -2184,31 +1916,26 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkinoutfalse < j) {
-								linkinoutfalse[lastlinkinoutfalse] = e
-										.getReversedEdge();
+								linkinoutfalse[lastlinkinoutfalse] = e.getReversedEdge();
 								lastlinkinoutfalse++;
 							}
 							while (lastlinkinfalse < j) {
-								linkinfalse[lastlinkinfalse] = e
-										.getReversedEdge();
+								linkinfalse[lastlinkinfalse] = e.getReversedEdge();
 								lastlinkinfalse++;
 							}
 							while (lastlinkinouttrue < j) {
-								linkinouttrue[lastlinkinouttrue] = e
-										.getReversedEdge();
+								linkinouttrue[lastlinkinouttrue] = e.getReversedEdge();
 								lastlinkinouttrue++;
 							}
 							while (lastlinkintrue < j) {
-								linkintrue[lastlinkintrue] = e
-										.getReversedEdge();
+								linkintrue[lastlinkintrue] = e.getReversedEdge();
 								lastlinkintrue++;
 							}
 						}
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? g.createSubLink(v0, v1) : g
-							.createSubLink(v1, v0);
+					Edge e = direction ? g.createSubLink(v0, v1) : g.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -2233,18 +1960,15 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkinoutfalse < j) {
-								linkinoutfalse[lastlinkinoutfalse] = e
-										.getReversedEdge();
+								linkinoutfalse[lastlinkinoutfalse] = e.getReversedEdge();
 								lastlinkinoutfalse++;
 							}
 							while (lastlinkinfalse < j) {
-								linkinfalse[lastlinkinfalse] = e
-										.getReversedEdge();
+								linkinfalse[lastlinkinfalse] = e.getReversedEdge();
 								lastlinkinfalse++;
 							}
 							while (lastsublinkinout < j) {
-								sublinkinout[lastsublinkinout] = e
-										.getReversedEdge();
+								sublinkinout[lastsublinkinout] = e.getReversedEdge();
 								lastsublinkinout++;
 							}
 							while (lastsublinkin < j) {
@@ -2254,8 +1978,7 @@ public class EdgeTest extends InstanceTest {
 						}
 					}
 				} else {
-					Edge e = direction ? g.createLinkBack(v0, v1) : g
-							.createLinkBack(v1, v0);
+					Edge e = direction ? g.createLinkBack(v0, v1) : g.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -2272,13 +1995,11 @@ public class EdgeTest extends InstanceTest {
 						edges[j] = e.getReversedEdge();
 						if (!first) {
 							while (lastlinkbackinout < j) {
-								linkbackinout[lastlinkbackinout] = e
-										.getReversedEdge();
+								linkbackinout[lastlinkbackinout] = e.getReversedEdge();
 								lastlinkbackinout++;
 							}
 							while (lastlinkbackin < j) {
-								linkbackin[lastlinkbackin] = e
-										.getReversedEdge();
+								linkbackin[lastlinkbackin] = e.getReversedEdge();
 								lastlinkbackin++;
 							}
 						}
@@ -2288,24 +2009,15 @@ public class EdgeTest extends InstanceTest {
 			}
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
-				assertEquals(linkinoutfalse[k],
-						e.getNextIncidence(Link.EC, EdgeDirection.INOUT));
-				assertEquals(sublinkinout[k],
-						e.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
-				assertEquals(linkbackinout[k],
-						e.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
-				assertEquals(linkoutfalse[k],
-						e.getNextIncidence(Link.EC, EdgeDirection.OUT));
-				assertEquals(sublinkout[k],
-						e.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
-				assertEquals(linkbackout[k],
-						e.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
-				assertEquals(linkinfalse[k],
-						e.getNextIncidence(Link.EC, EdgeDirection.IN));
-				assertEquals(sublinkin[k],
-						e.getNextIncidence(SubLink.EC, EdgeDirection.IN));
-				assertEquals(linkbackin[k],
-						e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
+				assertEquals(linkinoutfalse[k], e.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+				assertEquals(sublinkinout[k], e.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+				assertEquals(linkbackinout[k], e.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+				assertEquals(linkoutfalse[k], e.getNextIncidence(Link.EC, EdgeDirection.OUT));
+				assertEquals(sublinkout[k], e.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+				assertEquals(linkbackout[k], e.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+				assertEquals(linkinfalse[k], e.getNextIncidence(Link.EC, EdgeDirection.IN));
+				assertEquals(sublinkin[k], e.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+				assertEquals(linkbackin[k], e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 			}
 		}
 	}
@@ -2314,8 +2026,7 @@ public class EdgeTest extends InstanceTest {
 
 	private Vertex[] createRandomGraph(boolean retThis) {
 		// TODO write comments for this method and think about method name.
-		Vertex[] nodes = new Vertex[] { g.createSubNode(),
-				g.createDoubleSubNode(), g.createSuperNode() };
+		Vertex[] nodes = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 		Vertex[] ret = new Vertex[RANDOM_VERTEX_COUNT];
 		for (int i = 0; i < ret.length; i++) {
 			int edge = rand.nextInt(3);
@@ -2346,7 +2057,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2368,7 +2079,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2384,7 +2095,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2406,7 +2117,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2422,7 +2133,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2445,7 +2156,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2469,7 +2180,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2493,15 +2204,13 @@ public class EdgeTest extends InstanceTest {
 	 * Creates an randomly build graph an returns an 2-dim ArrayList of Edges,
 	 * which are needed to check the equality in respect to the parameters of
 	 * the methods.
-	 * 
+	 *
 	 * @param classedge
 	 * @param nosubclasses
 	 * @return @
 	 */
-	private ArrayList<ArrayList<Edge>> createRandomGraph(boolean edgeClass,
-			boolean nosubclasses) {
-		Vertex[] nodes = new Vertex[] { g.createSubNode(),
-				g.createDoubleSubNode(), g.createSuperNode() };
+	private ArrayList<ArrayList<Edge>> createRandomGraph(boolean edgeClass, boolean nosubclasses) {
+		Vertex[] nodes = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 		ArrayList<ArrayList<Edge>> ret = new ArrayList<>();
 		if (!edgeClass) {
 			// edges for getPrevEdgeInGraph() are needed
@@ -2583,7 +2292,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2604,7 +2313,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge has no previous edge in graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2617,7 +2326,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2635,7 +2344,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2654,7 +2363,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2672,7 +2381,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2737,7 +2446,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2767,7 +2476,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2783,7 +2492,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2846,7 +2555,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2872,7 +2581,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2896,7 +2605,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2909,7 +2618,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct before another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2924,7 +2633,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2943,7 +2652,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2956,7 +2665,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct after another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2971,7 +2680,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2994,7 +2703,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3011,7 +2720,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3037,10 +2746,10 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the incident edges of <code>c</code> equals the edges of
 	 * <code>incidentEdges</code>.
-	 * 
+	 *
 	 * @param v
 	 * @param incidentEdges
-	 *            @
+	 * @
 	 */
 	private void testIncidenceList(Vertex v, Edge... incidentEdges) {
 		Iterable<Edge> incidences;
@@ -3056,7 +2765,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to another vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3091,7 +2800,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an reversedEdge is changed to another vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3126,7 +2835,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is set to the previous alpha vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3155,7 +2864,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to the omega vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3187,7 +2896,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Alpha of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3232,7 +2941,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set alpha to a vertex which type
 	 * isn't allowed as an alpha vertex for that edge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = GraphException.class)
@@ -3247,7 +2956,7 @@ public class EdgeTest extends InstanceTest {
 	 * Creates a random graph and returns an 2-dim ArrayList ret.get(0) =
 	 * incident edges of v1 ret.get(1) = incident edges of v2 ret.get(2) =
 	 * incident edges of v3
-	 * 
+	 *
 	 * @return ret @
 	 */
 	private ArrayList<ArrayList<Edge>> createRandomGraph() {
@@ -3256,32 +2965,28 @@ public class EdgeTest extends InstanceTest {
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 
-		Vertex[] nodes = new Vertex[] { g.createSubNode(),
-				g.createDoubleSubNode(), g.createSuperNode() };
+		Vertex[] nodes = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
 			int edge = rand.nextInt(3);
 			switch (edge) {
 			case 0:
 				int start = rand.nextInt(2);
 				int end = rand.nextInt(2) + 1;
-				Edge e = g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				Edge e = g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				ret.get(start).add(e);
 				ret.get(end).add(e.getReversedEdge());
 				break;
 			case 1:
 				start = 1;
 				end = rand.nextInt(2) + 1;
-				e = g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				e = g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				ret.get(start).add(e);
 				ret.get(end).add(e.getReversedEdge());
 				break;
 			case 2:
 				start = rand.nextInt(2) + 1;
 				end = rand.nextInt(2);
-				e = g.createLinkBack((SuperNode) nodes[start],
-						(AbstractSuperNode) nodes[end]);
+				e = g.createLinkBack((SuperNode) nodes[start], (AbstractSuperNode) nodes[end]);
 				ret.get(start).add(e);
 				ret.get(end).add(e.getReversedEdge());
 				break;
@@ -3292,7 +2997,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3314,18 +3019,12 @@ public class EdgeTest extends InstanceTest {
 				}
 
 			} catch (GraphException ge) {
-				if ((e instanceof SubLink)
-						&& (newAlpha instanceof DoubleSubNode)) {
-					fail("SubLink can have an alpha of type "
-							+ newAlpha.getClass().getName());
-				} else if ((e instanceof Link) && !(e instanceof SubLink)
-						&& (newAlpha instanceof AbstractSuperNode)) {
-					fail("Link can have an alpha of type "
-							+ newAlpha.getClass().getName());
-				} else if ((e instanceof LinkBack)
-						&& (newAlpha instanceof SuperNode)) {
-					fail("LinkBack can have an alpha of type "
-							+ newAlpha.getClass().getName());
+				if ((e instanceof SubLink) && (newAlpha instanceof DoubleSubNode)) {
+					fail("SubLink can have an alpha of type " + newAlpha.getClass().getName());
+				} else if ((e instanceof Link) && !(e instanceof SubLink) && (newAlpha instanceof AbstractSuperNode)) {
+					fail("Link can have an alpha of type " + newAlpha.getClass().getName());
+				} else if ((e instanceof LinkBack) && (newAlpha instanceof SuperNode)) {
+					fail("LinkBack can have an alpha of type " + newAlpha.getClass().getName());
 				}
 			}
 		}
@@ -3347,7 +3046,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to another vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3382,7 +3081,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an reversedEdge is changed to another vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3417,7 +3116,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is set to the previous omega vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3446,7 +3145,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to the alpha vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3476,7 +3175,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3520,7 +3219,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set omega to a vertex which type
 	 * isn't allowed as an omega vertex for that edge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = GraphException.class)
@@ -3533,7 +3232,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3557,12 +3256,9 @@ public class EdgeTest extends InstanceTest {
 
 			} catch (GraphException ge) {
 				if ((e instanceof Link) && (newOmega instanceof SuperNode)) {
-					fail("Link can have an alpha of type "
-							+ newOmega.getClass().getName());
-				} else if ((e instanceof LinkBack)
-						&& (newOmega instanceof AbstractSuperNode)) {
-					fail("LinkBack can have an alpha of type "
-							+ newOmega.getClass().getName());
+					fail("Link can have an alpha of type " + newOmega.getClass().getName());
+				} else if ((e instanceof LinkBack) && (newOmega instanceof AbstractSuperNode)) {
+					fail("LinkBack can have an alpha of type " + newOmega.getClass().getName());
 				}
 			}
 		}
@@ -3585,7 +3281,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * This of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3647,7 +3343,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * That of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3714,7 +3410,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3741,7 +3437,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3768,7 +3464,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3795,7 +3491,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3824,7 +3520,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Test with edges of two graphs.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3848,12 +3544,10 @@ public class EdgeTest extends InstanceTest {
 		VertexTestGraph anotherGraph = null;
 		switch (implementationType) {
 		case STANDARD:
-			anotherGraph = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.STANDARD);
+			anotherGraph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
+			fail("Implementation " + implementationType + " not yet supported by this test.");
 		}
 		return anotherGraph;
 	}
@@ -3861,7 +3555,7 @@ public class EdgeTest extends InstanceTest {
 	// TODO maybe move the following two to graphTest
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3878,7 +3572,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting an edge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3897,7 +3591,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of an
 	 * edge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3919,7 +3613,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3945,7 +3639,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getSchemaClass
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3969,7 +3663,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getGraphClass
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3996,12 +3690,11 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test with null values.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
-	public void writeReadAttributeValues0() throws GraphIOException,
-			IOException {
+	public void writeReadAttributeValues0() throws GraphIOException, IOException {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		SubLink e1 = g.createSubLink(v1, v2);
@@ -4009,8 +3702,7 @@ public class EdgeTest extends InstanceTest {
 		// test of writeAttributeValues
 		g.save("test.tg");
 
-		LineNumberReader reader = new LineNumberReader(
-				new FileReader("test.tg"));
+		LineNumberReader reader = new LineNumberReader(new FileReader("test.tg"));
 		String line = "";
 		String[] parts = null;
 		while ((line = reader.readLine()) != null) {
@@ -4018,8 +3710,7 @@ public class EdgeTest extends InstanceTest {
 				line = line.substring(0, line.length() - 1);
 			}
 			parts = line.split(" ");
-			if (parts[0].equals(((Integer) e1.getId()).toString())
-					&& parts[1].equals(e1.getClass().getName())) {
+			if (parts[0].equals(((Integer) e1.getId()).toString()) && parts[1].equals(e1.getClass().getName())) {
 				break;
 			}
 		}
@@ -4043,13 +3734,11 @@ public class EdgeTest extends InstanceTest {
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
 		case STANDARD:
-			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
-					"test.tg", implementationType);
+			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph("test.tg", implementationType);
 
 			break;
 		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
+			fail("Implementation " + implementationType + " not yet supported by this test.");
 		}
 		return loadedgraph;
 	}
@@ -4059,7 +3748,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4070,12 +3759,12 @@ public class EdgeTest extends InstanceTest {
 		e.set_anInt(4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals(4, (int) e.getAttribute("anInt"));
 	}
 
 	/**
 	 * Tests if the value of the correct attribute is returned. reversedEdge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4087,13 +3776,13 @@ public class EdgeTest extends InstanceTest {
 		e.set_anInt(4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals(4, (int) e.getAttribute("anInt"));
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4108,7 +3797,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4125,7 +3814,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4137,12 +3826,12 @@ public class EdgeTest extends InstanceTest {
 		e.setAttribute("anInt", 4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals(4, (int) e.getAttribute("anInt"));
 	}
 
 	/**
 	 * Tests if an existing attribute is correct set. reversedEdge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4154,12 +3843,12 @@ public class EdgeTest extends InstanceTest {
 		e.setAttribute("anInt", 4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals(4, (int) e.getAttribute("anInt"));
 	}
 
 	/**
 	 * Tests if an existing attribute is set to null.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4175,7 +3864,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4188,7 +3877,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4202,7 +3891,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some tests.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4234,7 +3923,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4248,7 +3937,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4264,7 +3953,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4282,7 +3971,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4296,7 +3985,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4312,7 +4001,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4330,7 +4019,7 @@ public class EdgeTest extends InstanceTest {
 	// normalEdge
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4344,7 +4033,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4466,8 +4155,7 @@ public class EdgeTest extends InstanceTest {
 		e4 = g.createSubLink(v1, v2);
 
 		assertEquals(e4, e1.getNextSubLinkInGraph());
-		assertEquals(e4,
-				((SubLink) e1.getReversedEdge()).getNextSubLinkInGraph());
+		assertEquals(e4, ((SubLink) e1.getReversedEdge()).getNextSubLinkInGraph());
 		assertNull(e4.getNextSubLinkInGraph());
 	}
 
@@ -4485,28 +4173,15 @@ public class EdgeTest extends InstanceTest {
 		g.createSubLink(v2, v2);
 		e5 = g.createLink(v1, v2);
 
-		assertEquals(e1.getReversedEdge(),
-				e1.getNextLinkIncidence(EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				e1.getNextLinkIncidence(EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), e1.getNextLinkIncidence(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), e1.getNextLinkIncidence(EdgeDirection.IN));
 		assertEquals(e5, e1.getNextLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e3.getReversedEdge(),
-				((SubLink) e1.getReversedEdge())
-						.getNextLinkIncidence(EdgeDirection.INOUT));
-		assertEquals(e3.getReversedEdge(),
-				((SubLink) e1.getReversedEdge())
-						.getNextLinkIncidence(EdgeDirection.IN));
-		assertEquals(e5,
-				((SubLink) e1.getReversedEdge())
-						.getNextLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e5,
-				((Link) e3.getReversedEdge())
-						.getNextLinkIncidence(EdgeDirection.INOUT));
-		assertNull(((Link) e3.getReversedEdge())
-				.getNextLinkIncidence(EdgeDirection.IN));
-		assertEquals(e5,
-				((Link) e3.getReversedEdge())
-						.getNextLinkIncidence(EdgeDirection.OUT));
+		assertEquals(e3.getReversedEdge(), ((SubLink) e1.getReversedEdge()).getNextLinkIncidence(EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(), ((SubLink) e1.getReversedEdge()).getNextLinkIncidence(EdgeDirection.IN));
+		assertEquals(e5, ((SubLink) e1.getReversedEdge()).getNextLinkIncidence(EdgeDirection.OUT));
+		assertEquals(e5, ((Link) e3.getReversedEdge()).getNextLinkIncidence(EdgeDirection.INOUT));
+		assertNull(((Link) e3.getReversedEdge()).getNextLinkIncidence(EdgeDirection.IN));
+		assertEquals(e5, ((Link) e3.getReversedEdge()).getNextLinkIncidence(EdgeDirection.OUT));
 		assertNull(e5.getNextLinkIncidence(EdgeDirection.INOUT));
 		assertNull(e5.getNextLinkIncidence(EdgeDirection.IN));
 		assertNull(e5.getNextLinkIncidence(EdgeDirection.OUT));
@@ -4527,31 +4202,18 @@ public class EdgeTest extends InstanceTest {
 		e5 = g.createSubLink(v1, v2);
 		e6 = g.createSubLink(v2, v1);
 
-		assertEquals(e1.getReversedEdge(),
-				e1.getNextSubLinkIncidence(EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				e1.getNextSubLinkIncidence(EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), e1.getNextSubLinkIncidence(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), e1.getNextSubLinkIncidence(EdgeDirection.IN));
 		assertEquals(e5, e1.getNextLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e5,
-				((SubLink) e1.getReversedEdge())
-						.getNextSubLinkIncidence(EdgeDirection.INOUT));
-		assertEquals(e6.getReversedEdge(),
-				((SubLink) e1.getReversedEdge())
-						.getNextSubLinkIncidence(EdgeDirection.IN));
-		assertEquals(e5,
-				((SubLink) e1.getReversedEdge())
-						.getNextSubLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e6.getReversedEdge(),
-				e5.getNextSubLinkIncidence(EdgeDirection.INOUT));
-		assertEquals(e6.getReversedEdge(),
-				e5.getNextSubLinkIncidence(EdgeDirection.IN));
+		assertEquals(e5, ((SubLink) e1.getReversedEdge()).getNextSubLinkIncidence(EdgeDirection.INOUT));
+		assertEquals(e6.getReversedEdge(), ((SubLink) e1.getReversedEdge()).getNextSubLinkIncidence(EdgeDirection.IN));
+		assertEquals(e5, ((SubLink) e1.getReversedEdge()).getNextSubLinkIncidence(EdgeDirection.OUT));
+		assertEquals(e6.getReversedEdge(), e5.getNextSubLinkIncidence(EdgeDirection.INOUT));
+		assertEquals(e6.getReversedEdge(), e5.getNextSubLinkIncidence(EdgeDirection.IN));
 		assertNull(e5.getNextSubLinkIncidence(EdgeDirection.OUT));
-		assertNull(((SubLink) e6.getReversedEdge())
-				.getNextSubLinkIncidence(EdgeDirection.INOUT));
-		assertNull(((SubLink) e6.getReversedEdge())
-				.getNextSubLinkIncidence(EdgeDirection.IN));
-		assertNull(((SubLink) e6.getReversedEdge())
-				.getNextSubLinkIncidence(EdgeDirection.OUT));
+		assertNull(((SubLink) e6.getReversedEdge()).getNextSubLinkIncidence(EdgeDirection.INOUT));
+		assertNull(((SubLink) e6.getReversedEdge()).getNextSubLinkIncidence(EdgeDirection.IN));
+		assertNull(((SubLink) e6.getReversedEdge()).getNextSubLinkIncidence(EdgeDirection.OUT));
 	}
 
 	@Test

@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralabtest.greql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 
@@ -50,64 +49,52 @@ public class StoreJValueTest extends GenericTest {
 
 	@Test
 	public void testStoreJValue1() throws Exception {
-		fail(); // JValueVisitorException
+		// fail(); // JValueVisitorException
 		String queryString = "list(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
 		Object result = evalTestQuery("StoreJValue1", queryString);
-		XMLOutputWriter writer = new XMLOutputWriter(
-				getTestGraph(TestVersion.GREQL_GRAPH));
-		writer.writeValue(result, new File(
-				"testit/testdata/storejvaluetest1.xml"));
+		XMLOutputWriter writer = new XMLOutputWriter(getTestGraph(TestVersion.GREQL_GRAPH));
+		writer.writeValue(result, new File("testit/testdata/storejvaluetest1.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
-		Object loadedValue = loader
-				.load("testit/testdata/storejvaluetest1.xml");
+		Object loadedValue = loader.load("testit/testdata/storejvaluetest1.xml");
 		assertNotNull(loadedValue);
 		assertEquals(result, loadedValue);
 	}
 
 	@Test
 	public void testStoreJValue2a() throws Exception {
-		fail(); // JValueVisitorException
+		// fail(); // JValueVisitorException
 		String queryString = "V{}";
 		Object result = evalTestQuery("StoreJValue2a", queryString);
-		XMLOutputWriter writer = new XMLOutputWriter(
-				getTestGraph(TestVersion.GREQL_GRAPH));
-		writer.writeValue(result, new File(
-				"testit/testdata/storejvaluetest2a.xml"));
+		XMLOutputWriter writer = new XMLOutputWriter(getTestGraph(TestVersion.GREQL_GRAPH));
+		writer.writeValue(result, new File("testit/testdata/storejvaluetest2a.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
-		Object loadedValue = loader
-				.load("testit/testdata/storejvaluetest2a.xml");
+		Object loadedValue = loader.load("testit/testdata/storejvaluetest2a.xml");
 		assertNotNull(loadedValue);
 		assertEquals(result, loadedValue);
 	}
 
 	@Test
 	public void testStoreJValue2() throws Exception {
-		fail(); // JValueVisitorException
+		// fail(); // JValueVisitorException
 		String queryString = "from v:V{} report v as \"Nodes\" end";
 		Object result = evalTestQuery("StoreJValue2", queryString);
-		XMLOutputWriter writer = new XMLOutputWriter(
-				getTestGraph(TestVersion.GREQL_GRAPH));
-		writer.writeValue(result, new File(
-				"testit/testdata/storejvaluetest2.xml"));
+		XMLOutputWriter writer = new XMLOutputWriter(getTestGraph(TestVersion.GREQL_GRAPH));
+		writer.writeValue(result, new File("testit/testdata/storejvaluetest2.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
-		Object loadedValue = loader
-				.load("testit/testdata/storejvaluetest2.xml");
+		Object loadedValue = loader.load("testit/testdata/storejvaluetest2.xml");
 		assertNotNull(loadedValue);
 		assertEquals(result, loadedValue);
 	}
 
 	@Test
 	public void testStoreJValue3() throws Exception {
-		fail(); // JValueVisitorException
-		String queryString = "from x,y:list(1..100) reportTable x, y, x*y end";
+		// fail(); // JValueVisitorException
+		String queryString = "from x,y:list(1..100) report x, y, x*y end";
 		Object result = evalTestQuery("StoreJValue3", queryString);
-		XMLOutputWriter writer = new XMLOutputWriter(
-				getTestGraph(TestVersion.GREQL_GRAPH));
-		writer.writeValue(result, new File(
-				"testit/testdata/storejvaluetest3.xml"));
+		XMLOutputWriter writer = new XMLOutputWriter(getTestGraph(TestVersion.GREQL_GRAPH));
+		writer.writeValue(result, new File("testit/testdata/storejvaluetest3.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
-		Object loadedValue = loader
-				.load("testit/testdata/storejvaluetest3.xml");
+		Object loadedValue = loader.load("testit/testdata/storejvaluetest3.xml");
 		assertNotNull(loadedValue);
 		assertEquals(result, loadedValue);
 	}

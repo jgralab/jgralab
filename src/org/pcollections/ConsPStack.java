@@ -40,18 +40,17 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 /**
- * 
+ *
  * A simple persistent stack of non-null values.
  * <p>
  * This implementation is thread-safe (assuming Java's AbstractSequentialList is
  * thread-safe), although its iterators may not be.
- * 
+ *
  * @author harold
- * 
+ *
  * @param <E>
  */
-public final class ConsPStack<E> extends AbstractSequentialList<E> implements
-		PStack<E> {
+public final class ConsPStack<E> extends AbstractSequentialList<E> implements PStack<E> {
 	// // STATIC FACTORY METHODS ////
 	private static final ConsPStack<Object> EMPTY = new ConsPStack<>();
 
@@ -109,8 +108,7 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 	// not externally instantiable (or subclassable):
 	private ConsPStack() { // EMPTY constructor
 		if (EMPTY != null) {
-			throw new RuntimeException(
-					"empty constructor should only be used once");
+			throw new RuntimeException("empty constructor should only be used once");
 		}
 		size = 0;
 		first = null;
@@ -169,8 +167,7 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 
 			@Override
 			public E previous() {
-				System.err
-						.println("ConsPStack.listIterator().previous() is inefficient, don't use it!");
+				System.err.println("ConsPStack.listIterator().previous() is inefficient, don't use it!");
 				next = subList(index - 1); // go from beginning...
 				return next.first;
 			}
@@ -316,16 +313,19 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E e) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public E set(int index, E element) {
 		throw new UnsupportedOperationException();
 	};

@@ -59,24 +59,20 @@ public class CollectionFunctionTest extends GenericTest {
 	@Test
 	public void testConcat() throws Exception {
 		assertQueryEqualsQuery("concat(list(1..3), list(4..6))", "list(1..6)");
-		assertQueryEqualsQuery("concat(list(1..2), list(5..6))",
-				"list(1,2,5,6)");
-		assertQueryEqualsQuery("concat(list(1,23,3), list(5,2,5))",
-				"list(1,23,3,5,2,5)");
+		assertQueryEqualsQuery("concat(list(1..2), list(5..6))", "list(1,2,5,6)");
+		assertQueryEqualsQuery("concat(list(1,23,3), list(5,2,5))", "list(1,23,3,5,2,5)");
 		assertQueryEqualsQuery("concat(list(), list())", "list()");
 		assertQueryEqualsQuery("concat(list(), list(5,2,5))", "list(5,2,5)");
 		assertQueryEqualsQuery("concat(list(1), list(5,2,5))", "list(1,5,2,5)");
 		assertQueryEqualsQuery("concat(list(1,23,3), list())", "list(1,23,3)");
-		assertQueryEqualsQuery("concat(list(1,23,3), list(5))",
-				"list(1,23,3,5)");
+		assertQueryEqualsQuery("concat(list(1,23,3), list(5))", "list(1,23,3,5)");
 	}
 
 	@Test
 	public void testConcatInfix() throws Exception {
 		assertQueryEqualsQuery("list(1..3) ++ list(4..6)", "list(1..6)");
 		assertQueryEqualsQuery("list(1..2) ++ list(5..6)", "list(1,2,5,6)");
-		assertQueryEqualsQuery("list(1,23,3) ++ list(5,2,5)",
-				"list(1,23,3,5,2,5)");
+		assertQueryEqualsQuery("list(1,23,3) ++ list(5,2,5)", "list(1,23,3,5,2,5)");
 		assertQueryEqualsQuery("list() ++ list()", "list()");
 		assertQueryEqualsQuery("list() ++ list(5,2,5)", "list(5,2,5)");
 		assertQueryEqualsQuery("list(1) ++ list(5,2,5)", "list(1,5,2,5)");
@@ -170,15 +166,11 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("let x:= list(17) in count(x)", 1);
 		assertQueryEquals("let x:= list() in count(x)", 0);
 
-		assertQueryEquals(
-				"let x:= set (5, 5, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13) in count(x)",
-				9);
+		assertQueryEquals("let x:= set (5, 5, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13) in count(x)", 9);
 		assertQueryEquals("let x:= set(17) in count(x)", 1);
 		assertQueryEquals("let x:= set() in count(x)", 0);
 
-		assertQueryEquals(
-				"let x:= map (5 -> '', 5 -> 'juhu', 6 -> 'A', 7 -> 'B') in count(x)",
-				3);
+		assertQueryEquals("let x:= map (5 -> '', 5 -> 'juhu', 6 -> 'A', 7 -> 'B') in count(x)", 3);
 		assertQueryEquals("let x:= map('' -> 17) in count(x)", 1);
 		assertQueryEquals("let x:= map() in count(x)", 0);
 
@@ -187,14 +179,10 @@ public class CollectionFunctionTest extends GenericTest {
 
 	@Test
 	public void testDifference() throws Exception {
-		assertQueryEqualsQuery(
-				"let x:= set(5, 7, 9, 13), y := set(5, 6, 7, 8) in difference(x, y)",
-				"set(9,13)");
-		assertQueryEqualsQuery(
-				"let x:= set(5, 7, 9, 13), y := set(6, 8, 10, 11, 12) in difference(x, y)",
+		assertQueryEqualsQuery("let x:= set(5, 7, 9, 13), y := set(5, 6, 7, 8) in difference(x, y)", "set(9,13)");
+		assertQueryEqualsQuery("let x:= set(5, 7, 9, 13), y := set(6, 8, 10, 11, 12) in difference(x, y)",
 				"set(5, 7, 9, 13)");
-		assertQueryEquals("let x:= set(5), y := set(5, 6) in difference(x, y)",
-				JGraLab.set());
+		assertQueryEquals("let x:= set(5), y := set(5, 6) in difference(x, y)", JGraLab.set());
 	}
 
 	@Test
@@ -203,12 +191,10 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEqualsQuery("using m: entrySet(m)", "set()");
 
 		evalTestQuery("map(1 -> 'a string') store as m");
-		assertQueryEqualsQuery("using m: entrySet(m)",
-				"set(map('key' -> 1, 'value' -> 'a string'))");
+		assertQueryEqualsQuery("using m: entrySet(m)", "set(map('key' -> 1, 'value' -> 'a string'))");
 
 		evalTestQuery("map(1 -> 'a string', 2 -> 'another string') store as m");
-		assertQueryEqualsQuery(
-				"using m: entrySet(m)",
+		assertQueryEqualsQuery("using m: entrySet(m)",
 				"set(map ('key' ->1, 'value' -> 'a string'), map('key' -> 2, 'value' -> 'another string'))");
 
 		evalTestQuery("map('milk' -> 1, 'honey' -> 2, 'milk' -> 3) store as m");
@@ -218,11 +204,9 @@ public class CollectionFunctionTest extends GenericTest {
 
 	@Test
 	public void testGet() throws Exception {
-		evalTestQuery("map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
-				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
-		assertQueryEqualsQuery(
-				"using m: from x: keySet(m) reportSet get(m, x) end",
-				"using m: toSet(values(m))");
+		evalTestQuery(
+				"map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', " + "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
+		assertQueryEqualsQuery("using m: from x: keySet(m) reportSet get(m, x) end", "using m: toSet(values(m))");
 
 		evalTestQuery("list ('bratwurst', 'currywurst', 'steak', 'kaenguruhfleisch', 'spiessbraten') store as x");
 		assertQueryEquals("using x: get(x, 3)", "kaenguruhfleisch");
@@ -235,10 +219,9 @@ public class CollectionFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetSuffix() throws Exception {
-		evalTestQuery("map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
-				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
-		assertQueryEqualsQuery("using m: from x: keySet(m) reportSet m[x] end",
-				"using m: toSet(values(m))");
+		evalTestQuery(
+				"map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', " + "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
+		assertQueryEqualsQuery("using m: from x: keySet(m) reportSet m[x] end", "using m: toSet(values(m))");
 
 		evalTestQuery("list ('bratwurst', 'currywurst', 'steak', 'kaenguruhfleisch', 'spiessbraten') store as x");
 		assertQueryEquals("using x: x[3]", "kaenguruhfleisch");
@@ -316,8 +299,8 @@ public class CollectionFunctionTest extends GenericTest {
 		evalTestQuery("map(3 -> 'Three', 5 -> 'Five')  store as m");
 		assertQueryEqualsQuery("using m: keySet(m)", "set(3,5)");
 
-		evalTestQuery("map(1 -> 'One',   2 -> 'Two', 3 -> 'Three'"
-				+ ", 4 -> 'Four', 5 -> 'Five', 6 -> 'Six')  store as m");
+		evalTestQuery(
+				"map(1 -> 'One',   2 -> 'Two', 3 -> 'Three'" + ", 4 -> 'Four', 5 -> 'Five', 6 -> 'Six')  store as m");
 		assertQueryEqualsQuery("using m: keySet(m)", "set(1,2,3,4,5,6)");
 
 	}
@@ -378,33 +361,29 @@ public class CollectionFunctionTest extends GenericTest {
 	public void testSortList() throws Exception {
 		assertQueryEqualsQuery("sort(list())", "list()");
 		assertQueryEqualsQuery("sort(list(4))", "list(4)");
-		assertQueryEqualsQuery("sort(list(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
-				"list(1..10)");
+		assertQueryEqualsQuery("sort(list(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))", "list(1..10)");
 	}
 
 	@Test
 	public void testSortSet() throws Exception {
 		assertQueryEqualsQuery("sort(set())", "list()");
 		assertQueryEqualsQuery("sort(set(4))", "list(4)");
-		assertQueryEqualsQuery("sort(set(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
-				"list(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
+		assertQueryEqualsQuery("sort(set(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))", "list(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
 	}
 
 	@Test
 	public void testSum() throws Exception {
-		assertQueryEquals("let x:= list() in sum(x)", 0.0);
-		assertQueryEquals("let x:= list(5) in sum(x)", 5.0);
-		assertQueryEquals("let x:= list(5..13) in sum(x)", 81.0);
+		assertQueryEquals("let x:= list() in sum(x)", 0);
+		assertQueryEquals("let x:= list(5) in sum(x)", 5);
+		assertQueryEquals("let x:= list(5..13) in sum(x)", 81);
 
-		assertQueryEquals("let x:= set() in sum(x)", 0.0);
-		assertQueryEquals("let x:= set(5) in sum(x)", 5.0);
-		assertQueryEquals(
-				"let x:= set(5, 6, 7, 8, 9, 10, 11, 12, 13) in sum(x)", 81.0);
+		assertQueryEquals("let x:= set() in sum(x)", 0);
+		assertQueryEquals("let x:= set(5) in sum(x)", 5);
+		assertQueryEquals("let x:= set(5, 6, 7, 8, 9, 10, 11, 12, 13) in sum(x)", 81);
 
 		expectException("let x:= list('test') in sum(x)", GreqlException.class);
 		expectException("let x:= list(true) in sum(x)", GreqlException.class);
-		expectException("let x:= list(rec(name: 'Daniel')) in sum(x)",
-				GreqlException.class);
+		expectException("let x:= list(rec(name: 'Daniel')) in sum(x)", GreqlException.class);
 	}
 
 	@Test
@@ -427,10 +406,8 @@ public class CollectionFunctionTest extends GenericTest {
 	public void testUnionMapAndMap() throws Exception {
 		evalTestQuery("map(1 -> 'A', 2 -> 'A', 3 -> 'B') store as map1");
 		evalTestQuery("map(4 -> 'A', 5 -> 'C', 6 -> 'D') store as map2");
-		evalTestQuery("map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', "
-				+ "5 -> 'C', 6 -> 'D') store as map3");
-		assertQueryEqualsQuery("using map1, map2: union(map1, map2)",
-				"using map3: map3");
+		evalTestQuery("map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', " + "5 -> 'C', 6 -> 'D') store as map3");
+		assertQueryEqualsQuery("using map1, map2: union(map1, map2)", "using map3: map3");
 
 		evalTestQuery("map(1 -> 'A', 3 -> 'C', 4 -> 'D') store as map2");
 	}
@@ -439,8 +416,7 @@ public class CollectionFunctionTest extends GenericTest {
 	public void testUnionSetAndSet() throws Exception {
 		evalTestQuery("set(5, 7, 9, 13) store as x");
 		evalTestQuery("set(5, 6, 7, 8)  store as y");
-		assertQueryEqualsQuery("using x, y: union(x, y)",
-				"set(5, 6, 7, 8, 9, 13)");
+		assertQueryEqualsQuery("using x, y: union(x, y)", "set(5, 6, 7, 8, 9, 13)");
 	}
 
 	@Test
@@ -452,8 +428,7 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEqualsQuery("using m: values(m)", "list('a string')");
 
 		evalTestQuery("map(1 -> 'a string', 2 -> 'another string') store as m");
-		assertQueryEqualsQuery("using m: values(m)",
-				"list('a string', 'another string')");
+		assertQueryEqualsQuery("using m: values(m)", "list('a string', 'another string')");
 
 		evalTestQuery("map('milk' -> 1, 'honey' -> 2, 'milk' -> 3) store as m");
 		assertQueryEqualsQuery("using m: values(m)", "list(3,2)");

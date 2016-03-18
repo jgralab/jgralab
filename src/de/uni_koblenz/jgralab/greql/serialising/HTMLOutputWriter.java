@@ -77,12 +77,10 @@ public class HTMLOutputWriter extends DefaultWriter {
 	}
 
 	@Override
-	public void writeValue(Object value, File file) throws IOException,
-			SerialisingException {
-		out = null;
-		try {
-			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(file), "UTF-8")));
+	public void writeValue(Object value, File file) throws IOException, SerialisingException {
+		try (PrintWriter pw = new PrintWriter(
+				new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")))) {
+			out = pw;
 			writeValue(value);
 		} catch (SerialisingException e) {
 			throw e;
@@ -91,10 +89,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 		} catch (Exception e) {
 			throw new SerialisingException("Unhandled Exception", rootValue, e);
 		} finally {
-			if (out != null) {
-				out.close();
-				out = null;
-			}
+			out = null;
 		}
 	}
 
@@ -266,24 +261,20 @@ public class HTMLOutputWriter extends DefaultWriter {
 	@Override
 	protected void writeVertex(Vertex vertex) throws IOException {
 		if (createElementLinks) {
-			out.print("<a href=\"v" + vertex.getId() + "\">v" + vertex.getId()
-					+ ": " + vertex.getAttributedElementClass().getUniqueName()
-					+ "</a>");
+			out.print("<a href=\"v" + vertex.getId() + "\">v" + vertex.getId() + ": "
+					+ vertex.getAttributedElementClass().getUniqueName() + "</a>");
 		} else {
-			out.print("v" + vertex.getId() + ": "
-					+ vertex.getAttributedElementClass().getUniqueName());
+			out.print("v" + vertex.getId() + ": " + vertex.getAttributedElementClass().getUniqueName());
 		}
 	}
 
 	@Override
 	protected void writeEdge(Edge edge) throws IOException {
 		if (createElementLinks) {
-			out.print("<a href=\"e" + edge.getId() + "\">e" + edge.getId()
-					+ ": " + edge.getAttributedElementClass().getUniqueName()
-					+ "</a>");
+			out.print("<a href=\"e" + edge.getId() + "\">e" + edge.getId() + ": "
+					+ edge.getAttributedElementClass().getUniqueName() + "</a>");
 		} else {
-			out.print("e" + edge.getId() + ": "
-					+ edge.getAttributedElementClass().getUniqueName());
+			out.print("e" + edge.getId() + ": " + edge.getAttributedElementClass().getUniqueName());
 		}
 	}
 
@@ -319,8 +310,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 			out.println("<a href=\"g" + gr.getId() + "\">" + gr.getId() + ": "
 					+ gr.getAttributedElementClass().getUniqueName() + "</a>");
 		} else {
-			out.println(gr.getId() + ": "
-					+ gr.getAttributedElementClass().getUniqueName());
+			out.println(gr.getId() + ": " + gr.getAttributedElementClass().getUniqueName());
 		}
 	}
 
@@ -341,8 +331,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 	}
 
 	@Override
-	protected void writeAttributedElementClass(AttributedElementClass<?, ?> c)
-			throws IOException {
+	protected void writeAttributedElementClass(AttributedElementClass<?, ?> c) throws IOException {
 		out.println(c.getQualifiedName());
 	}
 
@@ -384,8 +373,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 	@Override
 	protected void writePSet(PSet<?> s) throws Exception {
 		if (s.size() > 0) {
-			if ((s instanceof POrderedSet)
-					&& (((POrderedSet<?>) s).get(0) instanceof Tuple)) {
+			if ((s instanceof POrderedSet) && (((POrderedSet<?>) s).get(0) instanceof Tuple)) {
 				writeTableOfTuples(s);
 				return;
 			}
@@ -426,7 +414,8 @@ public class HTMLOutputWriter extends DefaultWriter {
 		if (useCss) {
 			out.println("<style type=\"text/css\">");
 			out.println("table { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
-			out.println("td { vertical-align: top; border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
+			out.println(
+					"td { vertical-align: top; border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
 			out.println("th { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
 			out.println("</style>\n");
 		}
@@ -448,8 +437,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 	}
 
 	private String table(int border, int padding, int spacing) {
-		return "<table border=\"" + border + "\" cellpadding=\"" + padding
-				+ "\" cellspacing=\"" + spacing + "\">";
+		return "<table border=\"" + border + "\" cellpadding=\"" + padding + "\" cellspacing=\"" + spacing + "\">";
 	}
 
 	@Override

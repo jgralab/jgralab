@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-
+import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.ist.utilities.plist.PList;
@@ -14,9 +14,11 @@ public class PListTest {
 
 	private static final String TESTFILENAME = "testit/testdata/testIt.plist";
 
-	@Test
-	public void testCreate() throws Exception {
-		PList pl = new PList();
+	private PList pl;
+
+	@Before
+	public void createPList() throws Exception {
+		pl = new PList();
 
 		List<String> s = new ArrayList<>();
 		s.add("Alice");
@@ -31,7 +33,10 @@ public class PListTest {
 		pl.getDict().putArray("dicts", dl);
 
 		pl.storeTo(TESTFILENAME);
+	}
 
+	@Test
+	public void testCreate() throws Exception {
 		List<String> t = pl.getDict().getArray("strings");
 		Assert.assertEquals(3, t.size());
 		Assert.assertEquals("Alice", t.get(0));
@@ -44,16 +49,15 @@ public class PListTest {
 
 	@Test
 	public void testLoad() throws Exception {
-		PList pl = new PList(TESTFILENAME);
+		PList newPl = new PList(TESTFILENAME);
 
-		List<String> t = pl.getDict().getArray("strings");
+		List<String> t = newPl.getDict().getArray("strings");
 		Assert.assertEquals(3, t.size());
 		Assert.assertEquals("Alice", t.get(0));
 		Assert.assertEquals("Bob", t.get(1));
 		Assert.assertEquals("Charlie", t.get(2));
 
-		List<PListDict> u = pl.getDict().getArray("dicts");
+		List<PListDict> u = newPl.getDict().getArray("dicts");
 		Assert.assertEquals(2, u.size());
 	}
-
 }

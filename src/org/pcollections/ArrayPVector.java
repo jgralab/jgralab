@@ -46,15 +46,15 @@ import java.util.NoSuchElementException;
  * ArrayPVector is a PVector implementation based on arrays. This implementation
  * is biased for low memory consumption in cases where really many PVectors are
  * used. Instances share the same storage array as much as possible.
- * 
+ *
  * Also, the plus() operation is approximately O(1). Array copying only occurs
  * upon dynamic growth when the storage array has no more unused elements, or
  * when the ArrayPVector uses a sub-array of a different instance.
- * 
+ *
  * This implementation is not thread safe.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  * @param <E>
  *            the element type
  */
@@ -137,51 +137,61 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 	}
 
 	@Override
+	@Deprecated
 	public void add(int arg0, E arg1) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean addAll(int arg0, Collection<? extends E> arg1) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public E remove(int arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public E set(int arg0, E arg1) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean remove(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean removeAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public boolean retainAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
@@ -234,8 +244,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			}
 			return a;
 		} else {
-			return (T[]) Arrays.copyOfRange(value, offset, offset + count,
-					a.getClass());
+			return (T[]) Arrays.copyOfRange(value, offset, offset + count, a.getClass());
 		}
 	}
 
@@ -342,8 +351,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 	@Override
 	public PVector<E> plus(E e) {
 		if (e == null) {
-			throw new IllegalArgumentException(
-					"Can't add null to an ArrayPVector");
+			throw new IllegalArgumentException("Can't add null to an ArrayPVector");
 		}
 		if (sublist || count == 0 || offset + count + 1 > value.length) {
 			if (count == 0) {
@@ -355,8 +363,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			} else {
 				// we have to clone
 				@SuppressWarnings("unchecked")
-				E[] val = (E[]) new Object[Math.max(count + 1,
-						(int) (count * GROW_FACTOR))];
+				E[] val = (E[]) new Object[Math.max(count + 1, (int) (count * GROW_FACTOR))];
 				System.arraycopy(value, offset, val, 0, count);
 				val[count] = e;
 				return new ArrayPVector<>(val, 0, count + 1);
@@ -384,14 +391,12 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			return this;
 		} else if (count == 0 && l instanceof ArrayPVector) {
 			return (ArrayPVector<E>) l;
-		} else if (!sublist && value != null
-				&& offset + count + n <= value.length) {
+		} else if (!sublist && value != null && offset + count + n <= value.length) {
 			// l fits into the remaining space
 			int i = count;
 			for (E e : l) {
 				if (e == null) {
-					throw new IllegalArgumentException(
-							"Can't add null to an ArrayPVector");
+					throw new IllegalArgumentException("Can't add null to an ArrayPVector");
 				}
 				value[i++] = e;
 			}
@@ -406,8 +411,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			int i = count;
 			for (E e : l) {
 				if (e == null) {
-					throw new IllegalArgumentException(
-							"Can't add null to an ArrayPVector");
+					throw new IllegalArgumentException("Can't add null to an ArrayPVector");
 				}
 				val[i++] = e;
 			}
@@ -451,8 +455,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			if (start == end) {
 				return empty();
 			}
-			ArrayPVector<E> result = new ArrayPVector<>(value, offset + start,
-					end - start);
+			ArrayPVector<E> result = new ArrayPVector<>(value, offset + start, end - start);
 			result.sublist = true;
 			return result;
 		}
@@ -461,8 +464,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 	@Override
 	public ArrayPVector<E> with(int i, E e) {
 		if (e == null) {
-			throw new IllegalArgumentException(
-					"Can't set an element to null in an ArrayPVector");
+			throw new IllegalArgumentException("Can't set an element to null in an ArrayPVector");
 		}
 		if (get(i).equals(e)) {
 			return this;

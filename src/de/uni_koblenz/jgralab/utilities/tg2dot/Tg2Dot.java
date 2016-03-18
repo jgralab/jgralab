@@ -83,9 +83,9 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 /**
  * Tg2Dot2 takes a graph layout and a JGraLab graph and transforms the graph
  * into a DOT-graph of GraphViz.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class Tg2Dot extends Tg2Whatever {
 
@@ -160,13 +160,12 @@ public class Tg2Dot extends Tg2Whatever {
 		}
 		// write dot output into pipe to GraphViz layouter and store result as
 		// file
-		GraphVizProgram prog = new GraphVizProgram().layouter(graphVizLayouter)
-				.outputFormat(graphVizOutputFormat);
+
+		GraphVizProgram prog = new GraphVizProgram().layouter(graphVizLayouter).outputFormat(graphVizOutputFormat);
 		pipeToGraphViz(prog);
 	}
 
-	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
-			boolean reversedEdges) {
+	public static Tg2Dot createConverterAndSetAttributes(Graph graph, boolean reversedEdges) {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
@@ -175,25 +174,21 @@ public class Tg2Dot extends Tg2Whatever {
 		return converter;
 	}
 
-	public static void convertGraph(Graph graph, String outputFileName)
-			throws IOException {
+	public static void convertGraph(Graph graph, String outputFileName) throws IOException {
 		convertGraph(graph, outputFileName, false, GraphVizOutputFormat.XDOT);
 	}
 
-	public static void convertGraph(Graph graph, String outputFileName,
-			boolean reversedEdges) throws IOException {
-		convertGraph(graph, outputFileName, reversedEdges,
-				GraphVizOutputFormat.XDOT);
+	public static void convertGraph(Graph graph, String outputFileName, boolean reversedEdges) throws IOException {
+		convertGraph(graph, outputFileName, reversedEdges, GraphVizOutputFormat.XDOT);
 	}
 
-	public static void convertGraph(Graph graph, String outputFileName,
-			GraphVizOutputFormat format) throws IOException {
+	public static void convertGraph(Graph graph, String outputFileName, GraphVizOutputFormat format)
+			throws IOException {
 		convertGraph(graph, outputFileName, false, format);
 	}
 
-	public static void convertGraph(Graph graph, String outputFileName,
-			boolean reversedEdges, GraphVizOutputFormat format)
-			throws IOException {
+	public static void convertGraph(Graph graph, String outputFileName, boolean reversedEdges,
+			GraphVizOutputFormat format) throws IOException {
 
 		Tg2Dot converter = createConverterAndSetAttributes(graph, reversedEdges);
 		converter.setOutputFile(outputFileName);
@@ -201,30 +196,26 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.convert();
 	}
 
-	public static void convertGraph(AbstractBooleanGraphMarker marker,
-			String outputFileName) throws IOException {
+	public static void convertGraph(AbstractBooleanGraphMarker marker, String outputFileName) throws IOException {
 		convertGraph(marker, outputFileName, false);
 	}
 
-	public static void convertGraph(AbstractBooleanGraphMarker marker,
-			String outputFileName, boolean reversedEdges) throws IOException {
-		convertGraph(marker, outputFileName, GraphVizOutputFormat.PDF,
-				reversedEdges);
+	public static void convertGraph(AbstractBooleanGraphMarker marker, String outputFileName, boolean reversedEdges)
+			throws IOException {
+		convertGraph(marker, outputFileName, GraphVizOutputFormat.PDF, reversedEdges);
 	}
 
-	public static void convertGraph(AbstractBooleanGraphMarker marker,
-			String outputFileName, GraphVizOutputFormat format,
-			boolean reversedEdges) throws IOException {
-		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
-				reversedEdges);
+	public static void convertGraph(AbstractBooleanGraphMarker marker, String outputFileName,
+			GraphVizOutputFormat format, boolean reversedEdges) throws IOException {
+		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(), reversedEdges);
 		converter.setOutputFile(outputFileName);
 		converter.setGraphMarker(marker);
 		converter.convert();
 	}
 
 	public void pipeToGraphViz(GraphVizProgram prog) throws IOException {
-		String executionString = String.format("%s%s -T%s -o%s", prog.path,
-				prog.layouter, prog.outputFormat, outputName);
+		String executionString = String.format("%s%s -T%s -o%s", prog.graphvizPath, prog.layouter, prog.outputFormat,
+				outputName);
 		final Process process = Runtime.getRuntime().exec(executionString);
 		new Thread() {
 			@Override
@@ -238,21 +229,17 @@ public class Tg2Dot extends Tg2Whatever {
 		try {
 			int retVal = process.waitFor();
 			if (retVal != 0) {
-				throw new RuntimeException(
-						"GraphViz process failed! Error code = " + retVal);
+				throw new RuntimeException("GraphViz process failed! Error code = " + retVal);
 			}
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public InputStream convertToGraphVizStream(GraphVizProgram prog)
-			throws IOException {
-		String executionString = String.format("%s%s -T%s", prog.path,
-				prog.layouter, prog.outputFormat);
+	public InputStream convertToGraphVizStream(GraphVizProgram prog) throws IOException {
+		String executionString = String.format("%s%s -T%s", prog.graphvizPath, prog.layouter, prog.outputFormat);
 		final Process process = Runtime.getRuntime().exec(executionString);
-		InputStream inputStream = new BufferedInputStream(
-				process.getInputStream());
+		InputStream inputStream = new BufferedInputStream(process.getInputStream());
 		new Thread() {
 			@Override
 			public void run() {
@@ -265,10 +252,8 @@ public class Tg2Dot extends Tg2Whatever {
 		return inputStream;
 	}
 
-	public ImageIcon convertToGraphVizImageIcon(GraphVizProgram prog)
-			throws IOException {
-		BufferedInputStream imageStream = new BufferedInputStream(
-				convertToGraphVizStream(prog));
+	public ImageIcon convertToGraphVizImageIcon(GraphVizProgram prog) throws IOException {
+		BufferedInputStream imageStream = new BufferedInputStream(convertToGraphVizStream(prog));
 		return new ImageIcon(ImageIO.read(imageStream));
 	}
 
@@ -293,8 +278,7 @@ public class Tg2Dot extends Tg2Whatever {
 			try {
 				graphVizLayouter = GraphVizLayouter.valueOf(gvLayouter);
 			} catch (IllegalArgumentException e) {
-				throw new RuntimeException("Unknown layouter '" + gvLayouter
-						+ "'. Possible values are "
+				throw new RuntimeException("Unknown layouter '" + gvLayouter + "'. Possible values are "
 						+ GraphVizLayouter.describeValues());
 			}
 		}
@@ -302,11 +286,9 @@ public class Tg2Dot extends Tg2Whatever {
 		String gvOutputFormat = comLine.getOptionValue('t');
 		if (gvOutputFormat != null) {
 			try {
-				graphVizOutputFormat = GraphVizOutputFormat
-						.valueOf(gvOutputFormat.toUpperCase());
+				graphVizOutputFormat = GraphVizOutputFormat.valueOf(gvOutputFormat.toUpperCase());
 			} catch (IllegalArgumentException e) {
-				throw new RuntimeException("Unknown output format  '"
-						+ gvOutputFormat + "'. Possible values are "
+				throw new RuntimeException("Unknown output format  '" + gvOutputFormat + "'. Possible values are "
 						+ GraphVizOutputFormat.describeValues());
 			}
 		}
@@ -315,10 +297,7 @@ public class Tg2Dot extends Tg2Whatever {
 	@Override
 	protected void addAdditionalOptions(OptionHandler optionHandler) {
 
-		Option pListLayout = new Option(
-				"p",
-				"pListLayout",
-				true,
+		Option pListLayout = new Option("p", "pListLayout", true,
 				"(optional): declares a PList-layout file, which should be used to lay out the given graph.");
 		pListLayout.setRequired(false);
 		optionHandler.addOption(pListLayout);
@@ -328,14 +307,12 @@ public class Tg2Dot extends Tg2Whatever {
 		incidenceIndices.setRequired(false);
 		optionHandler.addOption(incidenceIndices);
 
-		Option elementSequenceIndices = new Option("m",
-				"elementSequenceIndices", false,
+		Option elementSequenceIndices = new Option("m", "elementSequenceIndices", false,
 				"(optional): prints the element sequence index of every vertex and edge.");
 		elementSequenceIndices.setRequired(false);
 		optionHandler.addOption(elementSequenceIndices);
 
-		Option gvFormat = new Option("t", "graphVizFormat", true,
-				"(optional): determines the GraphViz output format");
+		Option gvFormat = new Option("t", "graphVizFormat", true, "(optional): determines the GraphViz output format");
 		gvFormat.setRequired(false);
 		optionHandler.addOption(gvFormat);
 
@@ -396,18 +373,16 @@ public class Tg2Dot extends Tg2Whatever {
 	private void setCommandLineVariables() {
 		evaluator.setVariable(PRINT_ROLENAMES, roleNames);
 		evaluator.setVariable(PRINT_INCIDENCE_INDICES, printIncidenceIndices);
-		evaluator.setVariable(PRINT_ELEMENT_SEQUENCE_INDICES,
-				printElementSequenceIndices);
+		evaluator.setVariable(PRINT_ELEMENT_SEQUENCE_INDICES, printElementSequenceIndices);
 		evaluator.setVariable(PRINT_DOMAIN_NAMES, domainNames);
 		evaluator.setVariable(SHORTEN_STRINGS, shortenStrings);
-		evaluator.setVariable(ABBREVIATE_EDGE_ATTRIBUTE_NAMES,
-				abbreviateEdgeAttributeNames);
+		evaluator.setVariable(ABBREVIATE_EDGE_ATTRIBUTE_NAMES, abbreviateEdgeAttributeNames);
 		evaluator.setVariable(PRINT_EDGE_ATTRIBUTES, edgeAttributes);
 	}
 
 	/**
 	 * Creates a {@link DotWriter}.
-	 * 
+	 *
 	 * @param out
 	 *            Provides stream, the DotWriter will use.
 	 */
@@ -419,8 +394,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Starts the Graph in the output file.
 	 */
 	private void startDotGraph() {
-		writer.startGraph(GraphType.DIRECTED, graph.getAttributedElementClass()
-				.getQualifiedName(),
+		writer.startGraph(GraphType.DIRECTED, graph.getAttributedElementClass().getQualifiedName(),
 				graph.getId() + " / " + graph.getGraphVersion());
 	}
 
@@ -428,26 +402,23 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void printVertex(PrintStream out, Vertex vertex) {
 
 		Definition definition = getCorrespondingDefinition(vertex);
-		evaluator.setStaticVariablesOfGreqlEvaluator(vertex
-				.getAttributedElementClass());
+		evaluator.setStaticVariablesOfGreqlEvaluator(vertex.getAttributedElementClass());
 		writeLayoutedVertex(vertex, definition);
 	}
 
 	/**
 	 * Returns the responsible {@link TypeDefinition} or
 	 * {@link ElementDefinition} for the specified {@link AttributedElement}.
-	 * 
+	 *
 	 * @param attributedElement
 	 *            Given {@link AttributedElement}.
 	 * @return Responsible {@link Definition}.
 	 */
-	private Definition getCorrespondingDefinition(
-			AttributedElement<?, ?> attributedElement) {
+	private Definition getCorrespondingDefinition(AttributedElement<?, ?> attributedElement) {
 		if (layout.isDefinedbyElementDefinitions(attributedElement)) {
 			return constructSpecificElementDefinition(attributedElement);
 		} else {
-			TypeDefinition definition = layout
-					.getTypeDefinition(attributedElement);
+			TypeDefinition definition = layout.getTypeDefinition(attributedElement);
 			return definition;
 		}
 	}
@@ -455,14 +426,13 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Constructs an {@link ElementDefinition} for the given
 	 * {@link AttributedElement}.
-	 * 
+	 *
 	 * @param element
 	 *            Given AttributedElement.
 	 * @return {@link ElementDefinition} for the provided
 	 *         {@link AttributedElement}.
 	 */
-	private Definition constructSpecificElementDefinition(
-			AttributedElement<?, ?> element) {
+	private Definition constructSpecificElementDefinition(AttributedElement<?, ?> element) {
 
 		// Retrieves corresponding underlying TypeDefinition
 		Definition definition = layout.getTypeDefinition(element);
@@ -470,8 +440,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		// Overwrites all Attributes redefined by ElementDefinitions in the
 		// order of declaration
-		for (ElementDefinition elementDefinition : layout
-				.getElementDefinitions()) {
+		for (ElementDefinition elementDefinition : layout.getElementDefinitions()) {
 			if (elementDefinition.hasElement(element)) {
 				definition.overwriteAttributes(elementDefinition);
 			}
@@ -482,7 +451,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Evaluates all attributes of a given {@link Vertex} and prints via the
 	 * {@link DotWriter}.
-	 * 
+	 *
 	 * @param vertex
 	 *            Provides Vertex.
 	 * @param definition
@@ -491,8 +460,7 @@ public class Tg2Dot extends Tg2Whatever {
 	private void writeLayoutedVertex(Vertex vertex, Definition definition) {
 
 		// Resets changed variables in the GreqlEvaluator
-		evaluator.setVariablesOfGreqlEvaluator(vertex,
-				getCurrentElementSequenceIndex());
+		evaluator.setVariablesOfGreqlEvaluator(vertex, getCurrentElementSequenceIndex());
 
 		// Retrieves the unified vertex name ("v1", "v2", ... ) and the
 		// evaluated style attribute list.
@@ -507,7 +475,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Returns unified vertex names. A vertex name has the prefix 'v' followed
 	 * by the {@link Vertex} id.
-	 * 
+	 *
 	 * @param vertex
 	 *            Given {@link Vertex}
 	 * @return Unified vertex name.
@@ -523,15 +491,14 @@ public class Tg2Dot extends Tg2Whatever {
 	 * the method
 	 * {@link GreqlEvaluatorFacade#setVariablesOfGreqlEvaluator(AttributedElement, int)}
 	 * .
-	 * 
+	 *
 	 * @param spec
 	 *            Given {@link Definition} with the style attributes and their
 	 *            queries.
 	 * @return Evaluated style attribute list with attribute names as key and
 	 *         the evaluated value string as value.
 	 */
-	private Map<String, String> createEvaluatedStyleAttributeList(
-			Definition spec) {
+	private Map<String, String> createEvaluatedStyleAttributeList(Definition spec) {
 
 		Map<String, String> evaluatedList = new HashMap<>();
 
@@ -546,15 +513,14 @@ public class Tg2Dot extends Tg2Whatever {
 	@Override
 	protected void printEdge(PrintStream out, Edge edge) {
 		Definition definition = getCorrespondingDefinition(edge);
-		evaluator.setStaticVariablesOfGreqlEvaluator(edge
-				.getAttributedElementClass());
+		evaluator.setStaticVariablesOfGreqlEvaluator(edge.getAttributedElementClass());
 		writeLayoutedEdge(edge, definition);
 	}
 
 	/**
 	 * Evaluates all attributes of a given {@link Edge} and prints via the
 	 * {@link DotWriter}.
-	 * 
+	 *
 	 * @param edge
 	 *            Provides Edge.
 	 * @param definition
@@ -563,8 +529,7 @@ public class Tg2Dot extends Tg2Whatever {
 	private void writeLayoutedEdge(Edge edge, Definition definition) {
 
 		// Resets changed variables in the GreqlEvaluator
-		evaluator.setVariablesOfGreqlEvaluator(edge,
-				getCurrentElementSequenceIndex());
+		evaluator.setVariablesOfGreqlEvaluator(edge, getCurrentElementSequenceIndex());
 
 		// Reverts the direction of the if isReversedEdge is true
 		// This will not change the style, but will change the layout process in
@@ -594,21 +559,20 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Reverses all reversible style attributes in the provided evaluted style
 	 * attribute list.
-	 * 
+	 *
 	 * @param evaluatedList
 	 *            Given evaluated style attribute list as {@link Map}.
 	 */
 	private void reverseEdgeAttributes(Map<String, String> evaluatedList) {
 
-		for (Entry<String, String> entry : DotWriter.reversableEdgeAttributePairs
-				.entrySet()) {
+		for (Entry<String, String> entry : DotWriter.reversableEdgeAttributePairs.entrySet()) {
 			swapAttributes(entry.getKey(), entry.getValue(), evaluatedList);
 		}
 	}
 
 	/**
 	 * Swaps two key-value pairs in a map.
-	 * 
+	 *
 	 * @param head
 	 *            Key of the first key-value pair.
 	 * @param tail
@@ -616,8 +580,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * @param evaluatedList
 	 *            Evaluated style attribute list.
 	 */
-	private void swapAttributes(String head, String tail,
-			Map<String, String> evaluatedList) {
+	private void swapAttributes(String head, String tail, Map<String, String> evaluatedList) {
 		String headValue = evaluatedList.remove(head);
 		String tailValue = evaluatedList.remove(tail);
 
@@ -644,7 +607,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Return a flag indicating that incidence numbers should be included in the
 	 * graph layout process.
-	 * 
+	 *
 	 * @return True, if incidence numbers should be be printed.
 	 */
 	public boolean printsIncidenceNumbers() {
@@ -680,8 +643,7 @@ public class Tg2Dot extends Tg2Whatever {
 		return abbreviateEdgeAttributeNames;
 	}
 
-	public void setAbbreviateEdgeAttributeNames(
-			boolean abbreviateEdgeAttributeNames) {
+	public void setAbbreviateEdgeAttributeNames(boolean abbreviateEdgeAttributeNames) {
 		this.abbreviateEdgeAttributeNames = abbreviateEdgeAttributeNames;
 	}
 
@@ -689,8 +651,7 @@ public class Tg2Dot extends Tg2Whatever {
 		return printElementSequenceIndices;
 	}
 
-	public void setPrintElementSequenceIndices(
-			boolean printElementSequenceIndices) {
+	public void setPrintElementSequenceIndices(boolean printElementSequenceIndices) {
 		this.printElementSequenceIndices = printElementSequenceIndices;
 	}
 
@@ -714,8 +675,7 @@ public class Tg2Dot extends Tg2Whatever {
 		return graphVizOutputFormat;
 	}
 
-	public void setGraphVizOutputFormat(
-			GraphVizOutputFormat graphVizOutputFormat) {
+	public void setGraphVizOutputFormat(GraphVizOutputFormat graphVizOutputFormat) {
 		this.graphVizOutputFormat = graphVizOutputFormat;
 	}
 }

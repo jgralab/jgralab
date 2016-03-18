@@ -109,7 +109,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method isIncidenceListModified(long incidenceListVersion);
 	/**
 	 * Tests if the incidenceList wasn't modified.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -128,7 +128,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceLists of the involved
 	 * nodes may have been modified.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -145,19 +145,16 @@ public class VertexTest extends InstanceTest {
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
 			// create a new edge
-			Link sl = g.createLink((AbstractSuperNode) nodes[start],
-					(SuperNode) nodes[end]);
+			Link sl = g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 			assertTrue(nodes[start].isIncidenceListModified(versions[start]));
 			assertTrue(nodes[end].isIncidenceListModified(versions[end]));
 			if (start != end) {
 				assertFalse(nodes[6 - (start + 1) - (end + 1) - 1]
-						.isIncidenceListModified(versions[6 - (start + 1)
-								- (end + 1) - 1]));
+						.isIncidenceListModified(versions[6 - (start + 1) - (end + 1) - 1]));
 			} else {
 				for (int j = 0; j < 3; j++) {
 					if (j != start) {
-						assertFalse(nodes[j]
-								.isIncidenceListModified(versions[j]));
+						assertFalse(nodes[j].isIncidenceListModified(versions[j]));
 					}
 				}
 			}
@@ -173,13 +170,11 @@ public class VertexTest extends InstanceTest {
 			assertTrue(nodes[end].isIncidenceListModified(versions[end]));
 			if (start != end) {
 				assertFalse(nodes[6 - (start + 1) - (end + 1) - 1]
-						.isIncidenceListModified(versions[6 - (start + 1)
-								- (end + 1) - 1]));
+						.isIncidenceListModified(versions[6 - (start + 1) - (end + 1) - 1]));
 			} else {
 				for (int j = 0; j < 3; j++) {
 					if (j != start) {
-						assertFalse(nodes[j]
-								.isIncidenceListModified(versions[j]));
+						assertFalse(nodes[j].isIncidenceListModified(versions[j]));
 					}
 				}
 			}
@@ -194,7 +189,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceListVersions of the
 	 * involved nodes may have been increased.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -208,26 +203,19 @@ public class VertexTest extends InstanceTest {
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
 			// create a new edge
-			Link sl = g.createLink((AbstractSuperNode) nodes[start],
-					(SuperNode) nodes[end]);
+			Link sl = g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 			expectedVersions[start]++;
 			expectedVersions[end]++;
-			assertEquals(expectedVersions[0],
-					nodes[0].getIncidenceListVersion());
-			assertEquals(expectedVersions[1],
-					nodes[1].getIncidenceListVersion());
-			assertEquals(expectedVersions[2],
-					nodes[2].getIncidenceListVersion());
+			assertEquals(expectedVersions[0], nodes[0].getIncidenceListVersion());
+			assertEquals(expectedVersions[1], nodes[1].getIncidenceListVersion());
+			assertEquals(expectedVersions[2], nodes[2].getIncidenceListVersion());
 			// delete an edge
 			g.deleteEdge(sl);
 			expectedVersions[start]++;
 			expectedVersions[end]++;
-			assertEquals(expectedVersions[0],
-					nodes[0].getIncidenceListVersion());
-			assertEquals(expectedVersions[1],
-					nodes[1].getIncidenceListVersion());
-			assertEquals(expectedVersions[2],
-					nodes[2].getIncidenceListVersion());
+			assertEquals(expectedVersions[0], nodes[0].getIncidenceListVersion());
+			assertEquals(expectedVersions[1], nodes[1].getIncidenceListVersion());
+			assertEquals(expectedVersions[2], nodes[2].getIncidenceListVersion());
 		}
 	}
 
@@ -235,7 +223,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -246,7 +234,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -268,7 +256,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Generates a number of edges and checks the correct degrees of the
 	 * vertices. After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -282,8 +270,7 @@ public class VertexTest extends InstanceTest {
 		for (int i = 0; i < ITERATIONS; i++) {
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
-			g.createLink((AbstractSuperNode) nodes[start],
-					(SuperNode) nodes[end]);
+			g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 			expectedDegrees[start]++;
 			expectedDegrees[end]++;
 			assertEquals(expectedDegrees[0], nodes[0].getDegree());
@@ -317,7 +304,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeDirection.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -330,7 +317,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -361,7 +348,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different EdgeDirections. After that it
 	 * deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -381,27 +368,22 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedInOut[start]++;
 				expectedOut[start]++;
 				expectedInOut[end]++;
 				expectedIn[end]++;
 			} else {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedInOut[end]++;
 				expectedOut[end]++;
 				expectedInOut[start]++;
 				expectedIn[start]++;
 			}
-			assertEquals(expectedInOut[0],
-					nodes[0].getDegree(EdgeDirection.INOUT));
-			assertEquals(expectedInOut[1],
-					nodes[1].getDegree(EdgeDirection.INOUT));
-			assertEquals(expectedInOut[2],
-					nodes[2].getDegree(EdgeDirection.INOUT));
+			assertEquals(expectedInOut[0], nodes[0].getDegree(EdgeDirection.INOUT));
+			assertEquals(expectedInOut[1], nodes[1].getDegree(EdgeDirection.INOUT));
+			assertEquals(expectedInOut[2], nodes[2].getDegree(EdgeDirection.INOUT));
 			assertEquals(expectedIn[0], nodes[0].getDegree(EdgeDirection.IN));
 			assertEquals(expectedIn[1], nodes[1].getDegree(EdgeDirection.IN));
 			assertEquals(expectedIn[2], nodes[2].getDegree(EdgeDirection.IN));
@@ -423,12 +405,9 @@ public class VertexTest extends InstanceTest {
 			expectedIn[end]--;
 			expectedOut[start]--;
 			g.deleteEdge(e);
-			assertEquals(expectedInOut[0],
-					nodes[0].getDegree(EdgeDirection.INOUT));
-			assertEquals(expectedInOut[1],
-					nodes[1].getDegree(EdgeDirection.INOUT));
-			assertEquals(expectedInOut[2],
-					nodes[2].getDegree(EdgeDirection.INOUT));
+			assertEquals(expectedInOut[0], nodes[0].getDegree(EdgeDirection.INOUT));
+			assertEquals(expectedInOut[1], nodes[1].getDegree(EdgeDirection.INOUT));
+			assertEquals(expectedInOut[2], nodes[2].getDegree(EdgeDirection.INOUT));
 			assertEquals(expectedIn[0], nodes[0].getDegree(EdgeDirection.IN));
 			assertEquals(expectedIn[1], nodes[1].getDegree(EdgeDirection.IN));
 			assertEquals(expectedIn[2], nodes[2].getDegree(EdgeDirection.IN));
@@ -443,7 +422,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -454,7 +433,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -478,7 +457,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses. After that it deletes
 	 * the edges and checks the degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -498,32 +477,26 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
 				expectedSubLink[end]++;
 			}
-			testVertexForEdgeClass(nodes[0], expectedLink[0],
-					expectedSubLink[0], expectedLinkBack[0]);
-			testVertexForEdgeClass(nodes[1], expectedLink[1],
-					expectedSubLink[1], expectedLinkBack[1]);
-			testVertexForEdgeClass(nodes[2], expectedLink[2],
-					expectedSubLink[2], expectedLinkBack[2]);
+			testVertexForEdgeClass(nodes[0], expectedLink[0], expectedSubLink[0], expectedLinkBack[0]);
+			testVertexForEdgeClass(nodes[1], expectedLink[1], expectedSubLink[1], expectedLinkBack[1]);
+			testVertexForEdgeClass(nodes[2], expectedLink[2], expectedSubLink[2], expectedLinkBack[2]);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<>();
@@ -547,18 +520,15 @@ public class VertexTest extends InstanceTest {
 				expectedLink[end]--;
 			}
 			g.deleteEdge(e);
-			testVertexForEdgeClass(nodes[0], expectedLink[0],
-					expectedSubLink[0], expectedLinkBack[0]);
-			testVertexForEdgeClass(nodes[1], expectedLink[1],
-					expectedSubLink[1], expectedLinkBack[1]);
-			testVertexForEdgeClass(nodes[2], expectedLink[2],
-					expectedSubLink[2], expectedLinkBack[2]);
+			testVertexForEdgeClass(nodes[0], expectedLink[0], expectedSubLink[0], expectedLinkBack[0]);
+			testVertexForEdgeClass(nodes[1], expectedLink[1], expectedSubLink[1], expectedLinkBack[1]);
+			testVertexForEdgeClass(nodes[2], expectedLink[2], expectedSubLink[2], expectedLinkBack[2]);
 		}
 	}
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -568,8 +538,7 @@ public class VertexTest extends InstanceTest {
 	 * @param expectedLinkBack
 	 *            the expected number of incident LinkBacks
 	 */
-	private void testVertexForEdgeClass(Vertex forNode, int expectedLink,
-			int expectedSubLink, int expectedLinkBack) {
+	private void testVertexForEdgeClass(Vertex forNode, int expectedLink, int expectedSubLink, int expectedLinkBack) {
 		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink, forNode.getDegree(ecs[0]));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1]));
@@ -578,7 +547,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 * 
+	 *
 	 * @return {Link, SubLink, LinkBack}
 	 */
 	private EdgeClass[] getEdgeClasses() {
@@ -602,7 +571,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -615,7 +584,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -647,7 +616,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes. After that it deletes the
 	 * edges and checks the degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -667,21 +636,18 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
@@ -736,7 +702,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -747,7 +713,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -769,7 +735,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -786,7 +752,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses and their subclasses.
 	 * After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -806,32 +772,26 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
 				expectedSubLink[end]++;
 			}
-			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
-					expectedSubLink[0], expectedLinkBack[0]);
-			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
-					expectedSubLink[1], expectedLinkBack[1]);
-			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2],
-					expectedSubLink[2], expectedLinkBack[2]);
+			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0], expectedSubLink[0], expectedLinkBack[0]);
+			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1], expectedSubLink[1], expectedLinkBack[1]);
+			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2], expectedSubLink[2], expectedLinkBack[2]);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<>();
@@ -855,19 +815,16 @@ public class VertexTest extends InstanceTest {
 				expectedLink[end]--;
 			}
 			g.deleteEdge(e);
-			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
-					expectedSubLink[0], expectedLinkBack[0]);
-			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
-					expectedSubLink[1], expectedLinkBack[1]);
-			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2],
-					expectedSubLink[2], expectedLinkBack[2]);
+			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0], expectedSubLink[0], expectedLinkBack[0]);
+			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1], expectedSubLink[1], expectedLinkBack[1]);
+			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2], expectedSubLink[2], expectedLinkBack[2]);
 		}
 	}
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -877,8 +834,8 @@ public class VertexTest extends InstanceTest {
 	 * @param expectedLinkBack
 	 *            the expected number of incident LinkBacks @
 	 */
-	private void testVertexForEdgeClassSubClass(Vertex forNode,
-			int expectedLink, int expectedSubLink, int expectedLinkBack) {
+	private void testVertexForEdgeClassSubClass(Vertex forNode, int expectedLink, int expectedSubLink,
+			int expectedLinkBack) {
 		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink, forNode.getDegree(ecs[0]));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1]));
@@ -891,7 +848,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -902,7 +859,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -923,7 +880,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -940,7 +897,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and Subclasses. After that
 	 * it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -960,32 +917,26 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
 				expectedSubLink[end]++;
 			}
-			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
-					expectedSubLink[0], expectedLinkBack[0]);
-			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
-					expectedSubLink[1], expectedLinkBack[1]);
-			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2],
-					expectedSubLink[2], expectedLinkBack[2]);
+			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0], expectedSubLink[0], expectedLinkBack[0]);
+			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1], expectedSubLink[1], expectedLinkBack[1]);
+			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2], expectedSubLink[2], expectedLinkBack[2]);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<>();
@@ -1009,19 +960,16 @@ public class VertexTest extends InstanceTest {
 				expectedLink[end]--;
 			}
 			g.deleteEdge(e);
-			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
-					expectedSubLink[0], expectedLinkBack[0]);
-			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
-					expectedSubLink[1], expectedLinkBack[1]);
-			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2],
-					expectedSubLink[2], expectedLinkBack[2]);
+			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0], expectedSubLink[0], expectedLinkBack[0]);
+			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1], expectedSubLink[1], expectedLinkBack[1]);
+			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2], expectedSubLink[2], expectedLinkBack[2]);
 		}
 	}
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the Classes
 	 * extending Edge and SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1031,8 +979,8 @@ public class VertexTest extends InstanceTest {
 	 * @param expectedLinkBack
 	 *            the expected number of incident LinkBacks @
 	 */
-	private void testVertexForClassSubClass(Vertex forNode, int expectedLink,
-			int expectedSubLink, int expectedLinkBack) {
+	private void testVertexForClassSubClass(Vertex forNode, int expectedLink, int expectedSubLink,
+			int expectedLinkBack) {
 
 		assertEquals(expectedLink, forNode.getDegree(Link.EC));
 		assertEquals(expectedSubLink, forNode.getDegree(SubLink.EC));
@@ -1044,7 +992,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1057,7 +1005,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1071,20 +1019,16 @@ public class VertexTest extends InstanceTest {
 		g.createSubLink(dsubn, supern);
 		g.createLinkBack(supern, dsubn);
 		g.createLinkBack(dsubn, subn);
-		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
-				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
-				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.OUT);
 		testVertexForEdgeClassEdgeDirection(subn, 1, 0, 1, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(subn, 0, 0, 1, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(subn, 1, 0, 0, EdgeDirection.OUT);
 		testVertexForEdgeClassEdgeDirection(dsubn, 3, 1, 2, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(dsubn, 1, 0, 1, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(dsubn, 2, 1, 1, EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 1,
-				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 1, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.OUT);
 	}
@@ -1092,7 +1036,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1105,8 +1049,7 @@ public class VertexTest extends InstanceTest {
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 0, EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1,
-				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.INOUT);
 	}
 
 	/**
@@ -1114,7 +1057,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses and their
 	 * EdgeDirections. After that it deletes the edges and checks the degrees
 	 * again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1137,56 +1080,44 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
-			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0],
-					expectedSubLinkIn[0], expectedLinkBackIn[0],
-					EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkOut[0],
-					expectedSubLinkOut[0], expectedLinkBackOut[0],
-					EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0]
-					+ expectedLinkOut[0], expectedSubLinkIn[0]
-					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
-					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1],
-					expectedSubLinkIn[1], expectedLinkBackIn[1],
-					EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkOut[1],
-					expectedSubLinkOut[1], expectedLinkBackOut[1],
-					EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1]
-					+ expectedLinkOut[1], expectedSubLinkIn[1]
-					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
-					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2],
-					expectedSubLinkIn[2], expectedLinkBackIn[2],
-					EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkOut[2],
-					expectedSubLinkOut[2], expectedLinkBackOut[2],
-					EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2]
-					+ expectedLinkOut[2], expectedSubLinkIn[2]
-					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
-					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0],
+					expectedLinkBackIn[0], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0],
+					expectedLinkBackOut[0], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1],
+					expectedLinkBackIn[1], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1],
+					expectedLinkBackOut[1], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2],
+					expectedLinkBackIn[2], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2],
+					expectedLinkBackOut[2], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<>();
@@ -1210,43 +1141,34 @@ public class VertexTest extends InstanceTest {
 				expectedLinkIn[end]--;
 			}
 			g.deleteEdge(e);
-			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0],
-					expectedSubLinkIn[0], expectedLinkBackIn[0],
-					EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkOut[0],
-					expectedSubLinkOut[0], expectedLinkBackOut[0],
-					EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0]
-					+ expectedLinkOut[0], expectedSubLinkIn[0]
-					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
-					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1],
-					expectedSubLinkIn[1], expectedLinkBackIn[1],
-					EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkOut[1],
-					expectedSubLinkOut[1], expectedLinkBackOut[1],
-					EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1]
-					+ expectedLinkOut[1], expectedSubLinkIn[1]
-					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
-					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2],
-					expectedSubLinkIn[2], expectedLinkBackIn[2],
-					EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkOut[2],
-					expectedSubLinkOut[2], expectedLinkBackOut[2],
-					EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2]
-					+ expectedLinkOut[2], expectedSubLinkIn[2]
-					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
-					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0],
+					expectedLinkBackIn[0], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0],
+					expectedLinkBackOut[0], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1],
+					expectedLinkBackIn[1], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1],
+					expectedLinkBackOut[1], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirection(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2],
+					expectedLinkBackIn[2], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2],
+					expectedLinkBackOut[2], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirection(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
 		}
 	}
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * the EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1258,9 +1180,8 @@ public class VertexTest extends InstanceTest {
 	 * @param direction
 	 *            the direction of the incidences @
 	 */
-	private void testVertexForEdgeClassEdgeDirection(Vertex forNode,
-			int expectedLink, int expectedSubLink, int expectedLinkBack,
-			EdgeDirection direction) {
+	private void testVertexForEdgeClassEdgeDirection(Vertex forNode, int expectedLink, int expectedSubLink,
+			int expectedLinkBack, EdgeDirection direction) {
 		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink, forNode.getDegree(ecs[0], direction));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction));
@@ -1273,7 +1194,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1286,7 +1207,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1300,11 +1221,9 @@ public class VertexTest extends InstanceTest {
 		g.createSubLink(dsubn, supern);
 		g.createLinkBack(supern, dsubn);
 		g.createLinkBack(dsubn, subn);
-		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
-				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
-		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
-				EdgeDirection.OUT);
+		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.OUT);
 		testVertexForClassEdgeDirection(subn, 1, 0, 1, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(subn, 0, 0, 1, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(subn, 1, 0, 0, EdgeDirection.OUT);
@@ -1319,7 +1238,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1339,7 +1258,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and their EdgeDirections.
 	 * After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1362,56 +1281,44 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
-			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0],
-					expectedSubLinkIn[0], expectedLinkBackIn[0],
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
-			testVertexForClassEdgeDirection(nodes[0], expectedLinkOut[0],
-					expectedSubLinkOut[0], expectedLinkBackOut[0],
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0], expectedLinkBackOut[0],
 					EdgeDirection.OUT);
-			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0]
-					+ expectedLinkOut[0], expectedSubLinkIn[0]
-					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
-					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1],
-					expectedSubLinkIn[1], expectedLinkBackIn[1],
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1], expectedLinkBackIn[1],
 					EdgeDirection.IN);
-			testVertexForClassEdgeDirection(nodes[1], expectedLinkOut[1],
-					expectedSubLinkOut[1], expectedLinkBackOut[1],
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1], expectedLinkBackOut[1],
 					EdgeDirection.OUT);
-			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1]
-					+ expectedLinkOut[1], expectedSubLinkIn[1]
-					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
-					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2],
-					expectedSubLinkIn[2], expectedLinkBackIn[2],
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2], expectedLinkBackIn[2],
 					EdgeDirection.IN);
-			testVertexForClassEdgeDirection(nodes[2], expectedLinkOut[2],
-					expectedSubLinkOut[2], expectedLinkBackOut[2],
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2], expectedLinkBackOut[2],
 					EdgeDirection.OUT);
-			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2]
-					+ expectedLinkOut[2], expectedSubLinkIn[2]
-					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
-					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<>();
@@ -1435,43 +1342,34 @@ public class VertexTest extends InstanceTest {
 				expectedLinkIn[end]--;
 			}
 			g.deleteEdge(e);
-			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0],
-					expectedSubLinkIn[0], expectedLinkBackIn[0],
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
-			testVertexForClassEdgeDirection(nodes[0], expectedLinkOut[0],
-					expectedSubLinkOut[0], expectedLinkBackOut[0],
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0], expectedLinkBackOut[0],
 					EdgeDirection.OUT);
-			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0]
-					+ expectedLinkOut[0], expectedSubLinkIn[0]
-					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
-					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1],
-					expectedSubLinkIn[1], expectedLinkBackIn[1],
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1], expectedLinkBackIn[1],
 					EdgeDirection.IN);
-			testVertexForClassEdgeDirection(nodes[1], expectedLinkOut[1],
-					expectedSubLinkOut[1], expectedLinkBackOut[1],
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1], expectedLinkBackOut[1],
 					EdgeDirection.OUT);
-			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1]
-					+ expectedLinkOut[1], expectedSubLinkIn[1]
-					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
-					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2],
-					expectedSubLinkIn[2], expectedLinkBackIn[2],
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2], expectedLinkBackIn[2],
 					EdgeDirection.IN);
-			testVertexForClassEdgeDirection(nodes[2], expectedLinkOut[2],
-					expectedSubLinkOut[2], expectedLinkBackOut[2],
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2], expectedLinkBackOut[2],
 					EdgeDirection.OUT);
-			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2]
-					+ expectedLinkOut[2], expectedSubLinkIn[2]
-					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
-					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
 		}
 	}
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class and the
 	 * EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1483,13 +1381,11 @@ public class VertexTest extends InstanceTest {
 	 * @param direction
 	 *            the direction of the incidences
 	 */
-	private void testVertexForClassEdgeDirection(Vertex forNode,
-			int expectedLink, int expectedSubLink, int expectedLinkBack,
-			EdgeDirection direction) {
+	private void testVertexForClassEdgeDirection(Vertex forNode, int expectedLink, int expectedSubLink,
+			int expectedLinkBack, EdgeDirection direction) {
 		assertEquals(expectedLink, forNode.getDegree(Link.EC, direction));
 		assertEquals(expectedSubLink, forNode.getDegree(SubLink.EC, direction));
-		assertEquals(expectedLinkBack,
-				forNode.getDegree(LinkBack.EC, direction));
+		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.EC, direction));
 	}
 
 	// tests of the method getDegree(EdgeClass ec, EdgeDirection orientation,
@@ -1498,22 +1394,20 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirectionBoolean0() {
 		Vertex v = g.createDoubleSubNode();
-		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0,
-				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0,
-				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.OUT);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1527,36 +1421,24 @@ public class VertexTest extends InstanceTest {
 		g.createSubLink(dsubn, supern);
 		g.createLinkBack(supern, dsubn);
 		g.createLinkBack(dsubn, subn);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
-				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(subn, 1, 0, 1,
-				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(subn, 0, 0, 1,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(subn, 1, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 3, 1, 2,
-				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 1,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 2, 1, 1,
-				EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 2, 1, 1,
-				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 2, 1, 0,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
-				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0, EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(subn, 1, 0, 1, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(subn, 0, 0, 1, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(subn, 1, 0, 0, EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 3, 1, 2, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 1, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 2, 1, 1, EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 2, 1, 1, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 2, 1, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1, EdgeDirection.OUT);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1564,24 +1446,18 @@ public class VertexTest extends InstanceTest {
 		SuperNode dsubn = g.createSuperNode();
 		AbstractSuperNode supern = g.createSubNode();
 		g.createLinkBack(dsubn, supern);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
-				EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
-				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
-				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 1, EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 1, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 0, EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1, EdgeDirection.INOUT);
 
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1589,18 +1465,12 @@ public class VertexTest extends InstanceTest {
 		SuperNode dsubn = g.createSuperNode();
 		AbstractSuperNode supern = g.createSubNode();
 		g.createLink(supern, dsubn);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 0,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 0,
-				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 0,
-				EdgeDirection.IN);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 1, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirectionBoolean(supern, 1, 0, 0,
-				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0, EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 0, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 1, 0, 0, EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 1, 0, 0, EdgeDirection.INOUT);
 	}
 
 	/**
@@ -1608,7 +1478,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses, their EdgeDirections
 	 * and their SubClasses. After that it deletes the edges and checks the
 	 * degrees again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1631,58 +1501,43 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkIn[0], expectedSubLinkIn[0],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0],
 					expectedLinkBackIn[0], EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkOut[0], expectedSubLinkOut[0],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0],
 					expectedLinkBackOut[0], EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkIn[0] + expectedLinkOut[0],
-					expectedSubLinkIn[0] + expectedSubLinkOut[0],
-					expectedLinkBackIn[0] + expectedLinkBackOut[0],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
 					EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkIn[1], expectedSubLinkIn[1],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1],
 					expectedLinkBackIn[1], EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkOut[1], expectedSubLinkOut[1],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1],
 					expectedLinkBackOut[1], EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkIn[1] + expectedLinkOut[1],
-					expectedSubLinkIn[1] + expectedSubLinkOut[1],
-					expectedLinkBackIn[1] + expectedLinkBackOut[1],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
 					EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkIn[2], expectedSubLinkIn[2],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2],
 					expectedLinkBackIn[2], EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkOut[2], expectedSubLinkOut[2],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2],
 					expectedLinkBackOut[2], EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkIn[2] + expectedLinkOut[2],
-					expectedSubLinkIn[2] + expectedSubLinkOut[2],
-					expectedLinkBackIn[2] + expectedLinkBackOut[2],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
 					EdgeDirection.INOUT);
 		}
 		// delete the edges
@@ -1707,38 +1562,26 @@ public class VertexTest extends InstanceTest {
 				expectedLinkIn[end]--;
 			}
 			g.deleteEdge(e);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkIn[0], expectedSubLinkIn[0],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0],
 					expectedLinkBackIn[0], EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkOut[0], expectedSubLinkOut[0],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0],
 					expectedLinkBackOut[0], EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkIn[0] + expectedLinkOut[0],
-					expectedSubLinkIn[0] + expectedSubLinkOut[0],
-					expectedLinkBackIn[0] + expectedLinkBackOut[0],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
 					EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkIn[1], expectedSubLinkIn[1],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1],
 					expectedLinkBackIn[1], EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkOut[1], expectedSubLinkOut[1],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1],
 					expectedLinkBackOut[1], EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkIn[1] + expectedLinkOut[1],
-					expectedSubLinkIn[1] + expectedSubLinkOut[1],
-					expectedLinkBackIn[1] + expectedLinkBackOut[1],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
 					EdgeDirection.INOUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkIn[2], expectedSubLinkIn[2],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2],
 					expectedLinkBackIn[2], EdgeDirection.IN);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkOut[2], expectedSubLinkOut[2],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2],
 					expectedLinkBackOut[2], EdgeDirection.OUT);
-			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkIn[2] + expectedLinkOut[2],
-					expectedSubLinkIn[2] + expectedSubLinkOut[2],
-					expectedLinkBackIn[2] + expectedLinkBackOut[2],
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
 					EdgeDirection.INOUT);
 		}
 	}
@@ -1746,7 +1589,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1758,9 +1601,8 @@ public class VertexTest extends InstanceTest {
 	 * @param direction
 	 *            the direction of the incidences
 	 */
-	private void testVertexForEdgeClassEdgeDirectionBoolean(Vertex forNode,
-			int expectedLink, int expectedSubLink, int expectedLinkBack,
-			EdgeDirection direction) {
+	private void testVertexForEdgeClassEdgeDirectionBoolean(Vertex forNode, int expectedLink, int expectedSubLink,
+			int expectedLinkBack, EdgeDirection direction) {
 		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink, forNode.getDegree(ecs[0], direction));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction));
@@ -1773,7 +1615,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1786,7 +1628,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1800,33 +1642,24 @@ public class VertexTest extends InstanceTest {
 		g.createSubLink(dsubn, supern);
 		g.createLinkBack(supern, dsubn);
 		g.createLinkBack(dsubn, subn);
-		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
-				EdgeDirection.INOUT);
-		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
-				EdgeDirection.IN);
-		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForClassEdgeDirectionBoolean(subn, 1, 0, 1,
-				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0, EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(subn, 1, 0, 1, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirectionBoolean(subn, 0, 0, 1, EdgeDirection.IN);
 		testVertexForClassEdgeDirectionBoolean(subn, 1, 0, 0, EdgeDirection.OUT);
-		testVertexForClassEdgeDirectionBoolean(dsubn, 3, 1, 2,
-				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 3, 1, 2, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 1, EdgeDirection.IN);
-		testVertexForClassEdgeDirectionBoolean(dsubn, 2, 1, 1,
-				EdgeDirection.OUT);
-		testVertexForClassEdgeDirectionBoolean(supern, 2, 1, 1,
-				EdgeDirection.INOUT);
-		testVertexForClassEdgeDirectionBoolean(supern, 2, 1, 0,
-				EdgeDirection.IN);
-		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
-				EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 2, 1, 1, EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 2, 1, 1, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 2, 1, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1, EdgeDirection.OUT);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1835,21 +1668,16 @@ public class VertexTest extends InstanceTest {
 		AbstractSuperNode supern = g.createSubNode();
 		g.createLinkBack(dsubn, supern);
 		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 0, EdgeDirection.IN);
-		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
-				EdgeDirection.OUT);
-		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
-				EdgeDirection.INOUT);
-		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
-				EdgeDirection.IN);
-		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
-				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 1, EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 1, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 0, EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1, EdgeDirection.INOUT);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1858,16 +1686,11 @@ public class VertexTest extends InstanceTest {
 		AbstractSuperNode supern = g.createSubNode();
 		g.createLink(supern, dsubn);
 		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 0, EdgeDirection.IN);
-		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 0,
-				EdgeDirection.INOUT);
-		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 0,
-				EdgeDirection.IN);
-		testVertexForClassEdgeDirectionBoolean(supern, 1, 0, 0,
-				EdgeDirection.OUT);
-		testVertexForClassEdgeDirectionBoolean(supern, 1, 0, 0,
-				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 0, EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 0, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(supern, 1, 0, 0, EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 1, 0, 0, EdgeDirection.INOUT);
 	}
 
 	/**
@@ -1875,7 +1698,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Classes, their EdgeDirections and
 	 * their SubClasses. After that it deletes the edges and checks the degrees
 	 * again.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -1898,56 +1721,44 @@ public class VertexTest extends InstanceTest {
 			int end = rand.nextInt(2) + 1;
 			if (edge == 0) {
 				// create a Link
-				g.createLink((AbstractSuperNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createLink((AbstractSuperNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				g.createLinkBack((SuperNode) nodes[end],
-						(AbstractSuperNode) nodes[start]);
+				g.createLinkBack((SuperNode) nodes[end], (AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				g.createSubLink((DoubleSubNode) nodes[start],
-						(SuperNode) nodes[end]);
+				g.createSubLink((DoubleSubNode) nodes[start], (SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
-			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0],
-					expectedSubLinkIn[0], expectedLinkBackIn[0],
-					EdgeDirection.IN);
-			testVertexForClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkOut[0], expectedSubLinkOut[0],
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0],
+					expectedLinkBackIn[0], EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0],
 					expectedLinkBackOut[0], EdgeDirection.OUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0]
-					+ expectedLinkOut[0], expectedSubLinkIn[0]
-					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
-					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1],
-					expectedSubLinkIn[1], expectedLinkBackIn[1],
-					EdgeDirection.IN);
-			testVertexForClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkOut[1], expectedSubLinkOut[1],
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1],
+					expectedLinkBackIn[1], EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1],
 					expectedLinkBackOut[1], EdgeDirection.OUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1]
-					+ expectedLinkOut[1], expectedSubLinkIn[1]
-					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
-					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2],
-					expectedSubLinkIn[2], expectedLinkBackIn[2],
-					EdgeDirection.IN);
-			testVertexForClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkOut[2], expectedSubLinkOut[2],
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2],
+					expectedLinkBackIn[2], EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2],
 					expectedLinkBackOut[2], EdgeDirection.OUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2]
-					+ expectedLinkOut[2], expectedSubLinkIn[2]
-					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
-					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<>();
@@ -1971,43 +1782,34 @@ public class VertexTest extends InstanceTest {
 				expectedLinkIn[end]--;
 			}
 			g.deleteEdge(e);
-			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0],
-					expectedSubLinkIn[0], expectedLinkBackIn[0],
-					EdgeDirection.IN);
-			testVertexForClassEdgeDirectionBoolean(nodes[0],
-					expectedLinkOut[0], expectedSubLinkOut[0],
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0], expectedSubLinkIn[0],
+					expectedLinkBackIn[0], EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkOut[0], expectedSubLinkOut[0],
 					expectedLinkBackOut[0], EdgeDirection.OUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0]
-					+ expectedLinkOut[0], expectedSubLinkIn[0]
-					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
-					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1],
-					expectedSubLinkIn[1], expectedLinkBackIn[1],
-					EdgeDirection.IN);
-			testVertexForClassEdgeDirectionBoolean(nodes[1],
-					expectedLinkOut[1], expectedSubLinkOut[1],
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0], expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1], expectedSubLinkIn[1],
+					expectedLinkBackIn[1], EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkOut[1], expectedSubLinkOut[1],
 					expectedLinkBackOut[1], EdgeDirection.OUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1]
-					+ expectedLinkOut[1], expectedSubLinkIn[1]
-					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
-					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2],
-					expectedSubLinkIn[2], expectedLinkBackIn[2],
-					EdgeDirection.IN);
-			testVertexForClassEdgeDirectionBoolean(nodes[2],
-					expectedLinkOut[2], expectedSubLinkOut[2],
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1], expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2], expectedSubLinkIn[2],
+					expectedLinkBackIn[2], EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkOut[2], expectedSubLinkOut[2],
 					expectedLinkBackOut[2], EdgeDirection.OUT);
-			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2]
-					+ expectedLinkOut[2], expectedSubLinkIn[2]
-					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
-					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2], expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
 		}
 	}
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -2019,20 +1821,18 @@ public class VertexTest extends InstanceTest {
 	 * @param direction
 	 *            the direction of the incidences
 	 */
-	private void testVertexForClassEdgeDirectionBoolean(Vertex forNode,
-			int expectedLink, int expectedSubLink, int expectedLinkBack,
-			EdgeDirection direction) {
+	private void testVertexForClassEdgeDirectionBoolean(Vertex forNode, int expectedLink, int expectedSubLink,
+			int expectedLinkBack, EdgeDirection direction) {
 		assertEquals(expectedLink, forNode.getDegree(Link.EC, direction));
 		assertEquals(expectedSubLink, forNode.getDegree(SubLink.EC, direction));
-		assertEquals(expectedLinkBack,
-				forNode.getDegree(LinkBack.EC, direction));
+		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.EC, direction));
 	}
 
 	// tests of the method getPrevVertex();
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2043,7 +1843,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2062,7 +1862,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in an random graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2076,8 +1876,7 @@ public class VertexTest extends InstanceTest {
 			}
 			// Check correctness
 			for (int j = vertices.length - 1; j >= 0; j--) {
-				assertEquals(j == 0 ? null : vertices[j - 1],
-						vertices[j].getPrevVertex());
+				assertEquals(j == 0 ? null : vertices[j - 1], vertices[j].getPrevVertex());
 			}
 		}
 	}
@@ -2086,12 +1885,10 @@ public class VertexTest extends InstanceTest {
 		VertexTestGraph graph = null;
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.STANDARD);
+			graph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
+			fail("Implementation " + implementationType + " not yet supported by this test.");
 		}
 		return graph;
 	}
@@ -2101,7 +1898,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2112,7 +1909,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2131,7 +1928,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in an random graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2145,8 +1942,7 @@ public class VertexTest extends InstanceTest {
 			}
 			// Check correctness
 			for (int j = 0; j < vertices.length; j++) {
-				assertEquals(j == (vertices.length - 1) ? null
-						: vertices[j + 1], vertices[j].getNextVertex());
+				assertEquals(j == (vertices.length - 1) ? null : vertices[j + 1], vertices[j].getNextVertex());
 			}
 		}
 	}
@@ -2159,7 +1955,7 @@ public class VertexTest extends InstanceTest {
 	 * ret[1]=SubNode<br>
 	 * ret[2]=SuperNode<br>
 	 * ret[3]=DoubleSubNode
-	 * 
+	 *
 	 * @return an array <code>ret</code> of all VertexClasses
 	 */
 	private VertexClass[] getVertexClasses() {
@@ -2181,7 +1977,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2197,7 +1993,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2214,7 +2010,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2231,7 +2027,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2283,7 +2079,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2377,14 +2173,10 @@ public class VertexTest extends InstanceTest {
 			}
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
-				assertEquals(nextAbstractSuperNode[j],
-						vertices[j].getNextVertex(vClasses[0]));
-				assertEquals(nextSubNode[j],
-						vertices[j].getNextVertex(vClasses[1]));
-				assertEquals(nextSuperNode[j],
-						vertices[j].getNextVertex(vClasses[2]));
-				assertEquals(nextDoubleSubNode[j],
-						vertices[j].getNextVertex(vClasses[3]));
+				assertEquals(nextAbstractSuperNode[j], vertices[j].getNextVertex(vClasses[0]));
+				assertEquals(nextSubNode[j], vertices[j].getNextVertex(vClasses[1]));
+				assertEquals(nextSuperNode[j], vertices[j].getNextVertex(vClasses[2]));
+				assertEquals(nextDoubleSubNode[j], vertices[j].getNextVertex(vClasses[3]));
 			}
 		}
 	}
@@ -2394,7 +2186,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2409,7 +2201,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2425,7 +2217,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2441,7 +2233,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2492,7 +2284,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2584,21 +2376,17 @@ public class VertexTest extends InstanceTest {
 			}
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
-				assertEquals(nextAbstractSuperNode[j],
-						vertices[j].getNextVertex(AbstractSuperNode.VC));
-				assertEquals(nextSubNode[j],
-						vertices[j].getNextVertex(SubNode.VC));
-				assertEquals(nextSuperNode[j],
-						vertices[j].getNextVertex(SuperNode.VC));
-				assertEquals(nextDoubleSubNode[j],
-						vertices[j].getNextVertex(DoubleSubNode.VC));
+				assertEquals(nextAbstractSuperNode[j], vertices[j].getNextVertex(AbstractSuperNode.VC));
+				assertEquals(nextSubNode[j], vertices[j].getNextVertex(SubNode.VC));
+				assertEquals(nextSuperNode[j], vertices[j].getNextVertex(SuperNode.VC));
+				assertEquals(nextDoubleSubNode[j], vertices[j].getNextVertex(DoubleSubNode.VC));
 			}
 		}
 	}
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2724,21 +2512,17 @@ public class VertexTest extends InstanceTest {
 			}
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
-				assertEquals(nextAbstractSuperNodeFalse[j],
-						vertices[j].getNextVertex(vClasses[0]));
-				assertEquals(nextSubNodeFalse[j],
-						vertices[j].getNextVertex(vClasses[1]));
-				assertEquals(nextSuperNodeFalse[j],
-						vertices[j].getNextVertex(vClasses[2]));
-				assertEquals(nextDoubleSubNodeFalse[j],
-						vertices[j].getNextVertex(vClasses[3]));
+				assertEquals(nextAbstractSuperNodeFalse[j], vertices[j].getNextVertex(vClasses[0]));
+				assertEquals(nextSubNodeFalse[j], vertices[j].getNextVertex(vClasses[1]));
+				assertEquals(nextSuperNodeFalse[j], vertices[j].getNextVertex(vClasses[2]));
+				assertEquals(nextDoubleSubNodeFalse[j], vertices[j].getNextVertex(vClasses[3]));
 			}
 		}
 	}
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2863,14 +2647,10 @@ public class VertexTest extends InstanceTest {
 			}
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
-				assertEquals(nextAbstractSuperNodeFalse[j],
-						vertices[j].getNextVertex(AbstractSuperNode.VC));
-				assertEquals(nextSubNodeFalse[j],
-						vertices[j].getNextVertex(SubNode.VC));
-				assertEquals(nextSuperNodeFalse[j],
-						vertices[j].getNextVertex(SuperNode.VC));
-				assertEquals(nextDoubleSubNodeFalse[j],
-						vertices[j].getNextVertex(DoubleSubNode.VC));
+				assertEquals(nextAbstractSuperNodeFalse[j], vertices[j].getNextVertex(AbstractSuperNode.VC));
+				assertEquals(nextSubNodeFalse[j], vertices[j].getNextVertex(SubNode.VC));
+				assertEquals(nextSuperNodeFalse[j], vertices[j].getNextVertex(SuperNode.VC));
+				assertEquals(nextDoubleSubNodeFalse[j], vertices[j].getNextVertex(DoubleSubNode.VC));
 			}
 		}
 	}
@@ -2885,7 +2665,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2898,7 +2678,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2906,10 +2686,8 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = g.createDoubleSubNode();
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(EdgeDirection.INOUT));
-		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(EdgeDirection.IN));
+		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(EdgeDirection.INOUT));
+		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(EdgeDirection.OUT));
 		assertEquals(e, v0.getFirstIncidence(EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(EdgeDirection.IN));
@@ -2918,7 +2696,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges with the same direction.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2927,10 +2705,8 @@ public class VertexTest extends InstanceTest {
 		Vertex v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(EdgeDirection.OUT));
 		assertEquals(e1, v0.getFirstIncidence(EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(EdgeDirection.IN));
@@ -2939,7 +2715,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges with different direction.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2948,20 +2724,17 @@ public class VertexTest extends InstanceTest {
 		Vertex v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(EdgeDirection.IN));
 		assertEquals(e2, v1.getFirstIncidence(EdgeDirection.OUT));
 		assertEquals(e1, v0.getFirstIncidence(EdgeDirection.INOUT));
-		assertEquals(e2.getReversedEdge(),
-				v0.getFirstIncidence(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v0.getFirstIncidence(EdgeDirection.IN));
 		assertEquals(e1, v0.getFirstIncidence(EdgeDirection.OUT));
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -2969,22 +2742,20 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createDoubleSubNode();
 		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 		assertEquals(e1, v0.getFirstIncidence(EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v0.getFirstIncidence(EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v0.getFirstIncidence(EdgeDirection.IN));
 		assertEquals(e1, v0.getFirstIncidence(EdgeDirection.OUT));
 	}
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeDirection5() {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstInEdge = new Edge[3];
 			Edge[] firstOutEdge = new Edge[3];
 			Edge[] firstInOutEdge = new Edge[3];
@@ -2994,8 +2765,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					if (firstOutEdge[start] == null) {
 						firstOutEdge[start] = e0;
 					}
@@ -3010,8 +2780,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					if (firstOutEdge[end] == null) {
 						firstOutEdge[end] = e1;
 					}
@@ -3026,8 +2795,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					if (firstOutEdge[1] == null) {
 						firstOutEdge[1] = e2;
 					}
@@ -3043,24 +2811,15 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
-			assertEquals(firstInEdge[0],
-					vertices[0].getFirstIncidence(EdgeDirection.IN));
-			assertEquals(firstInEdge[1],
-					vertices[1].getFirstIncidence(EdgeDirection.IN));
-			assertEquals(firstInEdge[2],
-					vertices[2].getFirstIncidence(EdgeDirection.IN));
-			assertEquals(firstOutEdge[0],
-					vertices[0].getFirstIncidence(EdgeDirection.OUT));
-			assertEquals(firstOutEdge[1],
-					vertices[1].getFirstIncidence(EdgeDirection.OUT));
-			assertEquals(firstOutEdge[2],
-					vertices[2].getFirstIncidence(EdgeDirection.OUT));
-			assertEquals(firstInOutEdge[0],
-					vertices[0].getFirstIncidence(EdgeDirection.INOUT));
-			assertEquals(firstInOutEdge[1],
-					vertices[1].getFirstIncidence(EdgeDirection.INOUT));
-			assertEquals(firstInOutEdge[2],
-					vertices[2].getFirstIncidence(EdgeDirection.INOUT));
+			assertEquals(firstInEdge[0], vertices[0].getFirstIncidence(EdgeDirection.IN));
+			assertEquals(firstInEdge[1], vertices[1].getFirstIncidence(EdgeDirection.IN));
+			assertEquals(firstInEdge[2], vertices[2].getFirstIncidence(EdgeDirection.IN));
+			assertEquals(firstOutEdge[0], vertices[0].getFirstIncidence(EdgeDirection.OUT));
+			assertEquals(firstOutEdge[1], vertices[1].getFirstIncidence(EdgeDirection.OUT));
+			assertEquals(firstOutEdge[2], vertices[2].getFirstIncidence(EdgeDirection.OUT));
+			assertEquals(firstInOutEdge[0], vertices[0].getFirstIncidence(EdgeDirection.INOUT));
+			assertEquals(firstInOutEdge[1], vertices[1].getFirstIncidence(EdgeDirection.INOUT));
+			assertEquals(firstInOutEdge[2], vertices[2].getFirstIncidence(EdgeDirection.INOUT));
 		}
 	}
 
@@ -3068,7 +2827,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3082,7 +2841,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3101,7 +2860,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3120,7 +2879,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3140,7 +2899,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3155,7 +2914,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3163,8 +2922,7 @@ public class VertexTest extends InstanceTest {
 		EdgeClass[] eclasses = getEdgeClasses();
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLink = new Edge[3];
 			Edge[] firstLinkBack = new Edge[3];
 			Edge[] firstSubLink = new Edge[3];
@@ -3174,8 +2932,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					if (firstLink[start] == null) {
 						firstLink[start] = e0;
 					}
@@ -3184,8 +2941,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					if (firstLinkBack[end] == null) {
 						firstLinkBack[end] = e1;
 					}
@@ -3194,8 +2950,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					if (firstLink[1] == null) {
 						firstLink[1] = e2;
 					}
@@ -3211,24 +2966,15 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
-			assertEquals(firstLink[0],
-					vertices[0].getFirstIncidence(eclasses[0]));
-			assertEquals(firstLink[1],
-					vertices[1].getFirstIncidence(eclasses[0]));
-			assertEquals(firstLink[2],
-					vertices[2].getFirstIncidence(eclasses[0]));
-			assertEquals(firstLinkBack[0],
-					vertices[0].getFirstIncidence(eclasses[2]));
-			assertEquals(firstLinkBack[1],
-					vertices[1].getFirstIncidence(eclasses[2]));
-			assertEquals(firstLinkBack[2],
-					vertices[2].getFirstIncidence(eclasses[2]));
-			assertEquals(firstSubLink[0],
-					vertices[0].getFirstIncidence(eclasses[1]));
-			assertEquals(firstSubLink[1],
-					vertices[1].getFirstIncidence(eclasses[1]));
-			assertEquals(firstSubLink[2],
-					vertices[2].getFirstIncidence(eclasses[1]));
+			assertEquals(firstLink[0], vertices[0].getFirstIncidence(eclasses[0]));
+			assertEquals(firstLink[1], vertices[1].getFirstIncidence(eclasses[0]));
+			assertEquals(firstLink[2], vertices[2].getFirstIncidence(eclasses[0]));
+			assertEquals(firstLinkBack[0], vertices[0].getFirstIncidence(eclasses[2]));
+			assertEquals(firstLinkBack[1], vertices[1].getFirstIncidence(eclasses[2]));
+			assertEquals(firstLinkBack[2], vertices[2].getFirstIncidence(eclasses[2]));
+			assertEquals(firstSubLink[0], vertices[0].getFirstIncidence(eclasses[1]));
+			assertEquals(firstSubLink[1], vertices[1].getFirstIncidence(eclasses[1]));
+			assertEquals(firstSubLink[2], vertices[2].getFirstIncidence(eclasses[1]));
 		}
 	}
 
@@ -3237,7 +2983,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3250,7 +2996,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3268,7 +3014,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3286,7 +3032,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3305,7 +3051,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3319,15 +3065,14 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void getFirstEdgeTestClass5() {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLink = new Edge[3];
 			Edge[] firstLinkBack = new Edge[3];
 			Edge[] firstSubLink = new Edge[3];
@@ -3337,8 +3082,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					if (firstLink[start] == null) {
 						firstLink[start] = e0;
 					}
@@ -3347,8 +3091,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					if (firstLinkBack[end] == null) {
 						firstLinkBack[end] = e1;
 					}
@@ -3357,8 +3100,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					if (firstLink[1] == null) {
 						firstLink[1] = e2;
 					}
@@ -3377,18 +3119,12 @@ public class VertexTest extends InstanceTest {
 			assertEquals(firstLink[0], vertices[0].getFirstIncidence(Link.EC));
 			assertEquals(firstLink[1], vertices[1].getFirstIncidence(Link.EC));
 			assertEquals(firstLink[2], vertices[2].getFirstIncidence(Link.EC));
-			assertEquals(firstLinkBack[0],
-					vertices[0].getFirstIncidence(LinkBack.EC));
-			assertEquals(firstLinkBack[1],
-					vertices[1].getFirstIncidence(LinkBack.EC));
-			assertEquals(firstLinkBack[2],
-					vertices[2].getFirstIncidence(LinkBack.EC));
-			assertEquals(firstSubLink[0],
-					vertices[0].getFirstIncidence(SubLink.EC));
-			assertEquals(firstSubLink[1],
-					vertices[1].getFirstIncidence(SubLink.EC));
-			assertEquals(firstSubLink[2],
-					vertices[2].getFirstIncidence(SubLink.EC));
+			assertEquals(firstLinkBack[0], vertices[0].getFirstIncidence(LinkBack.EC));
+			assertEquals(firstLinkBack[1], vertices[1].getFirstIncidence(LinkBack.EC));
+			assertEquals(firstLinkBack[2], vertices[2].getFirstIncidence(LinkBack.EC));
+			assertEquals(firstSubLink[0], vertices[0].getFirstIncidence(SubLink.EC));
+			assertEquals(firstSubLink[1], vertices[1].getFirstIncidence(SubLink.EC));
+			assertEquals(firstSubLink[2], vertices[2].getFirstIncidence(SubLink.EC));
 		}
 	}
 
@@ -3397,7 +3133,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3420,7 +3156,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3433,8 +3169,7 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e, v0.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
-		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
+		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
 
@@ -3448,15 +3183,14 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstIncidence(eclasses[0], EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(eclasses[1], EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(eclasses[2], EdgeDirection.IN));
-		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[0], EdgeDirection.IN));
+		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(eclasses[0], EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(eclasses[1], EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(eclasses[2], EdgeDirection.IN));
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3469,10 +3203,8 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1, v0.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstIncidence(eclasses[0], EdgeDirection.OUT));
@@ -3485,16 +3217,14 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstIncidence(eclasses[0], EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(eclasses[1], EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(eclasses[2], EdgeDirection.IN));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[0], EdgeDirection.IN));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[1], EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(eclasses[0], EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(eclasses[1], EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(eclasses[2], EdgeDirection.IN));
 	}
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3507,10 +3237,8 @@ public class VertexTest extends InstanceTest {
 
 		assertEquals(e1, v0.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
-		assertEquals(e2.getReversedEdge(),
-				v0.getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
+		assertEquals(e2.getReversedEdge(), v0.getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
 		assertEquals(e2, v1.getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
 
@@ -3523,17 +3251,15 @@ public class VertexTest extends InstanceTest {
 
 		assertNull(v0.getFirstIncidence(eclasses[0], EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(eclasses[1], EdgeDirection.IN));
-		assertEquals(e2.getReversedEdge(),
-				v0.getFirstIncidence(eclasses[2], EdgeDirection.IN));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(eclasses[0], EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v0.getFirstIncidence(eclasses[2], EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(eclasses[0], EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(eclasses[1], EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(eclasses[2], EdgeDirection.IN));
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3550,15 +3276,14 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstIncidence(eclasses[1], EdgeDirection.OUT));
 		assertNull(v0.getFirstIncidence(eclasses[2], EdgeDirection.OUT));
 
-		assertEquals(e1.getReversedEdge(),
-				v0.getFirstIncidence(eclasses[0], EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v0.getFirstIncidence(eclasses[0], EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(eclasses[1], EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(eclasses[2], EdgeDirection.IN));
 	}
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3566,8 +3291,7 @@ public class VertexTest extends InstanceTest {
 		EdgeClass[] eclasses = getEdgeClasses();
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkInOut = new Edge[3];
 			Edge[] firstLinkBackInOut = new Edge[3];
 			Edge[] firstSubLinkInOut = new Edge[3];
@@ -3583,8 +3307,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					if (firstLinkInOut[start] == null) {
 						firstLinkInOut[start] = e0;
 					}
@@ -3599,8 +3322,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					if (firstLinkBackInOut[end] == null) {
 						firstLinkBackInOut[end] = e1;
 					}
@@ -3615,8 +3337,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					if (firstLinkInOut[1] == null) {
 						firstLinkInOut[1] = e2;
 					}
@@ -3645,62 +3366,35 @@ public class VertexTest extends InstanceTest {
 				}
 			}
 
-			assertEquals(firstLinkInOut[0], vertices[0].getFirstIncidence(
-					eclasses[0], EdgeDirection.INOUT));
-			assertEquals(firstLinkInOut[1], vertices[1].getFirstIncidence(
-					eclasses[0], EdgeDirection.INOUT));
-			assertEquals(firstLinkInOut[2], vertices[2].getFirstIncidence(
-					eclasses[0], EdgeDirection.INOUT));
-			assertEquals(firstLinkBackInOut[0], vertices[0].getFirstIncidence(
-					eclasses[2], EdgeDirection.INOUT));
-			assertEquals(firstLinkBackInOut[1], vertices[1].getFirstIncidence(
-					eclasses[2], EdgeDirection.INOUT));
-			assertEquals(firstLinkBackInOut[2], vertices[2].getFirstIncidence(
-					eclasses[2], EdgeDirection.INOUT));
-			assertEquals(firstSubLinkInOut[0], vertices[0].getFirstIncidence(
-					eclasses[1], EdgeDirection.INOUT));
-			assertEquals(firstSubLinkInOut[1], vertices[1].getFirstIncidence(
-					eclasses[1], EdgeDirection.INOUT));
-			assertEquals(firstSubLinkInOut[2], vertices[2].getFirstIncidence(
-					eclasses[1], EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[0], vertices[0].getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[1], vertices[1].getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[2], vertices[2].getFirstIncidence(eclasses[0], EdgeDirection.INOUT));
+			assertEquals(firstLinkBackInOut[0], vertices[0].getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
+			assertEquals(firstLinkBackInOut[1], vertices[1].getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
+			assertEquals(firstLinkBackInOut[2], vertices[2].getFirstIncidence(eclasses[2], EdgeDirection.INOUT));
+			assertEquals(firstSubLinkInOut[0], vertices[0].getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
+			assertEquals(firstSubLinkInOut[1], vertices[1].getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
+			assertEquals(firstSubLinkInOut[2], vertices[2].getFirstIncidence(eclasses[1], EdgeDirection.INOUT));
 
-			assertEquals(firstLinkOut[0], vertices[0].getFirstIncidence(
-					eclasses[0], EdgeDirection.OUT));
-			assertEquals(firstLinkOut[1], vertices[1].getFirstIncidence(
-					eclasses[0], EdgeDirection.OUT));
-			assertEquals(firstLinkOut[2], vertices[2].getFirstIncidence(
-					eclasses[0], EdgeDirection.OUT));
-			assertEquals(firstLinkBackOut[0], vertices[0].getFirstIncidence(
-					eclasses[2], EdgeDirection.OUT));
-			assertEquals(firstLinkBackOut[1], vertices[1].getFirstIncidence(
-					eclasses[2], EdgeDirection.OUT));
-			assertEquals(firstLinkBackOut[2], vertices[2].getFirstIncidence(
-					eclasses[2], EdgeDirection.OUT));
-			assertEquals(firstSubLinkOut[0], vertices[0].getFirstIncidence(
-					eclasses[1], EdgeDirection.OUT));
-			assertEquals(firstSubLinkOut[1], vertices[1].getFirstIncidence(
-					eclasses[1], EdgeDirection.OUT));
-			assertEquals(firstSubLinkOut[2], vertices[2].getFirstIncidence(
-					eclasses[1], EdgeDirection.OUT));
+			assertEquals(firstLinkOut[0], vertices[0].getFirstIncidence(eclasses[0], EdgeDirection.OUT));
+			assertEquals(firstLinkOut[1], vertices[1].getFirstIncidence(eclasses[0], EdgeDirection.OUT));
+			assertEquals(firstLinkOut[2], vertices[2].getFirstIncidence(eclasses[0], EdgeDirection.OUT));
+			assertEquals(firstLinkBackOut[0], vertices[0].getFirstIncidence(eclasses[2], EdgeDirection.OUT));
+			assertEquals(firstLinkBackOut[1], vertices[1].getFirstIncidence(eclasses[2], EdgeDirection.OUT));
+			assertEquals(firstLinkBackOut[2], vertices[2].getFirstIncidence(eclasses[2], EdgeDirection.OUT));
+			assertEquals(firstSubLinkOut[0], vertices[0].getFirstIncidence(eclasses[1], EdgeDirection.OUT));
+			assertEquals(firstSubLinkOut[1], vertices[1].getFirstIncidence(eclasses[1], EdgeDirection.OUT));
+			assertEquals(firstSubLinkOut[2], vertices[2].getFirstIncidence(eclasses[1], EdgeDirection.OUT));
 
-			assertEquals(firstLinkIn[0], vertices[0].getFirstIncidence(
-					eclasses[0], EdgeDirection.IN));
-			assertEquals(firstLinkIn[1], vertices[1].getFirstIncidence(
-					eclasses[0], EdgeDirection.IN));
-			assertEquals(firstLinkIn[2], vertices[2].getFirstIncidence(
-					eclasses[0], EdgeDirection.IN));
-			assertEquals(firstLinkBackIn[0], vertices[0].getFirstIncidence(
-					eclasses[2], EdgeDirection.IN));
-			assertEquals(firstLinkBackIn[1], vertices[1].getFirstIncidence(
-					eclasses[2], EdgeDirection.IN));
-			assertEquals(firstLinkBackIn[2], vertices[2].getFirstIncidence(
-					eclasses[2], EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[0], vertices[0].getFirstIncidence(
-					eclasses[1], EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[1], vertices[1].getFirstIncidence(
-					eclasses[1], EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[2], vertices[2].getFirstIncidence(
-					eclasses[1], EdgeDirection.IN));
+			assertEquals(firstLinkIn[0], vertices[0].getFirstIncidence(eclasses[0], EdgeDirection.IN));
+			assertEquals(firstLinkIn[1], vertices[1].getFirstIncidence(eclasses[0], EdgeDirection.IN));
+			assertEquals(firstLinkIn[2], vertices[2].getFirstIncidence(eclasses[0], EdgeDirection.IN));
+			assertEquals(firstLinkBackIn[0], vertices[0].getFirstIncidence(eclasses[2], EdgeDirection.IN));
+			assertEquals(firstLinkBackIn[1], vertices[1].getFirstIncidence(eclasses[2], EdgeDirection.IN));
+			assertEquals(firstLinkBackIn[2], vertices[2].getFirstIncidence(eclasses[2], EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[0], vertices[0].getFirstIncidence(eclasses[1], EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[1], vertices[1].getFirstIncidence(eclasses[1], EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[2], vertices[2].getFirstIncidence(eclasses[1], EdgeDirection.IN));
 		}
 	}
 
@@ -3709,7 +3403,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3731,7 +3425,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3743,8 +3437,7 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e, v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
-		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
@@ -3758,15 +3451,14 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
-		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3778,10 +3470,8 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.OUT));
@@ -3794,16 +3484,14 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 	}
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3815,10 +3503,8 @@ public class VertexTest extends InstanceTest {
 
 		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
-		assertEquals(e2.getReversedEdge(),
-				v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e2.getReversedEdge(), v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e2, v1.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
@@ -3831,17 +3517,15 @@ public class VertexTest extends InstanceTest {
 
 		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
-		assertEquals(e2.getReversedEdge(),
-				v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
-		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -3857,23 +3541,21 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
 		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
 
-		assertEquals(e1.getReversedEdge(),
-				v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertEquals(e1.getReversedEdge(), v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 	}
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirection5() {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkInOut = new Edge[3];
 			Edge[] firstLinkBackInOut = new Edge[3];
 			Edge[] firstSubLinkInOut = new Edge[3];
@@ -3889,8 +3571,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					if (firstLinkInOut[start] == null) {
 						firstLinkInOut[start] = e0;
 					}
@@ -3905,8 +3586,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					if (firstLinkBackInOut[end] == null) {
 						firstLinkBackInOut[end] = e1;
 					}
@@ -3921,8 +3601,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					if (firstLinkInOut[1] == null) {
 						firstLinkInOut[1] = e2;
 					}
@@ -3951,62 +3630,35 @@ public class VertexTest extends InstanceTest {
 				}
 			}
 
-			assertEquals(firstLinkInOut[0],
-					vertices[0].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
-			assertEquals(firstLinkInOut[1],
-					vertices[1].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
-			assertEquals(firstLinkInOut[2],
-					vertices[2].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
-			assertEquals(firstLinkBackInOut[0], vertices[0].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.INOUT));
-			assertEquals(firstLinkBackInOut[1], vertices[1].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.INOUT));
-			assertEquals(firstLinkBackInOut[2], vertices[2].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.INOUT));
-			assertEquals(firstSubLinkInOut[0], vertices[0].getFirstIncidence(
-					SubLink.EC, EdgeDirection.INOUT));
-			assertEquals(firstSubLinkInOut[1], vertices[1].getFirstIncidence(
-					SubLink.EC, EdgeDirection.INOUT));
-			assertEquals(firstSubLinkInOut[2], vertices[2].getFirstIncidence(
-					SubLink.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[0], vertices[0].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[1], vertices[1].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[2], vertices[2].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkBackInOut[0], vertices[0].getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkBackInOut[1], vertices[1].getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkBackInOut[2], vertices[2].getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
+			assertEquals(firstSubLinkInOut[0], vertices[0].getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+			assertEquals(firstSubLinkInOut[1], vertices[1].getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+			assertEquals(firstSubLinkInOut[2], vertices[2].getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
 
-			assertEquals(firstLinkOut[0],
-					vertices[0].getFirstIncidence(Link.EC, EdgeDirection.OUT));
-			assertEquals(firstLinkOut[1],
-					vertices[1].getFirstIncidence(Link.EC, EdgeDirection.OUT));
-			assertEquals(firstLinkOut[2],
-					vertices[2].getFirstIncidence(Link.EC, EdgeDirection.OUT));
-			assertEquals(firstLinkBackOut[0], vertices[0].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.OUT));
-			assertEquals(firstLinkBackOut[1], vertices[1].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.OUT));
-			assertEquals(firstLinkBackOut[2], vertices[2].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.OUT));
-			assertEquals(firstSubLinkOut[0], vertices[0].getFirstIncidence(
-					SubLink.EC, EdgeDirection.OUT));
-			assertEquals(firstSubLinkOut[1], vertices[1].getFirstIncidence(
-					SubLink.EC, EdgeDirection.OUT));
-			assertEquals(firstSubLinkOut[2], vertices[2].getFirstIncidence(
-					SubLink.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkOut[0], vertices[0].getFirstIncidence(Link.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkOut[1], vertices[1].getFirstIncidence(Link.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkOut[2], vertices[2].getFirstIncidence(Link.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkBackOut[0], vertices[0].getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkBackOut[1], vertices[1].getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkBackOut[2], vertices[2].getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
+			assertEquals(firstSubLinkOut[0], vertices[0].getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+			assertEquals(firstSubLinkOut[1], vertices[1].getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+			assertEquals(firstSubLinkOut[2], vertices[2].getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
 
-			assertEquals(firstLinkIn[0],
-					vertices[0].getFirstIncidence(Link.EC, EdgeDirection.IN));
-			assertEquals(firstLinkIn[1],
-					vertices[1].getFirstIncidence(Link.EC, EdgeDirection.IN));
-			assertEquals(firstLinkIn[2],
-					vertices[2].getFirstIncidence(Link.EC, EdgeDirection.IN));
-			assertEquals(firstLinkBackIn[0], vertices[0].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.IN));
-			assertEquals(firstLinkBackIn[1], vertices[1].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.IN));
-			assertEquals(firstLinkBackIn[2], vertices[2].getFirstIncidence(
-					LinkBack.EC, EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[0],
-					vertices[0].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[1],
-					vertices[1].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[2],
-					vertices[2].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+			assertEquals(firstLinkIn[0], vertices[0].getFirstIncidence(Link.EC, EdgeDirection.IN));
+			assertEquals(firstLinkIn[1], vertices[1].getFirstIncidence(Link.EC, EdgeDirection.IN));
+			assertEquals(firstLinkIn[2], vertices[2].getFirstIncidence(Link.EC, EdgeDirection.IN));
+			assertEquals(firstLinkBackIn[0], vertices[0].getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
+			assertEquals(firstLinkBackIn[1], vertices[1].getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
+			assertEquals(firstLinkBackIn[2], vertices[2].getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[0], vertices[0].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[1], vertices[1].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[2], vertices[2].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		}
 	}
 
@@ -4015,7 +3667,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not before itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4032,7 +3684,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not after itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4049,7 +3701,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v3 in v1---e1----v2-----e2-----v3
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4078,7 +3730,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v2 in v1---e1----v2-----e2-----v3
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4096,7 +3748,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1---e1----v2-----e2-----v3
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4114,7 +3766,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1---e1----v2 v1-----e2-----v3
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4132,7 +3784,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1---e1----v2 v1-----e2-----v2
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4149,7 +3801,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1---e1----v2-----e2-----v3
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4171,7 +3823,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if you want to remove an edge via the iterator.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = UnsupportedOperationException.class)
@@ -4188,7 +3840,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you call hasNext several time, the current edge of the iterator must
 	 * stay the same.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4206,7 +3858,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If there exists no further edges, hasNext must return false.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4229,7 +3881,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if the current edge is deleted.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4249,7 +3901,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if the position of the current edge is changed.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4269,7 +3921,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if a previous edge is deleted.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4291,7 +3943,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if a following edge is deleted.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4309,7 +3961,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if an edge is added.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4327,7 +3979,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if an edge gets another alpha vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4347,7 +3999,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if the expected incidences equals the returned incidences.
-	 * 
+	 *
 	 * @param v
 	 *            the node of which the incidences should be tested
 	 * @param ec
@@ -4357,8 +4009,7 @@ public class VertexTest extends InstanceTest {
 	 * @param expectedIncidences
 	 *            the expected incidences
 	 */
-	private void checkIncidenceList(Vertex v, EdgeClass ec, EdgeDirection dir,
-			List<Edge> expectedIncidences) {
+	private void checkIncidenceList(Vertex v, EdgeClass ec, EdgeDirection dir, List<Edge> expectedIncidences) {
 		int i = 0;
 		if (dir == null) {
 			for (Edge e : v.incidences(ec)) {
@@ -4382,21 +4033,20 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void incidencesTestEdgeDirection0() {
 		Vertex v0 = g.createDoubleSubNode();
-		checkIncidenceList(v0, null, EdgeDirection.INOUT,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, EdgeDirection.INOUT, new LinkedList<Edge>());
 		checkIncidenceList(v0, null, EdgeDirection.OUT, new LinkedList<Edge>());
 		checkIncidenceList(v0, null, EdgeDirection.IN, new LinkedList<Edge>());
 	}
 
 	/**
 	 * Checks if a vertex has only outgoing or ingoing incidences.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4426,7 +4076,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4479,15 +4129,14 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void incidencesTestEdgeDirection3() {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> inout = new LinkedList<>();
 			inout.add(new LinkedList<Edge>());
 			inout.add(new LinkedList<Edge>());
@@ -4507,24 +4156,21 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					e = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					inout.get(start).add(e);
 					out.get(start).add(e);
 					inout.get(end).add(e.getReversedEdge());
 					in.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					e = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					inout.get(end).add(e);
 					out.get(end).add(e);
 					inout.get(start).add(e.getReversedEdge());
 					in.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					e = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					inout.get(1).add(e);
 					out.get(1).add(e);
 					inout.get(end).add(e.getReversedEdge());
@@ -4533,18 +4179,15 @@ public class VertexTest extends InstanceTest {
 				}
 			}
 
-			checkIncidenceList(vertices[0], null, EdgeDirection.INOUT,
-					inout.get(0));
+			checkIncidenceList(vertices[0], null, EdgeDirection.INOUT, inout.get(0));
 			checkIncidenceList(vertices[0], null, EdgeDirection.OUT, out.get(0));
 			checkIncidenceList(vertices[0], null, EdgeDirection.IN, in.get(0));
 
-			checkIncidenceList(vertices[1], null, EdgeDirection.INOUT,
-					inout.get(1));
+			checkIncidenceList(vertices[1], null, EdgeDirection.INOUT, inout.get(1));
 			checkIncidenceList(vertices[1], null, EdgeDirection.OUT, out.get(1));
 			checkIncidenceList(vertices[1], null, EdgeDirection.IN, in.get(1));
 
-			checkIncidenceList(vertices[2], null, EdgeDirection.INOUT,
-					inout.get(2));
+			checkIncidenceList(vertices[2], null, EdgeDirection.INOUT, inout.get(2));
 			checkIncidenceList(vertices[2], null, EdgeDirection.OUT, out.get(2));
 			checkIncidenceList(vertices[2], null, EdgeDirection.IN, in.get(2));
 		}
@@ -4552,7 +4195,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be deleted.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4570,7 +4213,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be changed.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4588,7 +4231,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated a new OUT-edges could not be created.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4606,7 +4249,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be deleted.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4624,7 +4267,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be changed.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4642,7 +4285,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated a new IN-edges could not be created.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4662,7 +4305,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4676,7 +4319,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4707,7 +4350,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4755,7 +4398,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4763,8 +4406,7 @@ public class VertexTest extends InstanceTest {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
 			EdgeClass[] ecs = getEdgeClasses();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> link = new LinkedList<>();
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
@@ -4784,20 +4426,17 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					e = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					link.get(start).add(e);
 					link.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					e = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					linkback.get(end).add(e);
 					linkback.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					e = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					link.get(1).add(e);
 					sublink.get(1).add(e);
 					link.get(end).add(e.getReversedEdge());
@@ -4825,7 +4464,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4838,7 +4477,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4868,7 +4507,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4915,15 +4554,14 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void incidencesTestClass3() {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> link = new LinkedList<>();
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
@@ -4943,20 +4581,17 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					e = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					link.get(start).add(e);
 					link.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					e = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					linkback.get(end).add(e);
 					linkback.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					e = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					link.get(1).add(e);
 					sublink.get(1).add(e);
 					link.get(end).add(e.getReversedEdge());
@@ -4984,7 +4619,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -4992,28 +4627,22 @@ public class VertexTest extends InstanceTest {
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = g.createDoubleSubNode();
 
-		checkIncidenceList(v0, ecs[0], EdgeDirection.INOUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[0], EdgeDirection.OUT,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[0], EdgeDirection.INOUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[0], EdgeDirection.OUT, new LinkedList<Edge>());
 		checkIncidenceList(v0, ecs[0], EdgeDirection.IN, new LinkedList<Edge>());
 
-		checkIncidenceList(v0, ecs[1], EdgeDirection.INOUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[1], EdgeDirection.OUT,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[1], EdgeDirection.INOUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[1], EdgeDirection.OUT, new LinkedList<Edge>());
 		checkIncidenceList(v0, ecs[1], EdgeDirection.IN, new LinkedList<Edge>());
 
-		checkIncidenceList(v0, ecs[2], EdgeDirection.INOUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[2], EdgeDirection.OUT,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[2], EdgeDirection.INOUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[2], EdgeDirection.OUT, new LinkedList<Edge>());
 		checkIncidenceList(v0, ecs[2], EdgeDirection.IN, new LinkedList<Edge>());
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5076,7 +4705,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5176,7 +4805,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5184,8 +4813,7 @@ public class VertexTest extends InstanceTest {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
 			EdgeClass[] ecs = getEdgeClasses();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<>();
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
@@ -5232,24 +4860,21 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					e = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					linkinout.get(start).add(e);
 					linkout.get(start).add(e);
 					linkinout.get(end).add(e.getReversedEdge());
 					linkin.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					e = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					linkbackinout.get(end).add(e);
 					linkbackout.get(end).add(e);
 					linkbackinout.get(start).add(e.getReversedEdge());
 					linkbackin.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					e = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					linkinout.get(1).add(e);
 					linkout.get(1).add(e);
 					sublinkinout.get(1).add(e);
@@ -5262,68 +4887,41 @@ public class VertexTest extends InstanceTest {
 				}
 			}
 
-			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.INOUT,
-					linkinout.get(0));
-			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.OUT,
-					linkout.get(0));
-			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.IN,
-					linkin.get(0));
+			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.INOUT, linkinout.get(0));
+			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.OUT, linkout.get(0));
+			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.IN, linkin.get(0));
 
-			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.INOUT,
-					sublinkinout.get(0));
-			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.OUT,
-					sublinkout.get(0));
-			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.IN,
-					sublinkin.get(0));
+			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.INOUT, sublinkinout.get(0));
+			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.OUT, sublinkout.get(0));
+			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.IN, sublinkin.get(0));
 
-			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.INOUT,
-					linkbackinout.get(0));
-			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.OUT,
-					linkbackout.get(0));
-			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.IN,
-					linkbackin.get(0));
+			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.INOUT, linkbackinout.get(0));
+			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.OUT, linkbackout.get(0));
+			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.IN, linkbackin.get(0));
 
-			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.INOUT,
-					linkinout.get(1));
-			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.OUT,
-					linkout.get(1));
-			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.IN,
-					linkin.get(1));
+			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.INOUT, linkinout.get(1));
+			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.OUT, linkout.get(1));
+			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.IN, linkin.get(1));
 
-			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.INOUT,
-					sublinkinout.get(1));
-			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.OUT,
-					sublinkout.get(1));
-			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.IN,
-					sublinkin.get(1));
+			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.INOUT, sublinkinout.get(1));
+			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.OUT, sublinkout.get(1));
+			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.IN, sublinkin.get(1));
 
-			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.INOUT,
-					linkbackinout.get(1));
-			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.OUT,
-					linkbackout.get(1));
-			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.IN,
-					linkbackin.get(1));
+			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.INOUT, linkbackinout.get(1));
+			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.OUT, linkbackout.get(1));
+			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.IN, linkbackin.get(1));
 
-			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.INOUT,
-					linkinout.get(2));
-			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.OUT,
-					linkout.get(2));
-			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.IN,
-					linkin.get(2));
+			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.INOUT, linkinout.get(2));
+			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.OUT, linkout.get(2));
+			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.IN, linkin.get(2));
 
-			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.INOUT,
-					sublinkinout.get(2));
-			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.OUT,
-					sublinkout.get(2));
-			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.IN,
-					sublinkin.get(2));
+			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.INOUT, sublinkinout.get(2));
+			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.OUT, sublinkout.get(2));
+			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.IN, sublinkin.get(2));
 
-			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.INOUT,
-					linkbackinout.get(2));
-			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.OUT,
-					linkbackout.get(2));
-			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.IN,
-					linkbackin.get(2));
+			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.INOUT, linkbackinout.get(2));
+			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.OUT, linkbackout.get(2));
+			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.IN, linkbackin.get(2));
 		}
 	}
 
@@ -5332,38 +4930,29 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void incidencesTestClassEdgeDirection0() {
 		Vertex v0 = g.createDoubleSubNode();
 
-		checkIncidenceList(v0, Link.EC, EdgeDirection.INOUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, Link.EC, EdgeDirection.OUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, Link.EC, EdgeDirection.IN,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, Link.EC, EdgeDirection.INOUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, Link.EC, EdgeDirection.OUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, Link.EC, EdgeDirection.IN, new LinkedList<Edge>());
 
-		checkIncidenceList(v0, SubLink.EC, EdgeDirection.INOUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, SubLink.EC, EdgeDirection.OUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, SubLink.EC, EdgeDirection.IN,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.INOUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.OUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.IN, new LinkedList<Edge>());
 
-		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.OUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.IN,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.OUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.IN, new LinkedList<Edge>());
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5406,8 +4995,7 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v0, SubLink.EC, EdgeDirection.OUT, v0sublinkOut);
 		checkIncidenceList(v0, SubLink.EC, EdgeDirection.IN, v0sublinkIn);
 
-		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT,
-				v0linkbackInout);
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT, v0linkbackInout);
 		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.OUT, v0linkbackOut);
 		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.IN, v0linkbackIn);
 
@@ -5419,15 +5007,14 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v1, SubLink.EC, EdgeDirection.OUT, v1sublinkOut);
 		checkIncidenceList(v1, SubLink.EC, EdgeDirection.IN, v1sublinkIn);
 
-		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.INOUT,
-				v1linkbackInout);
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.INOUT, v1linkbackInout);
 		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.OUT, v1linkbackOut);
 		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.IN, v1linkbackIn);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5495,8 +5082,7 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v0, SubLink.EC, EdgeDirection.OUT, v0sublinkOut);
 		checkIncidenceList(v0, SubLink.EC, EdgeDirection.IN, v0sublinkIn);
 
-		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT,
-				v0linkbackInout);
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT, v0linkbackInout);
 		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.OUT, v0linkbackOut);
 		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.IN, v0linkbackIn);
 
@@ -5508,8 +5094,7 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v1, SubLink.EC, EdgeDirection.OUT, v1sublinkOut);
 		checkIncidenceList(v1, SubLink.EC, EdgeDirection.IN, v1sublinkIn);
 
-		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.INOUT,
-				v1linkbackInout);
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.INOUT, v1linkbackInout);
 		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.OUT, v1linkbackOut);
 		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.IN, v1linkbackIn);
 
@@ -5521,23 +5106,21 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v2, SubLink.EC, EdgeDirection.OUT, v2sublinkOut);
 		checkIncidenceList(v2, SubLink.EC, EdgeDirection.IN, v2sublinkIn);
 
-		checkIncidenceList(v2, LinkBack.EC, EdgeDirection.INOUT,
-				v2linkbackInout);
+		checkIncidenceList(v2, LinkBack.EC, EdgeDirection.INOUT, v2linkbackInout);
 		checkIncidenceList(v2, LinkBack.EC, EdgeDirection.OUT, v2linkbackOut);
 		checkIncidenceList(v2, LinkBack.EC, EdgeDirection.IN, v2linkbackIn);
 	}
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
 	public void incidencesTestClassEdgeDirection3() {
 		for (int i = 0; i < ITERATIONS; i++) {
 			g = createNewGraph();
-			Vertex[] vertices = new Vertex[] { g.createSubNode(),
-					g.createDoubleSubNode(), g.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(), g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<>();
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
@@ -5584,24 +5167,21 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = g.createLink((AbstractSuperNode) vertices[start],
-							(SuperNode) vertices[end]);
+					e = g.createLink((AbstractSuperNode) vertices[start], (SuperNode) vertices[end]);
 					linkinout.get(start).add(e);
 					linkout.get(start).add(e);
 					linkinout.get(end).add(e.getReversedEdge());
 					linkin.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = g.createLinkBack((SuperNode) vertices[end],
-							(AbstractSuperNode) vertices[start]);
+					e = g.createLinkBack((SuperNode) vertices[end], (AbstractSuperNode) vertices[start]);
 					linkbackinout.get(end).add(e);
 					linkbackout.get(end).add(e);
 					linkbackinout.get(start).add(e.getReversedEdge());
 					linkbackin.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = g.createSubLink((DoubleSubNode) vertices[1],
-							(SuperNode) vertices[end]);
+					e = g.createSubLink((DoubleSubNode) vertices[1], (SuperNode) vertices[end]);
 					linkinout.get(1).add(e);
 					linkout.get(1).add(e);
 					sublinkinout.get(1).add(e);
@@ -5614,68 +5194,41 @@ public class VertexTest extends InstanceTest {
 				}
 			}
 
-			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.INOUT,
-					linkinout.get(0));
-			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.OUT,
-					linkout.get(0));
-			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.IN,
-					linkin.get(0));
+			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.INOUT, linkinout.get(0));
+			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.OUT, linkout.get(0));
+			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.IN, linkin.get(0));
 
-			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.INOUT,
-					sublinkinout.get(0));
-			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.OUT,
-					sublinkout.get(0));
-			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.IN,
-					sublinkin.get(0));
+			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.INOUT, sublinkinout.get(0));
+			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.OUT, sublinkout.get(0));
+			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.IN, sublinkin.get(0));
 
-			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.INOUT,
-					linkbackinout.get(0));
-			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.OUT,
-					linkbackout.get(0));
-			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.IN,
-					linkbackin.get(0));
+			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.INOUT, linkbackinout.get(0));
+			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.OUT, linkbackout.get(0));
+			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.IN, linkbackin.get(0));
 
-			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.INOUT,
-					linkinout.get(1));
-			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.OUT,
-					linkout.get(1));
-			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.IN,
-					linkin.get(1));
+			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.INOUT, linkinout.get(1));
+			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.OUT, linkout.get(1));
+			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.IN, linkin.get(1));
 
-			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.INOUT,
-					sublinkinout.get(1));
-			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.OUT,
-					sublinkout.get(1));
-			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.IN,
-					sublinkin.get(1));
+			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.INOUT, sublinkinout.get(1));
+			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.OUT, sublinkout.get(1));
+			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.IN, sublinkin.get(1));
 
-			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.INOUT,
-					linkbackinout.get(1));
-			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.OUT,
-					linkbackout.get(1));
-			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.IN,
-					linkbackin.get(1));
+			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.INOUT, linkbackinout.get(1));
+			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.OUT, linkbackout.get(1));
+			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.IN, linkbackin.get(1));
 
-			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.INOUT,
-					linkinout.get(2));
-			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.OUT,
-					linkout.get(2));
-			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.IN,
-					linkin.get(2));
+			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.INOUT, linkinout.get(2));
+			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.OUT, linkout.get(2));
+			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.IN, linkin.get(2));
 
-			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.INOUT,
-					sublinkinout.get(2));
-			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.OUT,
-					sublinkout.get(2));
-			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.IN,
-					sublinkin.get(2));
+			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.INOUT, sublinkinout.get(2));
+			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.OUT, sublinkout.get(2));
+			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.IN, sublinkin.get(2));
 
-			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.INOUT,
-					linkbackinout.get(2));
-			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.OUT,
-					linkbackout.get(2));
-			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.IN,
-					linkbackin.get(2));
+			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.INOUT, linkbackinout.get(2));
+			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.OUT, linkbackout.get(2));
+			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.IN, linkbackin.get(2));
 		}
 	}
 
@@ -5686,7 +5239,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Checks some cases for true and false.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5714,7 +5267,7 @@ public class VertexTest extends InstanceTest {
 	// }
 	/**
 	 * Tests if the graphversion is increased by creating a new vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5730,7 +5283,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting a vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5744,7 +5297,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of a
 	 * vertex.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5762,7 +5315,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5780,7 +5333,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getSchemaClass
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5797,7 +5350,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getGraphClass
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5817,7 +5370,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5829,13 +5382,13 @@ public class VertexTest extends InstanceTest {
 		v.set_number(4);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
-		assertEquals(4, v.getAttribute("number"));
+		assertEquals(4, (int) v.getAttribute("number"));
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -5847,7 +5400,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -5861,7 +5414,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5873,12 +5426,12 @@ public class VertexTest extends InstanceTest {
 		v.setAttribute("number", 4);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
-		assertEquals(4, v.getAttribute("number"));
+		assertEquals(4, (int) v.getAttribute("number"));
 	}
 
 	/**
 	 * Tests if an existing attribute is set to null.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5893,7 +5446,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -5905,7 +5458,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -5918,7 +5471,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some tests.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5939,7 +5492,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5950,7 +5503,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -5962,7 +5515,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -6075,8 +5628,7 @@ public class VertexTest extends InstanceTest {
 		v0.add_source(v2);
 		v1.add_source(v0);
 
-		Iterator<? extends AbstractSuperNode> nodes = v0.get_source()
-				.iterator();
+		Iterator<? extends AbstractSuperNode> nodes = v0.get_source().iterator();
 		assertTrue(nodes.hasNext());
 		assertEquals(v0, nodes.next());
 		assertTrue(nodes.hasNext());
@@ -6092,7 +5644,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if <code>v.incidences()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param v
 	 *            the Vertex which incident edges should be checked
 	 * @param e
@@ -6114,7 +5666,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if <code>graph.edges()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param e
 	 *            the edges to check
 	 */
@@ -6230,7 +5782,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method remove_sourcec
 	/**
 	 * Removes the sourcec of v0 --&gt v0.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -6243,7 +5795,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Removes the sourcec of v0 --&gt v1.
-	 * 
+	 *
 	 * @
 	 */
 	@Test
@@ -6518,8 +6070,7 @@ public class VertexTest extends InstanceTest {
 		v0.add_targetb(v2);
 		v1.add_targetb(v0);
 
-		Iterator<? extends AbstractSuperNode> nodes = v0.get_targetb()
-				.iterator();
+		Iterator<? extends AbstractSuperNode> nodes = v0.get_targetb().iterator();
 		assertTrue(nodes.hasNext());
 		assertEquals(v0, nodes.next());
 		assertTrue(nodes.hasNext());
@@ -6736,13 +6287,10 @@ public class VertexTest extends InstanceTest {
 		SubLink e3 = g.createSubLink(v1, v1);
 		assertEquals(e1, v0.getFirstLinkIncidence(EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e1.getReversedEdge(),
-				v0.getFirstLinkIncidence(EdgeDirection.IN));
-		assertEquals(e2.getReversedEdge(),
-				v1.getFirstLinkIncidence(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v0.getFirstLinkIncidence(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1.getFirstLinkIncidence(EdgeDirection.INOUT));
 		assertEquals(e3, v1.getFirstLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e2.getReversedEdge(),
-				v1.getFirstLinkIncidence(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1.getFirstLinkIncidence(EdgeDirection.IN));
 	}
 
 	// tests of the method getFirstLinkBack
@@ -6769,13 +6317,10 @@ public class VertexTest extends InstanceTest {
 		LinkBack e3 = g.createLinkBack(v1, v1);
 		assertEquals(e1, v0.getFirstLinkBackIncidence(EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstLinkBackIncidence(EdgeDirection.OUT));
-		assertEquals(e1.getReversedEdge(),
-				v0.getFirstLinkBackIncidence(EdgeDirection.IN));
-		assertEquals(e2.getReversedEdge(),
-				v1.getFirstLinkBackIncidence(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v0.getFirstLinkBackIncidence(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1.getFirstLinkBackIncidence(EdgeDirection.INOUT));
 		assertEquals(e3, v1.getFirstLinkBackIncidence(EdgeDirection.OUT));
-		assertEquals(e2.getReversedEdge(),
-				v1.getFirstLinkBackIncidence(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1.getFirstLinkBackIncidence(EdgeDirection.IN));
 	}
 
 	// tests of the method getFirstSubLink
@@ -6802,19 +6347,16 @@ public class VertexTest extends InstanceTest {
 		SubLink e3 = g.createSubLink(v1, v1);
 		assertEquals(e1, v0.getFirstSubLinkIncidence(EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstSubLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e1.getReversedEdge(),
-				v0.getFirstSubLinkIncidence(EdgeDirection.IN));
-		assertEquals(e2.getReversedEdge(),
-				v1.getFirstSubLinkIncidence(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(), v0.getFirstSubLinkIncidence(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1.getFirstSubLinkIncidence(EdgeDirection.INOUT));
 		assertEquals(e3, v1.getFirstSubLinkIncidence(EdgeDirection.OUT));
-		assertEquals(e2.getReversedEdge(),
-				v1.getFirstSubLinkIncidence(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1.getFirstSubLinkIncidence(EdgeDirection.IN));
 	}
 
 	/**
 	 * Checks if the edges which are returned by an get#Edge#incidences are the
 	 * expected ones.
-	 * 
+	 *
 	 * @param incidenceName
 	 *            Name of #Edge#
 	 * @param v
@@ -6824,8 +6366,8 @@ public class VertexTest extends InstanceTest {
 	 * @param edges
 	 *            the expected edges
 	 */
-	private void checkGeneratedIncidences(String incidenceName,
-			DoubleSubNode v, EdgeDirection direction, Edge... edges) {
+	private void checkGeneratedIncidences(String incidenceName, DoubleSubNode v, EdgeDirection direction,
+			Edge... edges) {
 		int i = 0;
 		if (direction == null) {
 			if (incidenceName.equals("Link")) {
@@ -6877,8 +6419,7 @@ public class VertexTest extends InstanceTest {
 		Link e2 = g.createLink(v1, v0);
 		SubLink e3 = g.createSubLink(v1, v1);
 		LinkBack e4 = g.createLinkBack(v1, v0);
-		checkGeneratedIncidences("Link", v0, null, e1, e1.getReversedEdge(),
-				e2.getReversedEdge());
+		checkGeneratedIncidences("Link", v0, null, e1, e1.getReversedEdge(), e2.getReversedEdge());
 		checkGeneratedIncidences("Link", v1, null, e2, e3, e3.getReversedEdge());
 		checkGeneratedIncidences("LinkBack", v0, null, e0, e4.getReversedEdge());
 		checkGeneratedIncidences("LinkBack", v1, null, e0.getReversedEdge(), e4);
@@ -6896,45 +6437,31 @@ public class VertexTest extends InstanceTest {
 		Link e2 = g.createLink(v1, v0);
 		SubLink e3 = g.createSubLink(v1, v1);
 		LinkBack e4 = g.createLinkBack(v1, v0);
-		checkGeneratedIncidences("Link", v0, EdgeDirection.INOUT, e1,
-				e1.getReversedEdge(), e2.getReversedEdge());
-		checkGeneratedIncidences("Link", v1, EdgeDirection.INOUT, e2, e3,
-				e3.getReversedEdge());
+		checkGeneratedIncidences("Link", v0, EdgeDirection.INOUT, e1, e1.getReversedEdge(), e2.getReversedEdge());
+		checkGeneratedIncidences("Link", v1, EdgeDirection.INOUT, e2, e3, e3.getReversedEdge());
 		checkGeneratedIncidences("Link", v0, EdgeDirection.OUT, e1);
 		checkGeneratedIncidences("Link", v1, EdgeDirection.OUT, e2, e3);
-		checkGeneratedIncidences("Link", v0, EdgeDirection.IN,
-				e1.getReversedEdge(), e2.getReversedEdge());
-		checkGeneratedIncidences("Link", v1, EdgeDirection.IN,
-				e3.getReversedEdge());
-		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.INOUT, e0,
-				e4.getReversedEdge());
-		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.INOUT,
-				e0.getReversedEdge(), e4);
+		checkGeneratedIncidences("Link", v0, EdgeDirection.IN, e1.getReversedEdge(), e2.getReversedEdge());
+		checkGeneratedIncidences("Link", v1, EdgeDirection.IN, e3.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.INOUT, e0, e4.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.INOUT, e0.getReversedEdge(), e4);
 		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.OUT, e0);
 		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.OUT, e4);
-		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.IN,
-				e4.getReversedEdge());
-		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.IN,
-				e0.getReversedEdge());
-		checkGeneratedIncidences("SubLink", v0, EdgeDirection.INOUT, e1,
-				e1.getReversedEdge());
-		checkGeneratedIncidences("SubLink", v1, EdgeDirection.INOUT, e3,
-				e3.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.IN, e4.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.IN, e0.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v0, EdgeDirection.INOUT, e1, e1.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v1, EdgeDirection.INOUT, e3, e3.getReversedEdge());
 		checkGeneratedIncidences("SubLink", v0, EdgeDirection.OUT, e1);
 		checkGeneratedIncidences("SubLink", v1, EdgeDirection.OUT, e3);
-		checkGeneratedIncidences("SubLink", v0, EdgeDirection.IN,
-				e1.getReversedEdge());
-		checkGeneratedIncidences("SubLink", v1, EdgeDirection.IN,
-				e3.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v0, EdgeDirection.IN, e1.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v1, EdgeDirection.IN, e3.getReversedEdge());
 	}
 
 	@Test
 	public void isInstanceOfTest() {
 		VertexClass a = g.getSchema().getGraphClass().getVertexClass("A");
-		VertexClass asn = g.getSchema().getGraphClass()
-				.getVertexClass("AbstractSuperNode");
-		VertexClass sn = g.getSchema().getGraphClass()
-				.getVertexClass("SuperNode");
+		VertexClass asn = g.getSchema().getGraphClass().getVertexClass("AbstractSuperNode");
+		VertexClass sn = g.getSchema().getGraphClass().getVertexClass("SuperNode");
 
 		for (DoubleSubNode x : g.getDoubleSubNodeVertices()) {
 			assertTrue(x.isInstanceOf(x.getAttributedElementClass()));

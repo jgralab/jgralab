@@ -39,15 +39,15 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * 
+ *
  * A map-backed persistent set.
  * <p>
  * If the backing map is thread-safe, then this implementation is thread-safe
  * (assuming Java's AbstractSet is thread-safe), although its iterators may not
  * be.
- * 
+ *
  * @author harold
- * 
+ *
  * @param <E>
  */
 public final class MapPSet<E> extends AbstractSet<E> implements PSet<E> {
@@ -78,8 +78,7 @@ public final class MapPSet<E> extends AbstractSet<E> implements PSet<E> {
 	 * @param list
 	 * @return from(map).plusAll(list)
 	 */
-	public static <E> MapPSet<E> from(final PMap<E, ?> map,
-			final Collection<? extends E> list) {
+	public static <E> MapPSet<E> from(final PMap<E, ?> map, final Collection<? extends E> list) {
 		return from(map).plusAll(list);
 	}
 
@@ -145,11 +144,13 @@ public final class MapPSet<E> extends AbstractSet<E> implements PSet<E> {
 	}
 
 	@Override
+	@Deprecated
 	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	};
 
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}

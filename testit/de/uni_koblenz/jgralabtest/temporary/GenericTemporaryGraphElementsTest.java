@@ -46,21 +46,15 @@ public class GenericTemporaryGraphElementsTest {
 
 	@Before
 	public void setUp() throws GraphIOException {
-		this.schema = GraphIO.loadSchemaFromFile("testit" + File.separator
-				+ "testschemas" + File.separator + "greqltestschema.tg");
-		this.vc_CrossRoad = schema.getGraphClass().getVertexClass(
-				"junctions.Crossroad");
-		this.vc_Plaza = schema.getGraphClass()
-				.getVertexClass("junctions.Plaza");
-		this.vc_Airport = schema.getGraphClass().getVertexClass(
-				"junctions.Airport");
+		this.schema = GraphIO
+				.loadSchemaFromFile("testit" + File.separator + "testschemas" + File.separator + "greqltestschema.tg");
+		this.vc_CrossRoad = schema.getGraphClass().getVertexClass("junctions.Crossroad");
+		this.vc_Plaza = schema.getGraphClass().getVertexClass("junctions.Plaza");
+		this.vc_Airport = schema.getGraphClass().getVertexClass("junctions.Airport");
 		this.vc_Town = schema.getGraphClass().getVertexClass("localities.Town");
-		this.ec_Street = schema.getGraphClass().getEdgeClass(
-				"connections.Street");
-		this.ec_AirRoute = schema.getGraphClass().getEdgeClass(
-				"connections.AirRoute");
-		this.ec_ContainsCrossroad = schema.getGraphClass().getEdgeClass(
-				"localities.ContainsCrossroad");
+		this.ec_Street = schema.getGraphClass().getEdgeClass("connections.Street");
+		this.ec_AirRoute = schema.getGraphClass().getEdgeClass("connections.AirRoute");
+		this.ec_ContainsCrossroad = schema.getGraphClass().getEdgeClass("localities.ContainsCrossroad");
 		this.graph = schema.createGraph(ImplementationType.GENERIC);
 	}
 
@@ -70,12 +64,9 @@ public class GenericTemporaryGraphElementsTest {
 		Vertex v2_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v3_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v4_temp = graph.createTemporaryVertex();
-		Edge e1_street = graph
-				.createEdge(ec_Street, v3_crossroad, v2_crossroad);
-		Edge e2_street = graph.createTemporaryEdge(ec_Street, v3_crossroad,
-				v4_temp);
-		Edge e3_street = graph.createTemporaryEdge(ec_ContainsCrossroad,
-				v1_town, v4_temp);
+		Edge e1_street = graph.createEdge(ec_Street, v3_crossroad, v2_crossroad);
+		Edge e2_street = graph.createTemporaryEdge(ec_Street, v3_crossroad, v4_temp);
+		Edge e3_street = graph.createTemporaryEdge(ec_ContainsCrossroad, v1_town, v4_temp);
 		Edge e4_temp = graph.createTemporaryEdge(v2_crossroad, v3_crossroad);
 		Edge e5_temp = graph.createTemporaryEdge(v1_town, v4_temp);
 
@@ -100,14 +91,11 @@ public class GenericTemporaryGraphElementsTest {
 
 		Vertex v5_crossroad = graph.createVertex(vc_CrossRoad);
 
-		Edge e1_street = graph.createTemporaryEdge(ec_Street, v5_crossroad,
-				v4_temp);
+		Edge e1_street = graph.createTemporaryEdge(ec_Street, v5_crossroad, v4_temp);
 		int id_e1_street = e1_street.getId();
-		Edge e2_street = graph.createTemporaryEdge(ec_Street, v4_temp,
-				v2_crossroad);
+		Edge e2_street = graph.createTemporaryEdge(ec_Street, v4_temp, v2_crossroad);
 		int id_e2_street = e2_street.getId();
-		Edge e3_street = graph.createTemporaryEdge(ec_Street, v3_crossroad,
-				v4_temp);
+		Edge e3_street = graph.createTemporaryEdge(ec_Street, v3_crossroad, v4_temp);
 		int id_e3_street = e3_street.getId();
 
 		Vertex v4_plaza = v4_temp.bless(vc_Plaza);
@@ -163,8 +151,7 @@ public class GenericTemporaryGraphElementsTest {
 		Edge e1_street = graph.createEdge(ec_Street, v1_plaza, v2_crossroad);
 		Edge e2_street = graph.createEdge(ec_Street, v2_crossroad, v4_plaza);
 
-		TemporaryEdge e3_temp = graph.createTemporaryEdge(v2_crossroad,
-				v3_crossroad);
+		TemporaryEdge e3_temp = graph.createTemporaryEdge(v2_crossroad, v3_crossroad);
 
 		Edge e4_street = graph.createEdge(ec_Street, v3_crossroad, v1_plaza);
 		Edge e5_street = graph.createEdge(ec_Street, v4_plaza, v2_crossroad);
@@ -210,8 +197,7 @@ public class GenericTemporaryGraphElementsTest {
 		Vertex v1_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v2_airport = graph.createVertex(vc_Airport);
 
-		TemporaryEdge e1_temp = graph.createTemporaryEdge(v1_crossroad,
-				v2_airport);
+		TemporaryEdge e1_temp = graph.createTemporaryEdge(v1_crossroad, v2_airport);
 
 		try {
 			e1_temp.bless(ec_Street);
@@ -252,8 +238,7 @@ public class GenericTemporaryGraphElementsTest {
 	public void testConvertTemporaryEdgeWithPrimitiveAttributes() {
 		Vertex v1_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v2_crossroad = graph.createVertex(vc_CrossRoad);
-		TemporaryEdge e_temp = graph.createTemporaryEdge(v1_crossroad,
-				v2_crossroad);
+		TemporaryEdge e_temp = graph.createTemporaryEdge(v1_crossroad, v2_crossroad);
 		e_temp.setAttribute("name", "Gandhi-Street");
 		e_temp.setAttribute("oneway", true);
 		e_temp.setAttribute("length", 111.11);
@@ -269,7 +254,7 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(v2_crossroad, e_street.getOmega());
 		assertEquals("Gandhi-Street", e_street.getAttribute("name"));
 		assertEquals(true, e_street.getAttribute("oneway"));
-		assertEquals(111.11, e_street.getAttribute("length"));
+		assertEquals(111.11, e_street.getAttribute("length"), 0.001);
 	}
 
 	@Test
@@ -279,8 +264,7 @@ public class GenericTemporaryGraphElementsTest {
 		values = values.plus("day", 8);
 		values = values.plus("month", "AUG");
 		values = values.plus("year", 2008);
-		Record record = graph.createRecord(
-				(RecordDomain) schema.getDomain("Date"), values);
+		Record record = graph.createRecord((RecordDomain) schema.getDomain("Date"), values);
 		v1_temp.setAttribute("foundingDate", record);
 
 		Vertex v1_town = v1_temp.bless(vc_Town);
@@ -295,10 +279,8 @@ public class GenericTemporaryGraphElementsTest {
 	public void testConvertVertexWithRecordAttributeFail() {
 		schema.reopen();
 		ArrayList<RecordComponent> recordComponents = new ArrayList<>();
-		recordComponents.add(new RecordComponent("test", schema
-				.getStringDomain()));
-		RecordDomain d = schema.createRecordDomain("NewRecordDomain",
-				recordComponents);
+		recordComponents.add(new RecordComponent("test", schema.getStringDomain()));
+		RecordDomain d = schema.createRecordDomain("NewRecordDomain", recordComponents);
 		schema.finish();
 
 		TemporaryVertex v1_temp = graph.createTemporaryVertex();
