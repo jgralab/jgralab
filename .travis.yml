@@ -10,6 +10,4 @@ notifications:
 install: ant
 script: ant test
 jdk:
-  - openjdk7
-  - oraclejdk7
   - oraclejdk8
