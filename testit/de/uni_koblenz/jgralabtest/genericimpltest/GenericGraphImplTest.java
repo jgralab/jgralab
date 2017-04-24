@@ -669,7 +669,7 @@ public class GenericGraphImplTest {
 		g.readAttributeValueFromString("complexSetGraph", "{{f}}");
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)), g.getAttribute("complexSetGraph"));
 		g.readAttributeValueFromString("doubleGraph", "12.34");
-		assertEquals(12.34, g.getAttribute("doubleGraph"), 0.001);
+		assertEquals(12.34, (Double) g.getAttribute("doubleGraph"), 0.001);
 		g.readAttributeValueFromString("enumGraph", "SECOND");
 		assertEquals("SECOND", g.getAttribute("enumGraph"));
 		g.readAttributeValueFromString("intGraph", "42");
@@ -716,7 +716,7 @@ public class GenericGraphImplTest {
 						.plus(JGraLab.vector().plus(false).plus(false), JGraLab.set().plus(true).plus(false)),
 				g.getAttribute("complexMapGraph"));
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)), g.getAttribute("complexSetGraph"));
-		assertEquals(12.34, g.getAttribute("doubleGraph"), 0.001);
+		assertEquals(12.34, (Double) g.getAttribute("doubleGraph"), 0.001);
 		assertEquals("SECOND", g.getAttribute("enumGraph"));
 		assertEquals(42, (int) g.getAttribute("intGraph"));
 		assertEquals(JGraLab.vector().plus(true).plus(true), g.getAttribute("listGraph"));

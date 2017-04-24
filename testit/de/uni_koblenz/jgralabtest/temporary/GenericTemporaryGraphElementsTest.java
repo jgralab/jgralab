@@ -254,7 +254,7 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(v2_crossroad, e_street.getOmega());
 		assertEquals("Gandhi-Street", e_street.getAttribute("name"));
 		assertEquals(true, e_street.getAttribute("oneway"));
-		assertEquals(111.11, e_street.getAttribute("length"), 0.001);
+		assertEquals(111.11, (Double) e_street.getAttribute("length"), 0.001);
 	}
 
 	@Test

@@ -78,7 +78,7 @@ public class GenericVertexImplTest {
 				.plus(JGraLab.vector().plus(false), JGraLab.set().plus(false)), v.getAttribute("complexMapVertex"));
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(true)).plus(JGraLab.set().plus(false)),
 				v.getAttribute("complexSetVertex"));
-		assertEquals(1.1, v.getAttribute("doubleVertex"), 0.001);
+		assertEquals(1.1, (Double) v.getAttribute("doubleVertex"), 0.001);
 		assertEquals("FIRST", v.getAttribute("enumVertex"));
 		assertEquals(1, (int) v.getAttribute("intVertex"));
 		assertEquals(JGraLab.vector().plus(true).plus(false).plus(true), v.getAttribute("listVertex"));
@@ -109,7 +109,7 @@ public class GenericVertexImplTest {
 		v.setAttribute("complexSetVertex", JGraLab.set().plus(JGraLab.set().plus(false)));
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)), v.getAttribute("complexSetVertex"));
 		v.setAttribute("doubleVertex", 2.2d);
-		assertEquals(2.2d, v.getAttribute("doubleVertex"), 0.001);
+		assertEquals(2.2d, (Double) v.getAttribute("doubleVertex"), 0.001);
 		v.setAttribute("enumVertex", "SECOND");
 		assertEquals("SECOND", v.getAttribute("enumVertex"));
 		v.setAttribute("intVertex", 42);
@@ -505,7 +505,7 @@ public class GenericVertexImplTest {
 		v.readAttributeValueFromString("complexSetVertex", "{{f}}");
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)), v.getAttribute("complexSetVertex"));
 		v.readAttributeValueFromString("doubleVertex", "12.34");
-		assertEquals(12.34, v.getAttribute("doubleVertex"), 0.001);
+		assertEquals(12.34, (Double) v.getAttribute("doubleVertex"), 0.001);
 		v.readAttributeValueFromString("enumVertex", "SECOND");
 		assertEquals("SECOND", v.getAttribute("enumVertex"));
 		v.readAttributeValueFromString("intVertex", "42");
@@ -552,7 +552,7 @@ public class GenericVertexImplTest {
 						.plus(JGraLab.vector().plus(false).plus(false), JGraLab.set().plus(true).plus(false)),
 				v.getAttribute("complexMapVertex"));
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)), v.getAttribute("complexSetVertex"));
-		assertEquals(12.34, v.getAttribute("doubleVertex"), 0.001);
+		assertEquals(12.34, (Double) v.getAttribute("doubleVertex"), 0.001);
 		assertEquals("SECOND", v.getAttribute("enumVertex"));
 		assertEquals(42, (int) v.getAttribute("intVertex"));
 		assertEquals(JGraLab.vector().plus(true).plus(true), v.getAttribute("listVertex"));
