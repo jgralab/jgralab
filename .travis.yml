@@ -14,4 +14,4 @@ notifications:
     channels:
       - "irc.freenode.org#jgralab"
     use_notice: true
-script: ant test
+script: ant build test
