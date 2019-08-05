@@ -14,4 +14,5 @@ notifications:
     channels:
       - "irc.freenode.org#jgralab"
     use_notice: true
-script: ant build test
+install: ant build
+script: ant -lib lib/junit/ant-junit.jar:lib/junit/junit-4.7.jar test
