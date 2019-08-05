@@ -47,94 +47,91 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 public class MergeManifest extends Task {
-	private String metaDir;
-	private String dest;
-	private File manifestFile;
+    private String metaDir;
+    private String dest;
+    private File manifestFile;
 
-	public MergeManifest() {
-		metaDir = "META-INF";
-	}
+    public MergeManifest() {
+        metaDir = "META-INF";
+    }
 
-	public void setDest(String dest) {
-		this.dest = dest;
-	}
+    public void setDest(String dest) {
+        this.dest = dest;
+    }
 
-	public void setManifest(File manifestFile) {
-		this.manifestFile = manifestFile;
-	}
+    public void setManifest(File manifestFile) {
+        this.manifestFile = manifestFile;
+    }
 
-	@Override
-	public void execute() {
-		try {
-			File targetMetaDir = new File(dest + File.separator + metaDir);
-			if (!targetMetaDir.exists()) {
-				System.err.println("No " + metaDir + " directory. Skipping...");
-				return;
-			}
-			File[] content = targetMetaDir.listFiles();
-			List<File> manifests = new LinkedList<>();
-			// find manifest files
-			for (File currentContent : content) {
-				if (currentContent.isDirectory()) {
-					String manifestFileName = currentContent.getAbsolutePath()
-							+ File.separator + metaDir + File.separator
-							+ "MANIFEST.MF";
-					// System.out.println(manifestFileName);
-					File currentManifestFile = new File(manifestFileName);
-					if (currentManifestFile.exists()) {
-						manifests.add(currentManifestFile);
-					}
-				}
-			}
-			int size = manifests.size();
-			System.out.println("Found " + size
-					+ " manifest files from other jars.");
-			if (size > 0) {
-				StringWriter manifestString = new StringWriter();
-				PrintWriter targetManifest = new PrintWriter(manifestString);
-				BufferedReader reader = new BufferedReader(new FileReader(
-						manifestFile));
-				try {
-					for (String l = reader.readLine(); l != null; l = reader
-							.readLine()) {
-						targetManifest.println(l);
-					}
-				} finally {
-					reader.close();
-				}
+    @Override
+    public void execute() {
+        try {
+            File targetMetaDir = new File(dest + File.separator + metaDir);
+            if (!targetMetaDir.exists()) {
+                System.err.println("No " + metaDir + " directory. Skipping...");
+                return;
+            }
+            File[] content = targetMetaDir.listFiles();
+            if (content == null) {
+                return;
+            }
+            List<File> manifests = new LinkedList<>();
+            // find manifest files
+            for (File currentContent : content) {
+                if (currentContent.isDirectory()) {
+                    String manifestFileName = currentContent.getAbsolutePath() + File.separator + metaDir
+                            + File.separator + "MANIFEST.MF";
+                    // System.out.println(manifestFileName);
+                    File currentManifestFile = new File(manifestFileName);
+                    if (currentManifestFile.exists()) {
+                        manifests.add(currentManifestFile);
+                    }
+                }
+            }
+            int size = manifests.size();
+            System.out.println("Found " + size + " manifest files from other jars.");
+            if (size > 0) {
+                StringWriter manifestString = new StringWriter();
+                PrintWriter targetManifest = new PrintWriter(manifestString);
+                BufferedReader reader = new BufferedReader(new FileReader(manifestFile));
+                try {
+                    for (String l = reader.readLine(); l != null; l = reader.readLine()) {
+                        targetManifest.println(l);
+                    }
+                } finally {
+                    reader.close();
+                }
 
-				// search for name part and copy the remainder of the file,
-				// assuming that only name parts are following
-				for (File currentManifest : manifests) {
-					reader = new BufferedReader(new FileReader(currentManifest));
-					try {
-						boolean copy = false;
-						for (String l = reader.readLine(); l != null; l = reader
-								.readLine()) {
-							if (!copy && l.startsWith("Name: ")) {
-								System.out.println("Found name section in "
-										+ currentManifest.getAbsolutePath());
-								copy = true;
-								targetManifest.println();
-							}
-							if (copy) {
-								// System.out.println("Copying: " +
-								// currentLine);
-								targetManifest.println(l);
-							}
+                // search for name part and copy the remainder of the file,
+                // assuming that only name parts are following
+                for (File currentManifest : manifests) {
+                    reader = new BufferedReader(new FileReader(currentManifest));
+                    try {
+                        boolean copy = false;
+                        for (String l = reader.readLine(); l != null; l = reader.readLine()) {
+                            if (!copy && l.startsWith("Name: ")) {
+                                System.out.println("Found name section in " + currentManifest.getAbsolutePath());
+                                copy = true;
+                                targetManifest.println();
+                            }
+                            if (copy) {
+                                // System.out.println("Copying: " +
+                                // currentLine);
+                                targetManifest.println(l);
+                            }
 
-						}
-					} finally {
-						reader.close();
-					}
-				}
-				targetManifest.close();
-				PrintWriter out = new PrintWriter(manifestFile);
-				out.println(manifestString.toString());
-				out.close();
-			}
-		} catch (IOException e) {
-			throw new BuildException(e);
-		}
-	}
+                        }
+                    } finally {
+                        reader.close();
+                    }
+                }
+                targetManifest.close();
+                PrintWriter out = new PrintWriter(manifestFile);
+                out.println(manifestString.toString());
+                out.close();
+            }
+        } catch (IOException e) {
+            throw new BuildException(e);
+        }
+    }
 }

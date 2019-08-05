@@ -90,7 +90,7 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 public class Tg2Dot extends Tg2Whatever {
 
 	/**
-	 * Indicates to abbreviate all edge attribute names.
+	 * Indicates to abbteviate all edge attribute names.
 	 */
 	private boolean abbreviateEdgeAttributeNames = false;
 

@@ -46,150 +46,143 @@ import de.uni_koblenz.jgralab.greql.serialising.GreqlSerializer;
 /**
  * This is the base class for all exceptions that refeer to the querysource with
  * offset/length pairs
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class QuerySourceException extends GreqlException {
-	private static final long serialVersionUID = 8525494291742693931L;
+    private static final long serialVersionUID = 8525494291742693931L;
 
-	/**
-	 * the position in the query where exception occured
-	 */
-	private List<SourcePosition> positions;
+    /**
+     * the position in the query where exception occured
+     */
+    private List<SourcePosition> positions;
 
-	/**
-	 * the element that causes the error
-	 */
-	private final GreqlVertex element;
+    /**
+     * the element that causes the error
+     */
+    private final GreqlVertex element;
 
-	/**
-	 * 
-	 * @param element
-	 *            the element that caused the error
-	 * @param sourcePositions
-	 *            a list of sourceposition where the error possible occurs
-	 */
-	public QuerySourceException(String errorMessage, GreqlVertex element,
-			List<SourcePosition> sourcePositions, Throwable cause) {
-		super(errorMessage, cause);
-		this.element = element;
-		if (sourcePositions != null) {
-			positions = sourcePositions;
-		} else {
-			positions = new ArrayList<>();
-		}
-	}
+    /**
+     * 
+     * @param element the element that caused the error
+     * @param sourcePositions a list of sourceposition where the error possible
+     *        occurs
+     */
+    public QuerySourceException(String errorMessage, GreqlVertex element, List<SourcePosition> sourcePositions,
+            Throwable cause) {
+        super(errorMessage, cause);
+        this.element = element;
+        if (sourcePositions != null) {
+            positions = sourcePositions;
+        } else {
+            positions = new ArrayList<>();
+        }
+    }
 
-	/**
-	 * 
-	 * @param element
-	 *            the element that caused the error
-	 * @param sourcePosition
-	 *            the sourceposition where the error occurs
-	 */
-	public QuerySourceException(String errorMessage, GreqlVertex element,
-			SourcePosition sourcePosition, Exception cause) {
-		super(errorMessage, cause);
-		this.element = element;
-		positions = new ArrayList<>();
-		positions.add(sourcePosition);
-	}
+    /**
+     * 
+     * @param element the element that caused the error
+     * @param sourcePosition the sourceposition where the error occurs
+     */
+    public QuerySourceException(String errorMessage, GreqlVertex element, SourcePosition sourcePosition,
+            Exception cause) {
+        super(errorMessage, cause);
+        this.element = element;
+        positions = new ArrayList<>();
+        positions.add(sourcePosition);
+    }
 
-	/**
-	 * 
-	 * @param element
-	 *            the element that caused the error
-	 * @param sourcePositions
-	 *            a list of sourceposition where the error possible occurs
-	 */
-	public QuerySourceException(String errorMessage, GreqlVertex element,
-			List<SourcePosition> sourcePositions) {
-		this(errorMessage, element, sourcePositions, null);
-	}
+    /**
+     * 
+     * @param element the element that caused the error
+     * @param sourcePositions a list of sourceposition where the error possible
+     *        occurs
+     */
+    public QuerySourceException(String errorMessage, GreqlVertex element, List<SourcePosition> sourcePositions) {
+        this(errorMessage, element, sourcePositions, null);
+    }
 
-	/**
-	 * 
-	 * @param element
-	 *            the element that caused the error
-	 * @param sourcePosition
-	 *            the sourceposition where the error occurs
-	 */
-	public QuerySourceException(String errorMessage, GreqlVertex element,
-			SourcePosition sourcePosition) {
-		this(errorMessage, element, sourcePosition, null);
-	}
+    /**
+     * 
+     * @param element the element that caused the error
+     * @param sourcePosition the sourceposition where the error occurs
+     */
+    public QuerySourceException(String errorMessage, GreqlVertex element, SourcePosition sourcePosition) {
+        this(errorMessage, element, sourcePosition, null);
+    }
 
-	/**
-	 * returns the string of the message
-	 */
-	@Override
-	public String getMessage() {
-		StringBuilder sb = new StringBuilder();
-		if (positions.size() > 0) {
-			sb.append(super.getMessage());
-			sb.append(": query part '");
-			sb.append(element != null ? GreqlSerializer
-					.serializeVertex(element) : "<unknown element>");
-			sb.append("' at position (");
-			sb.append(positions.get(0).get_offset());
-			sb.append(", ");
-			sb.append(positions.get(0).get_length());
-			sb.append(")");
-		} else {
-			sb.append(super.getMessage());
-			sb.append(": query part '");
-			sb.append(element != null ? GreqlSerializer
-					.serializeVertex(element) : "<unknown element>");
-			sb.append("' at unknown position in query");
-		}
+    /**
+     * returns the string of the message
+     */
+    @Override
+    public String getMessage() {
+        StringBuilder sb = new StringBuilder();
+        if (positions.size() > 0) {
+            sb.append(super.getMessage());
+            sb.append(": query part '");
+            sb.append(element != null ? GreqlSerializer.serializeVertex(element) : "<unknown element>");
+            sb.append("' at position (");
+            sb.append(positions.get(0)
+                    .get_offset());
+            sb.append(", ");
+            sb.append(positions.get(0)
+                    .get_length());
+            sb.append(")");
+        } else {
+            sb.append(super.getMessage());
+            sb.append(": query part '");
+            sb.append(element != null ? GreqlSerializer.serializeVertex(element) : "<unknown element>");
+            sb.append("' at unknown position in query");
+        }
 
-		if (element != null) {
-			try {
-				String serializedGraph = GreqlSerializer
-						.serializeGraph((GreqlGraph) element.getGraph());
-				sb.append("\nComplete (optimized) Query: ");
-				sb.append(serializedGraph);
-			} catch (GreqlException e) {
+        if (element != null) {
+            try {
+                String serializedGraph = GreqlSerializer.serializeGraph((GreqlGraph) element.getGraph());
+                sb.append("\nComplete (optimized) Query: ");
+                sb.append(serializedGraph);
+            } catch (GreqlException e) {
 
-			}
-		}
+            }
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * returns the list of sourcepositions
-	 */
-	public List<SourcePosition> getSourcePositions() {
-		return positions;
-	}
+    /**
+     * returns the list of sourcepositions
+     */
+    public List<SourcePosition> getSourcePositions() {
+        return positions;
+    }
 
-	/**
-	 * @return the position where the undefined varialbe is used
-	 */
-	public int getOffset() {
-		if (positions.size() < 0) {
-			return 0;
-		}
-		return positions.get(0).get_offset();
-	}
+    /**
+     * @return the position where the undefined varialbe is used
+     */
+    public int getOffset() {
+        if (positions.isEmpty()) {
+            return 0;
+        }
+        return positions.get(0)
+                .get_offset();
+    }
 
-	/**
-	 * @return the length of the usage of the undefined variable
-	 */
-	public int getLength() {
-		if (positions.size() < 0) {
-			return 0;
-		}
-		return positions.get(0).get_length();
-	}
+    /**
+     * @return the length of the usage of the undefined variable
+     */
+    public int getLength() {
+        if (positions.isEmpty()) {
+            return 0;
+        }
+        return positions.get(0)
+                .get_length();
+    }
 
-	/**
-	 * @return the broken element
-	 */
-	public GreqlVertex getElement() {
-		return element;
-	}
+    /**
+     * @return the broken element
+     */
+    public GreqlVertex getElement() {
+        return element;
+    }
 
 }

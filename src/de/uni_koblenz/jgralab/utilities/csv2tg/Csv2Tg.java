@@ -72,366 +72,347 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public class Csv2Tg implements FilenameFilter {
 
-	private static final String CLI_OPTION_OUTPUT_FILE = "output";
-	private static final String CLI_OPTION_CSV_FILES = "input";
-	private static final String CLI_OPTION_SCHEMA = "schema";
-	private static final Object COMMENT_STRING = "#";
+    private static final String CLI_OPTION_OUTPUT_FILE = "output";
+    private static final String CLI_OPTION_CSV_FILES = "input";
+    private static final String CLI_OPTION_SCHEMA = "schema";
+    private static final Object COMMENT_STRING = "#";
 
-	public static void main(String[] args) throws GraphIOException {
-		Csv2Tg converter = new Csv2Tg();
-		converter.getOptions(args);
-		converter.process();
+    public static void main(String[] args) throws GraphIOException {
+        Csv2Tg converter = new Csv2Tg();
+        converter.getOptions(args);
+        converter.process();
 
-		System.out.println("Fini.");
-	}
+        System.out.println("Fini.");
+    }
 
-	private Schema schema;
-	private String[] csvFiles;
-	private Map<VertexClass, CsvReader> vertexInstances;
-	private Map<EdgeClass, CsvReader> edgeInstances;
-	private Map<CsvReader, String> reader2FilenameMap;
-	private CsvReader currentReader;
-	private String outputFile;
-	private Graph graph;
-	private Map<String, Vertex> vertices;
+    private Schema schema;
+    private String[] csvFiles;
+    private Map<VertexClass, CsvReader> vertexInstances;
+    private Map<EdgeClass, CsvReader> edgeInstances;
+    private Map<CsvReader, String> reader2FilenameMap;
+    private CsvReader currentReader;
+    private String outputFile;
+    private Graph graph;
+    private Map<String, Vertex> vertices;
 
-	public Schema getSchema() {
-		return schema;
-	}
+    public Schema getSchema() {
+        return schema;
+    }
 
-	public void setSchema(Schema schema) {
-		this.schema = schema;
-	}
+    public void setSchema(Schema schema) {
+        this.schema = schema;
+    }
 
-	public Csv2Tg() {
+    public Csv2Tg() {
 
-	}
+    }
 
-	final protected CommandLine processCommandLineOptions(String[] args) {
-		OptionHandler oh = createOptionHandler();
-		return oh.parse(args);
-	}
+    final protected CommandLine processCommandLineOptions(String[] args) {
+        OptionHandler oh = createOptionHandler();
+        return oh.parse(args);
+    }
 
-	protected void getOptions(String[] args) throws GraphIOException {
-		CommandLine comLine = processCommandLineOptions(args);
-		assert comLine != null;
+    protected void getOptions(String[] args) throws GraphIOException {
+        CommandLine comLine = processCommandLineOptions(args);
+        assert comLine != null;
 
-		setSchema(comLine.getOptionValue(CLI_OPTION_SCHEMA));
-		setCsvFiles(comLine.getOptionValues(CLI_OPTION_CSV_FILES));
-		setOutputFile(comLine.getOptionValue(CLI_OPTION_OUTPUT_FILE));
-	}
+        setSchema(comLine.getOptionValue(CLI_OPTION_SCHEMA));
+        setCsvFiles(comLine.getOptionValues(CLI_OPTION_CSV_FILES));
+        setOutputFile(comLine.getOptionValue(CLI_OPTION_OUTPUT_FILE));
+    }
 
-	private void setSchema(String filename) throws GraphIOException {
-		System.out.print("Loading Schema ... ");
-		Schema schema = GraphIO.loadSchemaFromFile(filename);
+    private void setSchema(String filename) throws GraphIOException {
+        System.out.print("Loading Schema ... ");
+        Schema schema = GraphIO.loadSchemaFromFile(filename);
 
-		if (!isCompiled(schema)) {
-			System.out.print("compiling ... ");
-			schema.compile(CodeGeneratorConfiguration.MINIMAL);
-		}
-		setSchema(schema);
-		System.out.println("done.");
-	}
+        if (!isCompiled(schema)) {
+            System.out.print("compiling ... ");
+            schema.compile(CodeGeneratorConfiguration.MINIMAL);
+        }
+        setSchema(schema);
+        System.out.println("done.");
+    }
 
-	private boolean isCompiled(Schema schema) {
-		try {
-			Class.forName(schema.getQualifiedName(), true,
-					SchemaClassManager.instance(schema.getQualifiedName()));
-		} catch (ClassNotFoundException ex) {
-			return false;
-		}
-		return true;
-	}
+    private boolean isCompiled(Schema schema) {
+        try {
+            Class.forName(schema.getQualifiedName(), true, SchemaClassManager.instance(schema.getQualifiedName()));
+        } catch (ClassNotFoundException ex) {
+            return false;
+        }
+        return true;
+    }
 
-	final protected OptionHandler createOptionHandler() {
-		String toolString = "java " + this.getClass().getName();
-		String versionString = JGraLab.getInfo(false);
-		OptionHandler oh = new OptionHandler(toolString, versionString);
+    final protected OptionHandler createOptionHandler() {
+        String toolString = "java " + this.getClass()
+                .getName();
+        String versionString = JGraLab.getInfo(false);
+        OptionHandler oh = new OptionHandler(toolString, versionString);
 
-		Option schema = new Option("s", CLI_OPTION_SCHEMA, true,
-				"(required): the schema according to which the graph should be constructed.");
-		schema.setRequired(true);
-		schema.setArgName("file");
-		oh.addOption(schema);
+        Option schema = new Option("s", CLI_OPTION_SCHEMA, true,
+                "(required): the schema according to which the graph should be constructed.");
+        schema.setRequired(true);
+        schema.setArgName("file");
+        oh.addOption(schema);
 
-		Option csvFiles = new Option("i", CLI_OPTION_CSV_FILES, true,
-				"(required): set of csv-file containing vertex / edge instance informations.");
-		csvFiles.setRequired(true);
-		csvFiles.setArgs(Option.UNLIMITED_VALUES);
-		csvFiles.setArgName("files_or_folder");
-		csvFiles.setValueSeparator(' ');
-		oh.addOption(csvFiles);
+        Option csvFiles = new Option("i", CLI_OPTION_CSV_FILES, true,
+                "(required): set of csv-file containing vertex / edge instance informations.");
+        csvFiles.setRequired(true);
+        csvFiles.setArgs(Option.UNLIMITED_VALUES);
+        csvFiles.setArgName("files_or_folder");
+        csvFiles.setValueSeparator(' ');
+        oh.addOption(csvFiles);
 
-		Option output = new Option("o", CLI_OPTION_OUTPUT_FILE, true,
-				"(required): the output file name, or empty for stdout");
-		output.setRequired(true);
-		output.setArgName("file");
-		oh.addOption(output);
+        Option output = new Option("o", CLI_OPTION_OUTPUT_FILE, true,
+                "(required): the output file name, or empty for stdout");
+        output.setRequired(true);
+        output.setArgName("file");
+        oh.addOption(output);
 
-		return oh;
-	}
+        return oh;
+    }
 
-	public void process() {
-		setUp();
-		try {
-			loadCsvFiles();
-			processVertexFiles();
-			processEdgeFiles();
+    public void process() {
+        setUp();
+        try {
+            loadCsvFiles();
+            processVertexFiles();
+            processEdgeFiles();
 
-			// Prints the key value from the csv-file of vertices, which do not
-			// have any edge attached!
-			// for (Vertex v : graph.vertices()) {
-			// if (v.getDegree() == 0) {
-			// for (Entry<String, Vertex> entry : vertices.entrySet()) {
-			// if (v.equals(entry.getValue())) {
-			// System.out.println("Missing edges: "
-			// + entry.getKey());
-			// }
-			// }
-			// }
-			// }
+            // Prints the key value from the csv-file of vertices, which do not
+            // have any edge attached!
+            // for (Vertex v : graph.vertices()) {
+            // if (v.getDegree() == 0) {
+            // for (Entry<String, Vertex> entry : vertices.entrySet()) {
+            // if (v.equals(entry.getValue())) {
+            // System.out.println("Missing edges: "
+            // + entry.getKey());
+            // }
+            // }
+            // }
+            // }
 
-			System.out.println("Finished Processing.");
-			System.out.print("Saving Graph ...");
-			GraphIO.saveGraphToFile(graph, outputFile, null);
-			System.out.print("done.");
-		} catch (NoSuchAttributeException e) {
-			e.printStackTrace();
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("An error occured while processing "
-					+ currentReader.getLineNumber() + " in file \""
-					+ reader2FilenameMap.get(currentReader) + "\".");
-			e.printStackTrace();
-		} finally {
-			try {
-				tearDown();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+            System.out.println("Finished Processing.");
+            System.out.print("Saving Graph ...");
+            GraphIO.saveGraphToFile(graph, outputFile, null);
+            System.out.print("done.");
+        } catch (NoSuchAttributeException e) {
+            e.printStackTrace();
+        } catch (GraphIOException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("An error occured while processing " + currentReader.getLineNumber() + " in file \""
+                    + reader2FilenameMap.get(currentReader) + "\".");
+            e.printStackTrace();
+        } finally {
+            try {
+                tearDown();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 
-	private void setUp() {
-		vertices = new HashMap<>();
-		vertexInstances = new HashMap<>();
-		edgeInstances = new HashMap<>();
-		reader2FilenameMap = new HashMap<>();
-		graph = schema.createGraph(ImplementationType.GENERIC);
-	}
+    private void setUp() {
+        vertices = new HashMap<>();
+        vertexInstances = new HashMap<>();
+        edgeInstances = new HashMap<>();
+        reader2FilenameMap = new HashMap<>();
+        graph = schema.createGraph(ImplementationType.GENERIC);
+    }
 
-	private void tearDown() throws IOException {
-		vertices = null;
-		graph = null;
+    private void tearDown() throws IOException {
+        vertices = null;
+        graph = null;
 
-		closeAllReader(vertexInstances.values());
-		closeAllReader(edgeInstances.values());
-		vertexInstances = null;
-		edgeInstances = null;
-		reader2FilenameMap = null;
-	}
+        closeAllReader(vertexInstances.values());
+        closeAllReader(edgeInstances.values());
+        vertexInstances = null;
+        edgeInstances = null;
+        reader2FilenameMap = null;
+    }
 
-	private void closeAllReader(Collection<CsvReader> readers)
-			throws IOException {
-		for (CsvReader reader : readers) {
-			reader.close();
-		}
-	}
+    private void closeAllReader(Collection<CsvReader> readers) throws IOException {
+        for (CsvReader reader : readers) {
+            reader.close();
+        }
+    }
 
-	private void processEdgeFiles() throws NoSuchAttributeException,
-			IOException, GraphIOException {
-		for (Entry<EdgeClass, CsvReader> entry : edgeInstances.entrySet()) {
+    private void processEdgeFiles() throws NoSuchAttributeException, IOException, GraphIOException {
+        for (Entry<EdgeClass, CsvReader> entry : edgeInstances.entrySet()) {
 
-			currentReader = entry.getValue();
+            currentReader = entry.getValue();
 
-			System.out.println("\tprocessing file: "
-					+ reader2FilenameMap.get(currentReader));
+            System.out.println("\tprocessing file: " + reader2FilenameMap.get(currentReader));
 
-			while (currentReader.readRecord()) {
-				createEdge(currentReader, entry.getKey());
-			}
-		}
-	}
+            while (currentReader.readRecord()) {
+                createEdge(currentReader, entry.getKey());
+            }
+        }
+    }
 
-	private void processVertexFiles() throws NoSuchAttributeException,
-			IOException, GraphIOException {
+    private void processVertexFiles() throws NoSuchAttributeException, IOException, GraphIOException {
 
-		for (Entry<VertexClass, CsvReader> entry : vertexInstances.entrySet()) {
+        for (Entry<VertexClass, CsvReader> entry : vertexInstances.entrySet()) {
 
-			currentReader = entry.getValue();
-			while (currentReader.readRecord()) {
-				createVertex(currentReader, entry.getKey());
-			}
-			System.out.println("\tprocessing file: "
-					+ reader2FilenameMap.get(currentReader));
-		}
-	}
+            currentReader = entry.getValue();
+            while (currentReader.readRecord()) {
+                createVertex(currentReader, entry.getKey());
+            }
+            System.out.println("\tprocessing file: " + reader2FilenameMap.get(currentReader));
+        }
+    }
 
-	private void loadCsvFiles() throws NoSuchAttributeException,
-			GraphIOException, IOException {
-		for (String csvFile : csvFiles) {
-			loadCsvFile(csvFile);
-		}
-	}
+    private void loadCsvFiles() throws NoSuchAttributeException, GraphIOException, IOException {
+        for (String csvFile : csvFiles) {
+            loadCsvFile(csvFile);
+        }
+    }
 
-	private void loadCsvFile(String csvFile) throws NoSuchAttributeException,
-			GraphIOException, IOException {
-		CsvReader reader = openCvsFile(csvFile);
-		reader2FilenameMap.put(reader, csvFile);
+    private void loadCsvFile(String csvFile) throws NoSuchAttributeException, GraphIOException, IOException {
+        CsvReader reader = openCvsFile(csvFile);
+        reader2FilenameMap.put(reader, csvFile);
 
-		String attributeClassName = reader.getFieldNames().get(0);
-		AttributedElementClass<?, ?> aec = schema
-				.getAttributedElementClass(attributeClassName);
-		if (aec instanceof VertexClass) {
-			vertexInstances.put((VertexClass) aec, reader);
-		} else {
-			edgeInstances.put((EdgeClass) aec, reader);
-		}
-	}
+        String attributeClassName = reader.getFieldNames()
+                .get(0);
+        AttributedElementClass<?, ?> aec = schema.getAttributedElementClass(attributeClassName);
+        if (aec instanceof VertexClass) {
+            vertexInstances.put((VertexClass) aec, reader);
+        } else {
+            edgeInstances.put((EdgeClass) aec, reader);
+        }
+    }
 
-	private CsvReader openCvsFile(String csvFile) {
-		try {
-			// Storing as a global variable is just for debugging purposes.
-			CsvReader openFileReader = new CsvReader(
-					new BufferedReader(new InputStreamReader(
-							new FileInputStream(csvFile), "UTF-8")),
-					CsvReader.WITH_FIELDNAMES);
-			return openFileReader;
-		} catch (FileNotFoundException cause) {
-			throw new RuntimeException(
-					"An error occured while opening the file \"" + csvFile
-							+ "\".", cause);
-		} catch (IOException cause) {
-			throw new RuntimeException(
-					"An error occured while opening the file \"" + csvFile
-							+ "\".", cause);
-		}
-	}
+    private CsvReader openCvsFile(String csvFile) {
+        try {
+            // Storing as a global variable is just for debugging purposes.
+            CsvReader openFileReader = new CsvReader(
+                    new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), "UTF-8")),
+                    CsvReader.WITH_FIELDNAMES);
+            return openFileReader;
+        } catch (FileNotFoundException cause) {
+            throw new RuntimeException("An error occured while opening the file \"" + csvFile + "\".", cause);
+        } catch (IOException cause) {
+            throw new RuntimeException("An error occured while opening the file \"" + csvFile + "\".", cause);
+        }
+    }
 
-	private void createVertex(CsvReader reader, VertexClass vc)
-			throws NoSuchAttributeException, GraphIOException {
-		Vertex vertex = graph.createVertex(vc);
+    private void createVertex(CsvReader reader, VertexClass vc) throws NoSuchAttributeException, GraphIOException {
+        Vertex vertex = graph.createVertex(vc);
 
-		insertAttribute(vertex, reader, 1);
+        insertAttribute(vertex, reader, 1);
 
-		String uniqueName = reader.getFieldAt(0);
-		if (vertices.containsKey(uniqueName)) {
-			throw new RuntimeException("The unique name \"" + uniqueName
-					+ "\" isn't in fact unique. This error occured while "
-					+ "processing the file \"" + reader2FilenameMap.get(reader)
-					+ "\".");
-		}
-		vertices.put(uniqueName, vertex);
-	}
+        String uniqueName = reader.getFieldAt(0);
+        if (vertices.containsKey(uniqueName)) {
+            throw new RuntimeException(
+                    "The unique name \"" + uniqueName + "\" isn't in fact unique. This error occured while "
+                            + "processing the file \"" + reader2FilenameMap.get(reader) + "\".");
+        }
+        vertices.put(uniqueName, vertex);
+    }
 
-	private void createEdge(CsvReader reader, EdgeClass ec)
-			throws NoSuchAttributeException, GraphIOException {
+    private void createEdge(CsvReader reader, EdgeClass ec) throws NoSuchAttributeException, GraphIOException {
 
-		Vertex alpha = getVertex(reader, 1);
-		Vertex omega = getVertex(reader, 2);
+        Vertex alpha = getVertex(reader, 1);
+        Vertex omega = getVertex(reader, 2);
 
-		Edge edge = graph.createEdge(ec, alpha, omega);
+        Edge edge = graph.createEdge(ec, alpha, omega);
 
-		insertAttribute(edge, reader, 3);
+        insertAttribute(edge, reader, 3);
 
-	}
+    }
 
-	private void insertAttribute(AttributedElement<?, ?> element,
-			CsvReader reader, int startColumnIndex)
-			throws NoSuchAttributeException, GraphIOException {
+    private void insertAttribute(AttributedElement<?, ?> element, CsvReader reader, int startColumnIndex)
+            throws NoSuchAttributeException, GraphIOException {
 
-		List<String> header = reader.getFieldNames();
+        List<String> header = reader.getFieldNames();
 
-		for (int index = startColumnIndex; index < header.size(); index++) {
+        for (int index = startColumnIndex; index < header.size(); index++) {
 
-			String attributeName = header.get(index);
-			String valueString = reader.getFieldAt(index);
+            String attributeName = header.get(index);
+            String valueString = reader.getFieldAt(index);
 
-			if (attributeName.equals(COMMENT_STRING) || valueString.isEmpty()) {
-				continue;
-			}
-			String transformedString = transformCsvStringValue(valueString);
+            if (attributeName.equals(COMMENT_STRING) || valueString.isEmpty()) {
+                continue;
+            }
+            String transformedString = transformCsvStringValue(valueString);
 
-			try {
-				((InternalAttributedElement) element)
-						.readAttributeValueFromString(attributeName,
-								transformedString);
-			} catch (NoSuchAttributeException ex) {
-				throw new RuntimeException("The attribute \"" + attributeName
-						+ "\" with value \"" + transformedString
-						+ "\" in line " + index
-						+ " is not a valid attribute name for "
-						+ element.getGraphClass().getQualifiedName(), ex);
-			}
+            try {
+                ((InternalAttributedElement) element).readAttributeValueFromString(attributeName, transformedString);
+            } catch (NoSuchAttributeException ex) {
+                throw new RuntimeException("The attribute \"" + attributeName + "\" with value \"" + transformedString
+                        + "\" in line " + index + " is not a valid attribute name for " + element.getGraphClass()
+                                .getQualifiedName(),
+                        ex);
+            }
 
-		}
-	}
+        }
+    }
 
-	private String transformCsvStringValue(String csvStringValue) {
-		if (csvStringValue.startsWith("\"") && csvStringValue.endsWith("\"")) {
-			csvStringValue = GraphIO.toUtfString(csvStringValue.substring(1,
-					csvStringValue.length() - 1).replace("\\\"", "\""));
-		}
-		return csvStringValue;
-	}
+    private String transformCsvStringValue(String csvStringValue) {
+        if (csvStringValue.startsWith("\"") && csvStringValue.endsWith("\"")) {
+            csvStringValue = GraphIO.toUtfString(csvStringValue.substring(1, csvStringValue.length() - 1)
+                    .replace("\\\"", "\""));
+        }
+        return csvStringValue;
+    }
 
-	private Vertex getVertex(CsvReader reader, int fieldNumber) {
-		String vertexName = reader.getFieldAt(fieldNumber);
-		Vertex vertex = vertices.get(vertexName);
-		if (vertex == null) {
-			throw new RuntimeException("Couldn't find vertex \"" + vertexName
-					+ "\" in line: " + reader.getLineNumber() + "in file \""
-					+ reader2FilenameMap.get(reader) + "\".");
-		}
-		return vertex;
-	}
+    private Vertex getVertex(CsvReader reader, int fieldNumber) {
+        String vertexName = reader.getFieldAt(fieldNumber);
+        Vertex vertex = vertices.get(vertexName);
+        if (vertex == null) {
+            throw new RuntimeException("Couldn't find vertex \"" + vertexName + "\" in line: " + reader.getLineNumber()
+                    + "in file \"" + reader2FilenameMap.get(reader) + "\".");
+        }
+        return vertex;
+    }
 
-	public String[] getCsvFiles() {
-		return csvFiles;
-	}
+    public String[] getCsvFiles() {
+        return csvFiles;
+    }
 
-	public void setCsvFiles(String[] vertexFiles) {
-		csvFiles = getFilesInFolder(vertexFiles);
-	}
+    public void setCsvFiles(String[] vertexFiles) {
+        csvFiles = getFilesInFolder(vertexFiles);
+    }
 
-	private String[] getFilesInFolder(String[] filenames) {
-		HashSet<String> fileList = new HashSet<>();
-		for (String filename : filenames) {
+    private String[] getFilesInFolder(String[] filenames) {
+        HashSet<String> fileList = new HashSet<>();
+        for (String filename : filenames) {
 
-			File file = new File(filename).getAbsoluteFile();
-			if (!file.exists()) {
-				throw new RuntimeException("File or folder \"" + filename
-						+ "\" does not exist!");
-			}
-			if (file.isDirectory()) {
-				for (File foundFile : file.listFiles(this)) {
-					fileList.add(foundFile.getAbsolutePath());
-				}
-			} else {
-				fileList.add(file.getAbsolutePath());
-			}
-		}
+            File file = new File(filename).getAbsoluteFile();
+            if (!file.exists()) {
+                throw new RuntimeException("File or folder \"" + filename + "\" does not exist!");
+            }
+            if (file.isDirectory()) {
+                File[] content = file.listFiles(this);
+                if (content != null) {
+                    for (File foundFile : content) {
+                        fileList.add(foundFile.getAbsolutePath());
+                    }
+                }
+            } else {
+                fileList.add(file.getAbsolutePath());
+            }
+        }
 
-		if (fileList.isEmpty()) {
-			throw new RuntimeException("No csv-files to convert to a tg-file.");
-		}
+        if (fileList.isEmpty()) {
+            throw new RuntimeException("No csv-files to convert to a tg-file.");
+        }
 
-		String[] result = new String[fileList.size()];
-		return fileList.toArray(result);
-	}
+        String[] result = new String[fileList.size()];
+        return fileList.toArray(result);
+    }
 
-	public String getOutputFile() {
-		return outputFile;
-	}
+    public String getOutputFile() {
+        return outputFile;
+    }
 
-	public void setOutputFile(String outputFile) {
-		this.outputFile = outputFile;
-	}
+    public void setOutputFile(String outputFile) {
+        this.outputFile = outputFile;
+    }
 
-	@Override
-	public boolean accept(File dir, String name) {
-		return name.endsWith(".csv");
-	}
+    @Override
+    public boolean accept(File dir, String name) {
+        return name.endsWith(".csv");
+    }
 }

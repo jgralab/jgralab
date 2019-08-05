@@ -60,291 +60,281 @@ import de.uni_koblenz.jgralab.utilities.argouml2tg.Tg2ArgoUml;
 
 public class Tg2ArgoUmlTest {
 
-	/**
-	 * Position of the test schemas.
-	 */
-	private static String folder = "testit/de/uni_koblenz/jgralabtest/utilities/rsa/testschemas/";
+    /**
+     * Position of the test schemas.
+     */
+    private static String folder = "testit/de/uni_koblenz/jgralabtest/utilities/rsa/testschemas/";
 
-	private ArgoUml2Tg argoUml2Tg;
+    private ArgoUml2Tg argoUml2Tg;
 
-	{
-		argoUml2Tg = new ArgoUml2Tg();
-		argoUml2Tg.setUseFromRole(true);
-		argoUml2Tg.setRemoveUnusedDomains(true);
-		argoUml2Tg.setUseNavigability(true);
-		argoUml2Tg.setFilenameDot(null);
-		argoUml2Tg.setFilenameValidation(null);
-		argoUml2Tg.setFilenameSchemaGraph(null);
-	}
+    {
+        argoUml2Tg = new ArgoUml2Tg();
+        argoUml2Tg.setUseFromRole(true);
+        argoUml2Tg.setRemoveUnusedDomains(true);
+        argoUml2Tg.setUseNavigability(true);
+        argoUml2Tg.setFilenameDot(null);
+        argoUml2Tg.setFilenameValidation(null);
+        argoUml2Tg.setFilenameSchemaGraph(null);
+    }
 
-	private static File folderWithTGs;
+    private static File folderWithTGs;
 
-	private static File temp;
+    private static File temp;
 
-	@BeforeClass
-	public static void setUp() {
-		JGraLab.setLogLevel(Level.OFF);
+    @BeforeClass
+    public static void setUp() {
+        JGraLab.setLogLevel(Level.OFF);
 
-		folderWithTGs = new File(folder);
-		assert folderWithTGs.exists() : "The folder " + folderWithTGs
-				+ " does not exist.";
+        folderWithTGs = new File(folder);
+        assert folderWithTGs.exists() : "The folder " + folderWithTGs + " does not exist.";
 
-		temp = new File(System.getProperty("java.io.tmpdir") + File.separator
-				+ "ArgoUml2Tg_TestOutput");
-		if (!temp.exists()) {
-			if (!temp.mkdir()) {
-				fail(temp.getAbsoluteFile() + "could not be created.");
-			}
-		}
-	}
+        temp = new File(System.getProperty("java.io.tmpdir") + File.separator + "ArgoUml2Tg_TestOutput");
+        if (!temp.exists()) {
+            if (!temp.mkdir()) {
+                fail(temp.getAbsoluteFile() + "could not be created.");
+            }
+        }
+    }
 
-	@AfterClass
-	public static void tearDown() throws Exception {
-		recursivelyDeleteFileOrDirectory(temp);
-	}
+    @AfterClass
+    public static void tearDown() throws Exception {
+        recursivelyDeleteFileOrDirectory(temp);
+    }
 
-	private static boolean recursivelyDeleteFileOrDirectory(File file) {
-		if (!file.isDirectory()) {
-			return file.delete();
-		} else {
-			boolean out = true;
-			for (File current : file.listFiles()) {
-				out &= recursivelyDeleteFileOrDirectory(current);
-			}
-			out &= file.delete();
-			return out;
-		}
-	}
+    private static boolean recursivelyDeleteFileOrDirectory(File file) {
+        if (!file.isDirectory()) {
+            return file.delete();
+        } else {
+            boolean out = true;
+            File[] content = file.listFiles();
+            if (content != null) {
+                for (File current : content) {
+                    out &= recursivelyDeleteFileOrDirectory(current);
+                }
+            }
+            out &= file.delete();
+            return out;
+        }
+    }
 
-	/**
-	 * In this test case all EdgeClasses are created navigable from FROM to TO.
-	 * 
-	 * @throws GraphIOException
-	 * @throws XMLStreamException
-	 * @throws IOException
-	 */
-	@Test
-	public void testDefault() throws GraphIOException, XMLStreamException,
-			IOException {
-		runTests(false);
-	}
+    /**
+     * In this test case all EdgeClasses are created navigable from FROM to TO.
+     *
+     * @throws GraphIOException
+     * @throws XMLStreamException
+     * @throws IOException
+     */
+    @Test
+    public void testDefault() throws GraphIOException, XMLStreamException, IOException {
+        runTests(false);
+    }
 
-	/**
-	 * In this test case all EdgeClasses are created bidirectional navigable.
-	 * 
-	 * @throws GraphIOException
-	 * @throws XMLStreamException
-	 * @throws IOException
-	 */
-	@Test
-	public void testBidirectional() throws GraphIOException,
-			XMLStreamException, IOException {
-		runTests(true);
-	}
+    /**
+     * In this test case all EdgeClasses are created bidirectional navigable.
+     *
+     * @throws GraphIOException
+     * @throws XMLStreamException
+     * @throws IOException
+     */
+    @Test
+    public void testBidirectional() throws GraphIOException, XMLStreamException, IOException {
+        runTests(true);
+    }
 
-	private void runTests(boolean createBidirectional) throws GraphIOException,
-			XMLStreamException, IOException {
-		// check all schemas in folder
-		for (String file : folderWithTGs.list()) {
-			if (file.toLowerCase().endsWith(".tg")) {
+    private void runTests(boolean createBidirectional) throws GraphIOException, XMLStreamException, IOException {
+        // check all schemas in folder
+        String[] filenames = folderWithTGs.list();
+        if (filenames != null) {
+            for (String file : filenames) {
+                if (file.toLowerCase()
+                        .endsWith(".tg")) {
 
-				String originalTg = folderWithTGs.getAbsolutePath()
-						+ File.separator + file;
+                    String originalTg = folderWithTGs.getAbsolutePath() + File.separator + file;
 
-				// create xmi
-				String generatedXMI = temp.getAbsolutePath() + File.separator
-						+ new File(file).getName() + ".xmi";
-				if (createBidirectional) {
-					Tg2ArgoUml.main(new String[] { "-i", originalTg, "-o",
-							generatedXMI, "-b" });
-				} else {
-					Tg2ArgoUml.main(new String[] { "-i", originalTg, "-o",
-							generatedXMI });
-				}
+                    // create xmi
+                    String generatedXMI = temp.getAbsolutePath() + File.separator + new File(file).getName() + ".xmi";
+                    if (createBidirectional) {
+                        Tg2ArgoUml.main(new String[] { "-i", originalTg, "-o", generatedXMI, "-b" });
+                    } else {
+                        Tg2ArgoUml.main(new String[] { "-i", originalTg, "-o", generatedXMI });
+                    }
 
-				// create tg out of xmi
-				String generatedTg = temp.getAbsolutePath() + File.separator
-						+ new File(file).getName();
-				argoUml2Tg.setFilenameSchema(generatedTg);
-				argoUml2Tg.process(generatedXMI);
+                    // create tg out of xmi
+                    String generatedTg = temp.getAbsolutePath() + File.separator + new File(file).getName();
+                    argoUml2Tg.setFilenameSchema(generatedTg);
+                    argoUml2Tg.process(generatedXMI);
 
-				// check generated tg
-				compareTgs(originalTg, generatedTg);
-			}
-		}
-	}
+                    // check generated tg
+                    compareTgs(originalTg, generatedTg);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Compares all nonempty lines of originalTg and generatedTg. The order of
-	 * the lines is ignored. Attributes are sorted lexicographic.
-	 * 
-	 * @param originalTg
-	 * @param generatedTg
-	 * @param isReverted
-	 */
-	private void compareTgs(String originalTg, String generatedTg) {
-		try {
-			HashSet<String> originalTgContent = new HashSet<>();
-			HashSet<String> generatedTgContent = new HashSet<>();
+    /**
+     * Compares all nonempty lines of originalTg and generatedTg. The order of the
+     * lines is ignored. Attributes are sorted lexicographic.
+     *
+     * @param originalTg
+     * @param generatedTg
+     * @param isReverted
+     */
+    private void compareTgs(String originalTg, String generatedTg) {
+        try {
+            HashSet<String> originalTgContent = new HashSet<>();
+            HashSet<String> generatedTgContent = new HashSet<>();
 
-			// read lines of original Tg
-			LineNumberReader reader = new LineNumberReader(new FileReader(
-					originalTg));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				line = line.trim();
-				if (!line.isEmpty() && !line.startsWith("//")) {
-					if (containsAttributes(line)) {
-						line = sortAttributes(line);
-						System.out.println("old line: " + line);
-					}
-					originalTgContent.add(line);
-				}
-			}
-			reader.close();
+            // read lines of original Tg
+            LineNumberReader reader = new LineNumberReader(new FileReader(originalTg));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty() && !line.startsWith("//")) {
+                    if (containsAttributes(line)) {
+                        line = sortAttributes(line);
+                        System.out.println("old line: " + line);
+                    }
+                    originalTgContent.add(line);
+                }
+            }
+            reader.close();
 
-			// read lines of generated Tg
-			reader = new LineNumberReader(new FileReader(generatedTg));
-			while ((line = reader.readLine()) != null) {
-				line = line.trim();
-				if (!line.isEmpty() && !line.startsWith("//")) {
-					if (containsAttributes(line)) {
-						line = sortAttributes(line);
-						System.out.println("new line: " + line);
-					}
-					generatedTgContent.add(line);
-				}
-			}
-			reader.close();
+            // read lines of generated Tg
+            reader = new LineNumberReader(new FileReader(generatedTg));
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty() && !line.startsWith("//")) {
+                    if (containsAttributes(line)) {
+                        line = sortAttributes(line);
+                        System.out.println("new line: " + line);
+                    }
+                    generatedTgContent.add(line);
+                }
+            }
+            reader.close();
 
-			// compare the content of both Tgs
-			assertEquals(originalTg + " and " + generatedTg
-					+ " have different length.", originalTgContent.size(),
-					generatedTgContent.size());
-			for (String s : originalTgContent) {
-				assertTrue(s + " is not contained in the generated Tg "
-						+ generatedTg, generatedTgContent.contains(s));
-			}
-			for (String s : generatedTgContent) {
-				assertTrue(
-						s
-								+ " is contained in the generated Tg but not in the original Tg "
-								+ originalTg, originalTgContent.contains(s));
-			}
+            // compare the content of both Tgs
+            assertEquals(originalTg + " and " + generatedTg + " have different length.", originalTgContent.size(),
+                    generatedTgContent.size());
+            for (String s : originalTgContent) {
+                assertTrue(s + " is not contained in the generated Tg " + generatedTg, generatedTgContent.contains(s));
+            }
+            for (String s : generatedTgContent) {
+                assertTrue(s + " is contained in the generated Tg but not in the original Tg " + originalTg,
+                        originalTgContent.contains(s));
+            }
 
-		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			fail("An exception occurred while reading the file " + originalTg
-					+ ":\n" + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+        } catch (FileNotFoundException e) {
+            fail(e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            fail("An exception occurred while reading the file " + originalTg + ":\n" + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Sorts the attributes lexicographically.
-	 * 
-	 * @param line
-	 * @return
-	 */
-	private String sortAttributes(String line) {
-		StringBuilder startOfLine = new StringBuilder();
-		TreeSet<String> attributes = new TreeSet<>();
-		StringBuilder endOfLine = new StringBuilder();
+    /**
+     * Sorts the attributes lexicographically.
+     *
+     * @param line
+     * @return
+     */
+    private String sortAttributes(String line) {
+        StringBuilder startOfLine = new StringBuilder();
+        TreeSet<String> attributes = new TreeSet<>();
+        StringBuilder endOfLine = new StringBuilder();
 
-		boolean isInAttributeDefinition = false;
-		boolean isInDefaultValueDefinition = false;
-		boolean areAttributesAlreadyFinished = false;
+        boolean isInAttributeDefinition = false;
+        boolean isInDefaultValueDefinition = false;
+        boolean areAttributesAlreadyFinished = false;
 
-		StringBuilder currentAttribute = null;
-		/*
-		 * The default values of attributes are put into " ". If the first "
-		 * occurs we know, that we now reach the definition of a default value.
-		 * The problem is to differ between the " of the end of the default
-		 * value definition and an \" occurring in the default value. For that
-		 * reason prevChar was introduced. prevChar is set to \n because this
-		 * cannot occur in a line.
-		 */
-		char prevChar = '\n';
+        StringBuilder currentAttribute = null;
+        /*
+         * The default values of attributes are put into " ". If the first " occurs we
+         * know, that we now reach the definition of a default value. The problem is to
+         * differ between the " of the end of the default value definition and an \"
+         * occurring in the default value. For that reason prevChar was introduced.
+         * prevChar is set to \n because this cannot occur in a line.
+         */
+        char prevChar = '\n';
 
-		for (char c : line.toCharArray()) {
-			if (areAttributesAlreadyFinished) {
-				// the attributes are already read completely
-				endOfLine.append(c);
-			} else {
-				// there are still some attributes to be recognized
-				if (!isInAttributeDefinition) {
-					// the first attribute is not reached yet
-					startOfLine.append(c);
-					if (c == '{') {
-						// beginning of attribute definition is reached
-						isInAttributeDefinition = true;
-						currentAttribute = new StringBuilder();
-					}
-				} else {
-					// the first attribute is or was reached
-					if (!isInDefaultValueDefinition) {
-						// we are currently not in the default value part
-						if (c == ',') {
-							// end of an attribute is reached
-							attributes.add(currentAttribute.toString().trim());
-							currentAttribute = new StringBuilder();
-						} else if (c == '\"') {
-							// the default value part is reached
-							currentAttribute.append(c);
-							isInDefaultValueDefinition = true;
-						} else if (c == '}') {
-							// the end of the last attribute is reached
-							attributes.add(currentAttribute.toString().trim());
-							endOfLine.append(c);
-							areAttributesAlreadyFinished = true;
-							isInAttributeDefinition = false;
-						}
-					} else {
-						// the default value of an attribute is currently read
-						currentAttribute.append(c);
-						if (c == '\"' && prevChar != '\\') {
-							// the end of the default value is reached
-							isInDefaultValueDefinition = false;
-							prevChar = '\n';
-						} else if (c == '\\' && prevChar == '\\') {
-							// the last and the current char is a \
-							// (e.g. \\). The following char is not quoted.
-							prevChar = '\n';
-						} else {
-							prevChar = c;
-						}
-					}
-				}
-			}
-		}
+        for (char c : line.toCharArray()) {
+            if (areAttributesAlreadyFinished) {
+                // the attributes are already read completely
+                endOfLine.append(c);
+            } else {
+                // there are still some attributes to be recognized
+                if (!isInAttributeDefinition) {
+                    // the first attribute is not reached yet
+                    startOfLine.append(c);
+                    if (c == '{') {
+                        // beginning of attribute definition is reached
+                        isInAttributeDefinition = true;
+                        currentAttribute = new StringBuilder();
+                    }
+                } else {
+                    // the first attribute is or was reached
+                    if (!isInDefaultValueDefinition) {
+                        // we are currently not in the default value part
+                        if (c == ',') {
+                            // end of an attribute is reached
+                            attributes.add(currentAttribute.toString()
+                                    .trim());
+                            currentAttribute = new StringBuilder();
+                        } else if (c == '\"') {
+                            // the default value part is reached
+                            currentAttribute.append(c);
+                            isInDefaultValueDefinition = true;
+                        } else if (c == '}') {
+                            // the end of the last attribute is reached
+                            attributes.add(currentAttribute.toString()
+                                    .trim());
+                            endOfLine.append(c);
+                            areAttributesAlreadyFinished = true;
+                            isInAttributeDefinition = false;
+                        }
+                    } else {
+                        // the default value of an attribute is currently read
+                        currentAttribute.append(c);
+                        if (c == '\"' && prevChar != '\\') {
+                            // the end of the default value is reached
+                            isInDefaultValueDefinition = false;
+                            prevChar = '\n';
+                        } else if (c == '\\' && prevChar == '\\') {
+                            // the last and the current char is a \
+                            // (e.g. \\). The following char is not quoted.
+                            prevChar = '\n';
+                        } else {
+                            prevChar = c;
+                        }
+                    }
+                }
+            }
+        }
 
-		// put the line with the sorted attributes together again
-		boolean isFirstAttribute = true;
-		for (String attribute : attributes) {
-			if (isFirstAttribute) {
-				isFirstAttribute = false;
-			} else {
-				startOfLine.append(", ");
-			}
-			startOfLine.append(attribute);
-		}
-		startOfLine.append(endOfLine);
+        // put the line with the sorted attributes together again
+        boolean isFirstAttribute = true;
+        for (String attribute : attributes) {
+            if (isFirstAttribute) {
+                isFirstAttribute = false;
+            } else {
+                startOfLine.append(", ");
+            }
+            startOfLine.append(attribute);
+        }
+        startOfLine.append(endOfLine);
 
-		return startOfLine.toString();
-	}
+        return startOfLine.toString();
+    }
 
-	/**
-	 * Checks if <code>line</code> contains attributes.
-	 * 
-	 * @param line
-	 * @return
-	 */
-	private boolean containsAttributes(String line) {
-		return !line.startsWith("Comment")
-				&& line.contains("{")
-				&& (!line.contains("[") || line.indexOf("{") < line
-						.indexOf("["));
-	}
+    /**
+     * Checks if <code>line</code> contains attributes.
+     *
+     * @param line
+     * @return
+     */
+    private boolean containsAttributes(String line) {
+        return !line.startsWith("Comment") && line.contains("{")
+                && (!line.contains("[") || line.indexOf("{") < line.indexOf("["));
+    }
 }
