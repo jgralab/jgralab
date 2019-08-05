@@ -1,4 +1,11 @@
+dist: xenial
 language: java
+addons:
+  apt:
+    packages:
+      - ant
+jdk:
+  - openjdk8
 notifications:
   email:
     recipients:
@@ -7,7 +14,4 @@ notifications:
     channels:
       - "irc.freenode.org#jgralab"
     use_notice: true
-install: ant
 script: ant test
-jdk:
-  - openjdk8
